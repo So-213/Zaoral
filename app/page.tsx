@@ -52,7 +52,7 @@ export default function Home() {
             </Link>
           </div>
           <div className="space-y-4">
-            <Link href="https://3.112.27.108:3000">
+            <Link href="http://3.112.27.108:3000">
               <Button
                 variant="outline"
                 size="lg"
