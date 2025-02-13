@@ -4,40 +4,57 @@ import { Button } from "@/components/ui/button"
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-gradient-to-br from-rose-50 via-white to-purple-50">
-      <div className="container mx-auto px-4 py-8 space-y-24">
+    <main className="min-h-screen flex items-center justify-center bg-gradient-to-br from-rose-50 via-white to-purple-50">
+      <div className="container mx-auto space-y-8">
+
         {/* Hero Section */}
-        <section className="text-center space-y-8 pt-12">
+        <section className="text-center flex flex-col items-center justify-center space-y-8 pt-12">
           <div className="inline-flex items-center gap-2 text-4xl md:text-5xl font-bold animate-in fade-in slide-in-from-top-8 duration-1000">
             <div className="relative">
               <MessageCircle className="w-12 h-12 md:w-16 md:h-16 text-rose-500" strokeWidth={1.5} />
               <div className="absolute bottom-0 left-0 w-full h-1 bg-rose-500/20" />
             </div>
-            <h1>Zaral</h1>
+            <h1>Zaoral</h1>
           </div>
           <p className="text-xl md:text-2xl text-gray-600 max-w-3xl mx-auto leading-relaxed animate-in fade-in slide-in-from-bottom-8 duration-1000">
             LINEで女に返信させるサービス
           </p>
         </section>
 
+        <div className="mt-8 h-8"></div>
+
         {/* About Section */}
-        <section className="space-y-12 max-w-4xl mx-auto">
+        <section className="max-w-4xl mx-auto">
           <div className="group relative w-fit mx-auto">
-            <h2 className="text-3xl md:text-4xl font-bold flex items-center gap-2">
+          <h2 className="text-lg md:text-xl font-bold flex items-center gap-2">
               <MessageCircle className="w-8 h-8 text-rose-500" strokeWidth={1.5} />
-              <span>Zaralとは</span>
+              <span>Zaoralとは</span>
             </h2>
             <div className="absolute -bottom-2 left-0 w-full h-1 bg-rose-500/20 scale-x-0 group-hover:scale-x-100 transition-transform duration-300" />
           </div>
         </section>
 
         {/* How to Use Section */}
-        <section className="space-y-12 max-w-4xl mx-auto">
+        <section className="max-w-4xl mx-auto">
           <div className="group relative w-fit mx-auto">
-            <h2 className="text-3xl md:text-4xl font-bold">使い方</h2>
+          <h2 className="text-lg md:text-xl font-bold flex items-center gap-2">
+            使い方
+          </h2>
             <div className="absolute -bottom-2 left-0 w-full h-1 bg-purple-500/20 scale-x-0 group-hover:scale-x-100 transition-transform duration-300" />
           </div>
         </section>
+
+        {/* From Author Section */}
+        <section className="max-w-4xl mx-auto">
+          <div className="group relative w-fit mx-auto">
+          <h2 className="text-lg md:text-xl font-bold flex items-center gap-2">
+            サイト制作者より
+          </h2>
+            <div className="absolute -bottom-2 left-0 w-full h-1 bg-purple-500/20 scale-x-0 group-hover:scale-x-100 transition-transform duration-300" />
+          </div>
+        </section>
+
+        <div className="mt-8 h-8"></div>
 
         {/* CTA Section */}
         <section className="space-y-8 text-center">
