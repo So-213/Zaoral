@@ -37,7 +37,7 @@ export default function Home() {
             <button
               onClick={async () => {
                 try {
-                  const response = await fetch('/zaoral');
+                  const response = await fetch('https://zrl213.com/zaoral');
                   if (!response.ok) {
                     throw new Error('Failed to fetch EJS page');
                   }
