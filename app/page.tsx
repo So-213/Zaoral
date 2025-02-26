@@ -27,40 +27,10 @@ export default function Home() {
         <div className="mt-8 h-8"></div>
 
         {/* About Section */}
-        {/* <section className="max-w-4xl mx-auto">
-          <div className="group relative w-fit mx-auto">
-            
-            
-            <h2 className="text-lg md:text-xl font-bold flex items-center gap-2">
-                <MessageCircle className="w-8 h-8 text-rose-500" strokeWidth={1.5} />
-                <span>Zaoralとは</span>
-            </h2>
-
-            <div className="absolute -bottom-2 left-0 w-full h-1 bg-rose-500/20 scale-x-0 group-hover:scale-x-100 transition-transform duration-300" />
-             */}
-            
-            {/* 追加: EJS ページ取得ボタン */}
-            {/* <a
-              href="https://zrl213.com/zaoral"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-4 px-4 py-2 bg-rose-500 text-white rounded-lg shadow hover:bg-rose-600 transition-all"
-            >
-              詳細を見る
-            </a>
-
-
-          </div>
-        </section> */}
-
-
-        {/* About Section */}
         <section className="max-w-4xl mx-auto">
           <div className="group relative w-fit mx-auto">
-
-            {/* ボタンとして全体をリンク化 */}
             <a
-              href="https://zrl213.com/zaoral"
+              href="https://zrl213.com/zaora;"
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-2 text-lg md:text-xl font-bold text-black hover:text-rose-500 transition-all"
@@ -68,34 +38,55 @@ export default function Home() {
               <MessageCircle className="w-8 h-8 text-rose-500" strokeWidth={1.5} />
               <span>Zaoralとは</span>
             </a>
-
             <div className="absolute -bottom-2 left-0 w-full h-1 bg-rose-500/20 scale-x-0 group-hover:scale-x-100 transition-transform duration-300" />
-
           </div>
         </section>
-
-
-
-
-
 
         {/* How to Use Section */}
         <section className="max-w-4xl mx-auto">
           <div className="group relative w-fit mx-auto">
-          <h2 className="text-lg md:text-xl font-bold flex items-center gap-2">
-            使い方
-          </h2>
-            <div className="absolute -bottom-2 left-0 w-full h-1 bg-purple-500/20 scale-x-0 group-hover:scale-x-100 transition-transform duration-300" />
+            <a
+              href="https://zrl213.com/howToUse"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 text-lg md:text-xl font-bold text-black hover:text-rose-500 transition-all"
+            >
+              <MessageCircle className="w-8 h-8 text-rose-500" strokeWidth={1.5} />
+              <span>使い方</span>
+            </a>
+            <div className="absolute -bottom-2 left-0 w-full h-1 bg-rose-500/20 scale-x-0 group-hover:scale-x-100 transition-transform duration-300" />
           </div>
         </section>
 
         {/* From Author Section */}
         <section className="max-w-4xl mx-auto">
           <div className="group relative w-fit mx-auto">
-          <h2 className="text-lg md:text-xl font-bold flex items-center gap-2">
-            サイト制作者より
-          </h2>
-            <div className="absolute -bottom-2 left-0 w-full h-1 bg-purple-500/20 scale-x-0 group-hover:scale-x-100 transition-transform duration-300" />
+            <a
+              href="https://zrl213.com/fromAuthor"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 text-lg md:text-xl font-bold text-black hover:text-rose-500 transition-all"
+            >
+              <MessageCircle className="w-8 h-8 text-rose-500" strokeWidth={1.5} />
+              <span>サイト制作者より</span>
+            </a>
+            <div className="absolute -bottom-2 left-0 w-full h-1 bg-rose-500/20 scale-x-0 group-hover:scale-x-100 transition-transform duration-300" />
+          </div>
+        </section>
+
+        {/* Contact Section */}
+        <section className="max-w-4xl mx-auto">
+          <div className="group relative w-fit mx-auto">
+            <a
+              href="https://zrl213.com/contact"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 text-lg md:text-xl font-bold text-black hover:text-rose-500 transition-all"
+            >
+              <MessageCircle className="w-8 h-8 text-rose-500" strokeWidth={1.5} />
+              <span>お問い合わせ</span>
+            </a>
+            <div className="absolute -bottom-2 left-0 w-full h-1 bg-rose-500/20 scale-x-0 group-hover:scale-x-100 transition-transform duration-300" />
           </div>
         </section>
 
