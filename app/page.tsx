@@ -30,7 +30,7 @@ export default function Home() {
         <section className="max-w-4xl mx-auto">
           <div className="group relative w-fit mx-auto">
             <a
-              href="https://zrl213.com/zaora;"
+              href="https://zrl213.com/zaoral;"
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-2 text-lg md:text-xl font-bold text-black hover:text-rose-500 transition-all"
@@ -51,7 +51,6 @@ export default function Home() {
               rel="noopener noreferrer"
               className="flex items-center gap-2 text-lg md:text-xl font-bold text-black hover:text-rose-500 transition-all"
             >
-              <MessageCircle className="w-8 h-8 text-rose-500" strokeWidth={1.5} />
               <span>使い方</span>
             </a>
             <div className="absolute -bottom-2 left-0 w-full h-1 bg-rose-500/20 scale-x-0 group-hover:scale-x-100 transition-transform duration-300" />
@@ -67,7 +66,6 @@ export default function Home() {
               rel="noopener noreferrer"
               className="flex items-center gap-2 text-lg md:text-xl font-bold text-black hover:text-rose-500 transition-all"
             >
-              <MessageCircle className="w-8 h-8 text-rose-500" strokeWidth={1.5} />
               <span>サイト制作者より</span>
             </a>
             <div className="absolute -bottom-2 left-0 w-full h-1 bg-rose-500/20 scale-x-0 group-hover:scale-x-100 transition-transform duration-300" />
@@ -83,7 +81,6 @@ export default function Home() {
               rel="noopener noreferrer"
               className="flex items-center gap-2 text-lg md:text-xl font-bold text-black hover:text-rose-500 transition-all"
             >
-              <MessageCircle className="w-8 h-8 text-rose-500" strokeWidth={1.5} />
               <span>お問い合わせ</span>
             </a>
             <div className="absolute -bottom-2 left-0 w-full h-1 bg-rose-500/20 scale-x-0 group-hover:scale-x-100 transition-transform duration-300" />
