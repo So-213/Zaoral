@@ -34,7 +34,7 @@ export default function Home() {
               rel="noopener noreferrer"
               className="flex items-center gap-2 text-lg md:text-xl font-bold text-black hover:text-rose-500 transition-all"
             >
-              <MessageCircle className="w-8 h-8 md:w-16 md:h-16 text-rose-500" strokeWidth={1.5} />
+              <MessageCircle className="w-6 h-6 text-rose-500" strokeWidth={1.5} />
               <span>Zaoralとは</span>
             </a>
             <div className="absolute -bottom-2 left-0 w-full h-1 bg-rose-500/20 scale-x-0 group-hover:scale-x-100 transition-transform duration-300" />
