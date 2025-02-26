@@ -34,27 +34,6 @@ export default function Home() {
                 <span>Zaoralとは</span>
             </h2>
             <div className="absolute -bottom-2 left-0 w-full h-1 bg-rose-500/20 scale-x-0 group-hover:scale-x-100 transition-transform duration-300" />
-            
-            {/* 追加: EJS ページ取得ボタン */}
-            <button
-              onClick={async () => {
-                try {
-                  const response = await fetch('https://zrl213.com/zaoral');
-                  if (!response.ok) {
-                    throw new Error('Failed to fetch EJS page');
-                  }
-                  const html = await response.text();
-                  document.open();
-                  document.write(html);
-                  document.close();
-                } catch (error) {
-                  console.error(error);
-                }
-              }}
-              className="mt-4 px-4 py-2 bg-rose-500 text-white rounded-lg shadow hover:bg-rose-600 transition-all"
-            >
-              詳細を見る
-            </button>
 
           </div>
         </section>
