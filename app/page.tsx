@@ -30,13 +30,10 @@ export default function Home() {
         <section className="max-w-4xl mx-auto">
           <div className="group relative w-fit mx-auto">
             
-            <h2 className="text-lg md:text-xl font-bold flex items-center gap-2">
-                <MessageCircle className="w-8 h-8 text-rose-500" strokeWidth={1.5} />
-                <span>Zaoralとは</span>
-            </h2>
-            <div className="absolute -bottom-2 left-0 w-full h-1 bg-rose-500/20 scale-x-0 group-hover:scale-x-100 transition-transform duration-300" />
-            
-            
+
+            {/* <div className="absolute -bottom-2 left-0 w-full h-1 bg-rose-500/20 scale-x-0 group-hover:scale-x-100 transition-transform duration-300" />
+             */}
+
             {/* 追加: EJS ページ取得ボタン */}
             <a
               href="https://zrl213.com/zaoral"
@@ -44,7 +41,10 @@ export default function Home() {
               rel="noopener noreferrer"
               className="mt-4 px-4 py-2 bg-rose-500 text-white rounded-lg shadow hover:bg-rose-600 transition-all"
             >
-              詳細を見る
+            <h2 className="text-lg md:text-xl font-bold flex items-center gap-2">
+                <MessageCircle className="w-8 h-8 text-rose-500" strokeWidth={1.5} />
+                <span>Zaoralとは</span>
+            </h2>
             </a>
 
 
