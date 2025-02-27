@@ -23,11 +23,13 @@ export default function ZaoralPage() {
           <Image 
             src="/zaoral.png" 
             alt="Zaoral ロゴ" 
-            width={300}
+            width={650}
             height={150} 
             className="zaoral-image" 
           />
         </div>
+        <div></div>
+        <div></div>
         <div></div>
         <div></div>
         <Link href="/" className="button">ホームに戻る</Link>
@@ -38,7 +40,7 @@ export default function ZaoralPage() {
           background: linear-gradient(to bottom right, #fff5f7, #faf0ff);
         }
         .container {
-          max-width: 700px;
+          max-width: 730px;
           margin: 50px auto;
           padding: 30px;
           background: white;
@@ -88,14 +90,12 @@ export default function ZaoralPage() {
         .button:hover {
           background: linear-gradient(to right, #e0487a, #9b2ddf);
         }
-        
         .image-container {
           display: flex;
           justify-content: center;
           align-items: center;
           margin: 20px 0;
         }
-
         .zaoral-image {
           display: block;
           max-width: 90%;
