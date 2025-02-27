@@ -8,9 +8,10 @@ export default function ZaoralPage() {
     <div className="bg-gradient min-h-screen flex items-center justify-center">
       <div className="container">
         <h1 className="title">
-          <svg className="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M7.5 12h9m0 0H7.5m9 0a4.5 4.5 0 100-9H9A4.5 4.5 0 007.5 12m9 0V21l-4.5-4.5H9a4.5 4.5 0 110-9" />
-          </svg>
+        <svg className="icon" xmlns="http://www.w3.org/2000/svg" fill="none"
+            width="28" height="28" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M7.5 12h9m0 0H7.5m9 0a4.5 4.5 0 100-9H9A4.5 4.5 0 007.5 12m9 0V21l-4.5-4.5H9a4.5 4.5 0 110-9" />
+        </svg>
           Zaoralとは
         </h1>
         <br></br>
@@ -46,7 +47,7 @@ export default function ZaoralPage() {
         .container {
           max-width: 760px;
           margin: 50px auto;
-          padding: 10px;
+          padding: 20px;
           background: white;
           border-radius: 12px;
           box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
