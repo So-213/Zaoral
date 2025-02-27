@@ -19,8 +19,17 @@ export default function ZaoralPage() {
         <p>その中にはすぐに返信をくれなかったり、未読/既読スルーしがちな女が一定数います。</p>
         <p>そのような女達に対して、メッセージ（いわゆる追いLINE）をWebページ化することで興味を惹き、返信させると共に、既読/未読スルーされることを防ぎます。</p>
 
-        <Image src="/zaoral.png" alt="Zaoral ロゴ" width={300} height={150} className="zaoral-image" />
-
+        <div className="image-container">
+          <Image 
+            src="/zaoral.png" 
+            alt="Zaoral ロゴ" 
+            width={300}
+            height={150} 
+            className="zaoral-image" 
+          />
+        </div>
+        <div></div>
+        <div></div>
         <Link href="/" className="button">ホームに戻る</Link>
       </div>
 
@@ -79,6 +88,14 @@ export default function ZaoralPage() {
         .button:hover {
           background: linear-gradient(to right, #e0487a, #9b2ddf);
         }
+        
+        .image-container {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          margin: 20px 0;
+        }
+
         .zaoral-image {
           display: block;
           max-width: 90%;
