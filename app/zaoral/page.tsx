@@ -24,7 +24,6 @@ export default function ZaoralPage() {
         <br></br>
         <p>そのような女達に対して、メッセージ（いわゆる追いLINE）をWebページ化することで興味を惹き、返信させると共に、既読/未読スルーされることを防ぎます。</p>
         <br></br>
-        <br></br>
 
         <div className="image-container">
           <Image 
@@ -47,7 +46,7 @@ export default function ZaoralPage() {
         .container {
           max-width: 760px;
           margin: 50px auto;
-          padding: 30px;
+          padding: 20px;
           background: white;
           border-radius: 12px;
           box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
