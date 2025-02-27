@@ -30,7 +30,7 @@ export default function Home() {
         <section className="max-w-4xl mx-auto">
           <div className="group relative w-fit mx-auto">
             <a
-              href="https://zrl213.com/zaoral"
+              href="/zaoral"
               rel="noopener noreferrer"
               className="flex items-center gap-2 text-lg md:text-xl font-bold text-black hover:text-rose-500 transition-all"
             >
@@ -59,7 +59,7 @@ export default function Home() {
         <section className="max-w-4xl mx-auto">
           <div className="group relative w-fit mx-auto">
             <a
-              href="https://zrl213.com/fromAuthor"
+              href="/fromAuthor"
               rel="noopener noreferrer"
               className="flex items-center gap-2 text-lg md:text-xl font-bold text-black hover:text-rose-500 transition-all"
             >
