@@ -28,10 +28,6 @@ export default function ZaoralPage() {
             className="zaoral-image" 
           />
         </div>
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
         <Link href="/" className="button">ホームに戻る</Link>
       </div>
 
@@ -40,7 +36,7 @@ export default function ZaoralPage() {
           background: linear-gradient(to bottom right, #fff5f7, #faf0ff);
         }
         .container {
-          max-width: 730px;
+          max-width: 760px;
           margin: 50px auto;
           padding: 30px;
           background: white;
@@ -73,6 +69,7 @@ export default function ZaoralPage() {
           overflow-wrap: break-word;
         }
         .button {
+          margin-top: 40px;
           display: block;
           width: 100%;
           max-width: 280px;
