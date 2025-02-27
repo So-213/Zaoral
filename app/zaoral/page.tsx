@@ -13,11 +13,18 @@ export default function ZaoralPage() {
           </svg>
           Zaoralとは
         </h1>
-
+        <br></br>
+        <br></br>
+        <br></br>
         <p>ナンパやマッチングアプリをする男達のための「女の返信を促すサービス」です。</p>
+        <br></br>
         <p>ナンパやマッチングアプリをしていると、沢山の女とLINEを交換すると思います。</p>
+        <br></br>
         <p>その中にはすぐに返信をくれなかったり、未読/既読スルーしがちな女が一定数います。</p>
+        <br></br>
         <p>そのような女達に対して、メッセージ（いわゆる追いLINE）をWebページ化することで興味を惹き、返信させると共に、既読/未読スルーされることを防ぎます。</p>
+        <br></br>
+        <br></br>
 
         <div className="image-container">
           <Image 
@@ -28,6 +35,8 @@ export default function ZaoralPage() {
             className="zaoral-image" 
           />
         </div>
+        <br></br>
+        <br></br>
         <Link href="/" className="button">ホームに戻る</Link>
       </div>
 
