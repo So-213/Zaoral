@@ -11,7 +11,7 @@ export default function Home() {
       <div className="container mx-auto space-y-8">
 
         {/* Hero Section */}
-        <section className="text-center flex flex-col items-center justify-center space-y-8 pt-12">
+        <section className="text-center flex flex-col items-center justify-center space-y-8">
           <div className="inline-flex items-center gap-2 text-4xl md:text-5xl font-bold animate-in fade-in slide-in-from-top-8 duration-1000">
             <div className="relative">
               <MessageCircle className="w-12 h-12 md:w-16 md:h-16 text-rose-500" strokeWidth={1.5} />
@@ -19,7 +19,7 @@ export default function Home() {
             </div>
             <h1>Zaoral</h1>
           </div>
-          <p className="text-xl md:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed animate-in fade-in slide-in-from-bottom-8 duration-1000">
+          <p className="text-xl md:text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed animate-in fade-in slide-in-from-bottom-8 duration-1000">
             LINEで女に返信させるサービス
           </p>
         </section>
@@ -64,20 +64,6 @@ export default function Home() {
               className="flex items-center gap-2 text-lg md:text-xl font-bold text-black hover:text-rose-500 transition-all"
             >
               <span>サイト制作者より</span>
-            </a>
-            <div className="absolute -bottom-2 left-0 w-full h-1 bg-rose-500/20 scale-x-0 group-hover:scale-x-100 transition-transform duration-300" />
-          </div>
-        </section>
-
-        {/* Contact Section */}
-        <section className="max-w-4xl mx-auto">
-          <div className="group relative w-fit mx-auto">
-            <a
-              href="https://zrl213.com/contact"
-              rel="noopener noreferrer"
-              className="flex items-center gap-2 text-lg md:text-xl font-bold text-black hover:text-rose-500 transition-all"
-            >
-              <span>お問い合わせ</span>
             </a>
             <div className="absolute -bottom-2 left-0 w-full h-1 bg-rose-500/20 scale-x-0 group-hover:scale-x-100 transition-transform duration-300" />
           </div>

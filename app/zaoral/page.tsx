@@ -17,13 +17,13 @@ export default function ZaoralPage() {
         <br></br>
         <br></br>
         <br></br>
-        <p>ナンパやマッチングアプリをする男達のための「女の返信を促すサービス」です。</p>
+        <p>ナンパやマッチングアプリをする男達のための<span className="highlight">「女の返信を促すサービス」</span>です。</p>
         <br></br>
         <p>ナンパやマッチングアプリをしていると、沢山の女とLINEを交換すると思います。</p>
         <br></br>
         <p>その中にはすぐに返信をくれなかったり、未読/既読スルーしがちな女が一定数います。</p>
         <br></br>
-        <p>そのような女達に対して、メッセージ（いわゆる追いLINE）をWebページ化することで興味を惹き、返信させると共に、既読/未読スルーされることを防ぎます。</p>
+        <p>そのような女達に対して、<span className="highlight">メッセージ（いわゆる追いLINE）をWebページ化</span>することで興味を惹き、返信させると共に、既読/未読スルーされることを防ぎます。</p>
         <br></br>
 
         <div className="image-container">
@@ -76,6 +76,13 @@ export default function ZaoralPage() {
           margin: 0 auto;
           white-space: normal;
           overflow-wrap: break-word;
+        }
+        .highlight {
+          color:rgb(255, 90, 90); /* ピンク系の強調色 */
+          font-weight: bold;
+          background-color: #fff0f5; /* 薄いピンクの背景 */
+          padding: 2px 5px;
+          border-radius: 4px;
         }
         .button {
           margin-top: 40px;
