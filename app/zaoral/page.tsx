@@ -17,6 +17,7 @@ export default function ZaoralPage() {
         <br></br>
         <br></br>
         <br></br>
+        <p><strong>《概要》</strong></p>
         <p>ナンパやマッチングアプリをする男達のための<span className="highlight">「女の返信を促すサービス」</span>です。</p>
         <br></br>
         <p>ナンパやマッチングアプリをしていると、沢山の女とLINEを交換すると思います。</p>
@@ -37,6 +38,29 @@ export default function ZaoralPage() {
         </div>
         <br></br>
         <br></br>
+        <br></br>
+        <p><strong>《作成できるWebページ》</strong></p>
+        <br></br>
+        <br></br>
+        <br></br>
+        <p>※基本的には2週間で自動的に消去されます。</p>
+        {/* <p>月2ページまでは永久保存版として作成できます。</p> */}
+
+        <br></br>
+        <br></br>
+        <br></br>
+
+        <p><strong>《プラン》</strong></p>
+
+        <br></br>
+        <br></br>
+        <br></br>
+
+
+
+
+
+
         <Link href="/" className="button">ホームに戻る</Link>
       </div>
 
