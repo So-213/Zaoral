@@ -18,13 +18,13 @@ export default function ZaoralPage() {
         <br></br>
         <br></br>
         <p><strong>《概要》</strong></p>
-        <p>ナンパやマッチングアプリをする男達のための<span className="highlight">「女の返信を促すサービス」</span>です。</p>
+        <p>ナンパやマッチングアプリをする男達のための<span className="highlight">「女性の返信を促すサービス」</span>です。</p>
         <br></br>
-        <p>ナンパやマッチングアプリをしていると、沢山の女とLINEを交換すると思います。</p>
+        <p>ナンパやマッチングアプリをしていると、沢山の女性とLINEを交換すると思います。</p>
         <br></br>
-        <p>その中にはすぐに返信をくれなかったり、未読/既読スルーしがちな女が一定数います。</p>
+        <p>その中にはすぐに返信をくれなかったり、未読/既読スルーしがちな人が一定数います。</p>
         <br></br>
-        <p>そのような女達に対して、<span className="highlight">メッセージ（いわゆる追いLINE）をWebページ化</span>することで興味を惹き、返信させると共に、既読/未読スルーされることを防ぎます。</p>
+        <p>そのような女性に対して、<span className="highlight">メッセージ（いわゆる追いLINE）をWebページ化</span>することで興味を惹き、返信させると共に、既読/未読スルーされることを防ぎます。</p>
         <br></br>
 
         <div className="image-container">
@@ -43,7 +43,7 @@ export default function ZaoralPage() {
         <br></br>
         <br></br>
         <br></br>
-        <p>※基本的には2週間で自動的に消去されます。</p>
+        <p>※Webページは2週間で自動的に消去されます。</p>
         {/* <p>月2ページまでは永久保存版として作成できます。</p> */}
 
         <br></br>
