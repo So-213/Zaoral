@@ -1,26 +1,22 @@
 "use client";
 
-import { signOut, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 
-export default function HomePage() {
-  const { data: session } = useSession();
+export default function Dashboard() {
+  const { data: session, status } = useSession();
+
+  if (status === "loading") {
+    return <p>Loading...</p>;
+  }
+
+  if (!session) {
+    return <p>ログインしてください</p>;
+  }
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen">
-      <h1 className="text-2xl font-bold">ホームページ</h1>
-      {session ? (
-        <>
-          <p>ようこそ, {session.user?.name} さん</p>
-          <button
-            className="mt-4 px-4 py-2 bg-red-500 text-white rounded"
-            onClick={() => signOut()}
-          >
-            ログアウト
-          </button>
-        </>
-      ) : (
-        <p>ログインしていません</p>
-      )}
+    <div>
+      <h1>Dashboard</h1>
+      <p>こんにちは, {session.user?.name} さん</p>
     </div>
   );
 }
