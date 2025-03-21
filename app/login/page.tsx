@@ -1,36 +1,18 @@
 "use client";
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
 
-
-
-
+import { signIn } from "next-auth/react";
 
 export default function LoginPage() {
-  const router = useRouter();
-
-  useEffect(() => {
-    const login = async () => {
-      try {
-        const response = await fetch("/api/login", {
-          method: "GET",
-          credentials: "include", // クッキーを含める（セッション管理用）
-        });
-
-        if (response.ok) {
-          // バックエンドからのリダイレクトURLを取得
-          const data = await response.json();
-          window.location.href = data.redirectUrl; // Cognito の認証ページへ遷移
-        } else {
-          console.error("Login request failed");
-        }
-      } catch (error) {
-        console.error("Error during login:", error);
-      }
-    };
-
-    login();
-  }, []);
-
-  return <p>ログイン処理中...</p>;
+  return (
+    <div className="flex flex-col items-center justify-center min-h-screen">
+      <h1 className="text-2xl font-bold">ログイン</h1>
+      <button
+        className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
+        onClick={() => signIn("google")}
+      >
+        Googleでログイン
+      </button>
+    </div>
+  );
 }
+

@@ -20,7 +20,7 @@ export default function Home() {
             <h1>Zaoral</h1>
           </div>
           <p className="text-xl md:text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed animate-in fade-in slide-in-from-bottom-8 duration-1000">
-            LINEで女に返信させるサービス
+            LINEで女性に返信させるサービス
           </p>
         </section>
 
@@ -74,7 +74,7 @@ export default function Home() {
         {/* CTA Section */}
         <section className="space-y-8 text-center">
           <div className="space-y-4">
-            <Link href="/trial">
+            <Link href="/dashboard">
               <Button
                 size="lg"
                 className="text-lg bg-gradient-to-r from-rose-500 to-purple-500 hover:from-rose-600 hover:to-purple-600 transition-all duration-300 animate-in fade-in slide-in-from-bottom-4"
