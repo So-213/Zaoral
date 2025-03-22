@@ -1,10 +1,8 @@
-// zaoral/frontend/app/api/\[...nextauth\]/route.ts 
-
-
 import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
+import { getServerSession } from "next-auth";
 
-const handler = NextAuth({
+const authOptions = {
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
@@ -12,10 +10,9 @@ const handler = NextAuth({
     }),
   ],
   secret: process.env.NEXTAUTH_SECRET,
-  debug: true,  // ← これを追加
-});
-console.log("NextAuth handler initialized"); // ← これを追加！
+};
+
+const handler = NextAuth(authOptions);
+
 export { handler as GET, handler as POST };
-
-
-
+export const auth = () => getServerSession(authOptions); // ← 追加
