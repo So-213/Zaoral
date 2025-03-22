@@ -10,9 +10,20 @@ const authOptions = {
     }),
   ],
   secret: process.env.NEXTAUTH_SECRET,
+  pages: {
+    signIn: "/login", // ログインページ
+    signOut: "/", // ログアウト後のページ
+    error: "/error", // 認証エラー時のページ
+    newUser: "/welcome", // 初回ログイン時のページ
+  },
+  callbacks: {
+    async redirect() {
+      return "/dashboard"; 
+    },
+  },
 };
 
 const handler = NextAuth(authOptions);
 
 export { handler as GET, handler as POST };
-export const auth = () => getServerSession(authOptions); // ← 追加
+export const auth = () => getServerSession(authOptions);
