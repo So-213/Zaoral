@@ -8,7 +8,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
       <body>
-        <SessionProvider>{children}</SessionProvider> {/* ← ここOK */}
+        <SessionProvider>
+          {children}
+        </SessionProvider> 
       </body>
     </html>
   );
