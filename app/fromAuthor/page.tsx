@@ -46,9 +46,6 @@ export default function FromAuthorPage() {
         何かとトラブルがあると思います。その場合は何卒温かい気持ちで復旧を待っていただけたらと思います。</p>
         <p>また、当サイトには有料プランもございます。投げ銭みたいな気持ちで、是非ともよろしくお願いしたいと思います🙇‍♂️。</p>
 
-        <br></br>
-        <br></br>
-        <Link href="/" className="button">ホームに戻る</Link>
       </div>
 
       <style jsx>{`

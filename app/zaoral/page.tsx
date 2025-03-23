@@ -61,7 +61,6 @@ export default function ZaoralPage() {
 
 
 
-        <Link href="/" className="button">ホームに戻る</Link>
       </div>
 
       <style jsx>{`

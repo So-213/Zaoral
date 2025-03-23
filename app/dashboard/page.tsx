@@ -7,5 +7,10 @@ export default async function DashboardPage() {
     return <p>認証が必要です</p>;
   }
 
+
+
+
+
+  
   return <p>ようこそ、{session.user?.name} さん！</p>;
 }
