@@ -2,22 +2,22 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation"; // 現在のパスを取得
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
+  const pathname = usePathname(); 
+
+
+  if (pathname === "/" || pathname === "/login") return null;
 
   return (
     <nav className="navbar">
-      {/* ハンバーガーメニューのボタン */}
       <button className="hamburger" onClick={() => setIsOpen(!isOpen)}>
         ☰
       </button>
 
-      {/* メニュー */}
       <ul className={`menu ${isOpen ? "open" : ""}`}>
-        <li>
-          <Link href="/">Home</Link>
-        </li>
         <li>
           <Link href="/zaoral">Zaoralとは</Link>
         </li>
@@ -29,7 +29,6 @@ export default function Navbar() {
         </li>
       </ul>
 
-      {/* スタイル調整 */}
       <style jsx>{`
         .navbar {
           border-bottom: 2px solid black;
@@ -41,7 +40,7 @@ export default function Navbar() {
           background: none;
           border: none;
           cursor: pointer;
-          display: none; /* デフォルトでは非表示 */
+          display: none;
         }
 
         .menu {
@@ -75,3 +74,5 @@ export default function Navbar() {
     </nav>
   );
 }
+
+
