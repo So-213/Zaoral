@@ -16,10 +16,16 @@ export default function Navbar() {
       {/* メニュー */}
       <ul className={`menu ${isOpen ? "open" : ""}`}>
         <li>
-          <Link href="/fromAuther">サイト制作者より</Link>
+          <Link href="/">Home</Link>
         </li>
         <li>
           <Link href="/zaoral">Zaoralとは</Link>
+        </li>
+        <li>
+          <Link href="/howToUse">使い方</Link>
+        </li>
+        <li>
+          <Link href="/fromAuthor">サイト制作者より</Link>
         </li>
       </ul>
 
