@@ -21,6 +21,9 @@ export default function Navbar() {
       {/* ナビゲーションメニュー */}
       <ul className={`menu ${isOpen ? "open" : ""}`}>
         <li>
+          <Link href="/">Home</Link>
+        </li>
+        <li>
           <Link href="/zaoral">Zaoralとは</Link>
         </li>
         <li>
@@ -66,8 +69,8 @@ export default function Navbar() {
           padding: 10px;
           border-radius: 5px;
           box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
-          min-width: 160px; /* 最低幅を確保して俳句化を防ぐ */
-          text-align: left; /* 左寄せ */
+          min-width: 180px; /* 幅を統一 */
+          text-align: left;
         }
 
         /* ハンバーガークリック時に表示 */
@@ -75,22 +78,33 @@ export default function Navbar() {
           display: flex;
         }
 
-        /* メニューのリンク */
+        /* ボタン風リンク */
         .menu li {
-          white-space: nowrap; /* テキストが折り返されないように */
+          margin-bottom: 8px; /* ボタン間の余白 */
         }
 
         .menu li a {
+          display: block !important; /* 確実に適用 */
+          width: 100%; /* ボタン幅を固定 */
+          padding: 12px 15px;
+          background: #ffecec; /* 淡いピンク */
+          border-radius: 6px;
           text-decoration: none;
           color: #d64550;
           font-weight: bold;
-          transition: 0.3s;
-          padding: 5px 10px;
-          display: block;
+          text-align: center;
+          border: 1px solid #ff8c94;
+          transition: background 0.3s, transform 0.1s;
         }
 
+        /* ホバー時 */
         .menu li a:hover {
-          border-bottom: 2px solid #ff5a5f;
+          background: #ffccd5; /* ちょっと濃いピンク */
+        }
+
+        /* クリック時のエフェクト */
+        .menu li a:active {
+          transform: scale(0.96); /* クリック時に少し縮む */
         }
       `}</style>
     </nav>
