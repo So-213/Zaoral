@@ -1,3 +1,5 @@
+// lib/auth.ts
+
 import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import { getServerSession } from "next-auth";
@@ -10,16 +12,11 @@ const authOptions = {
     }),
   ],
   secret: process.env.NEXTAUTH_SECRET,
-  pages: {
-    signIn: "/login", // ログインページ
-    signOut: "/", // ログアウト後のページ
-    error: "/error", // 認証エラー時のページ
-    newUser: "/welcome", // 初回ログイン時のページ
-  },
   callbacks: {
-    async redirect() {
-      return "/dashboard"; 
-    },
+    async redirect({ url }: { url: string }) {
+      return url ?? "/dashboard";
+    }
+    
   },
 };
 

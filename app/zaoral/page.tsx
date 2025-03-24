@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
+
 
 export default function ZaoralPage() {
   return (
@@ -106,25 +106,6 @@ export default function ZaoralPage() {
           background-color: #fff0f5; /* 薄いピンクの背景 */
           padding: 2px 5px;
           border-radius: 4px;
-        }
-        .button {
-          margin-top: 40px;
-          display: block;
-          width: 100%;
-          max-width: 280px;
-          margin: 20px auto;
-          padding: 12px;
-          border-radius: 8px;
-          font-size: 16px;
-          font-weight: bold;
-          text-decoration: none;
-          text-align: center;
-          color: white;
-          background: linear-gradient(to right, #ff5a8d, #b832ff);
-          transition: 0.3s;
-        }
-        .button:hover {
-          background: linear-gradient(to right, #e0487a, #9b2ddf);
         }
         .image-container {
           display: flex;

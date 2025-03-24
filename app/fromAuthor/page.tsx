@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
+
 
 export default function FromAuthorPage() {
   return (
@@ -84,25 +84,6 @@ export default function FromAuthorPage() {
           margin: 0 auto;
           white-space: normal;
           overflow-wrap: break-word;
-        }
-        .button {
-          margin-top: 40px;
-          display: block;
-          width: 100%;
-          max-width: 280px;
-          margin: 20px auto;
-          padding: 12px;
-          border-radius: 8px;
-          font-size: 16px;
-          font-weight: bold;
-          text-decoration: none;
-          text-align: center;
-          color: white;
-          background: linear-gradient(to right, #ff5a8d, #b832ff);
-          transition: 0.3s;
-        }
-        .button:hover {
-          background: linear-gradient(to right, #e0487a, #9b2ddf);
         }
         .image-container {
           display: flex;
