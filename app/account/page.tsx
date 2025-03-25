@@ -1,12 +1,16 @@
 "use client";
-import { signOut } from "next-auth/react";
+import { signOut } from "next-auth/react"; // NextAuth.js のクライアント側フック 
+
+// import { useSession } from "next-auth/react";
+
+
 
 export default function AccountPage() {
 
-  const handleLogout = async () => {
-    await signOut({ redirect: false }); // セッションを削除（リダイレクトなし）
-    window.location.reload(); // 強制リロードして `useSession()` を更新
-  };
+
+  // const { data: session, status } = useSession(); // statusはログイン状態、sessionはログインしているユーザーの情報 を含むオブジェクト（JWTの中身）
+  // console.log("Session status:", status);//これがおかしい
+  // console.log("Session data:", session);//これはちゃんとnullになる
 
 
   return (
@@ -33,10 +37,7 @@ export default function AccountPage() {
         </h1>
 
         {/* ログアウトボタン */}
-        <button onClick={handleLogout} className="logout-button">
-          ログアウト
-        </button>
-        
+        <button className="logout-button" onClick={() => signOut({ callbackUrl: "/" })}>ログアウト</button>        
       </div>
 
       <style jsx>{`

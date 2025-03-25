@@ -3,23 +3,26 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation"; // 現在のパスを取得
-import { useSession } from "next-auth/react"; // NextAuth.js のクライアント側フック 
+
+
+import { useSession } from "next-auth/react"; 
 
 
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname(); // 現在のURLパスを取得
-  const { data: session, status} = useSession(); // status を追加
+
+
+
+  const { data: session } = useSession(); // status を追加
+  // console.log(session);
 
 
 
 
   // Home ("/") または Login ("/login") にいるときはナビバーを非表示
   if (pathname === "/" || pathname === "/login") return null;
-
-  console.log("Session status:", status);
-  console.log("Session data:", session);
 
   return (
     <nav className="navbar">
@@ -42,13 +45,11 @@ export default function Navbar() {
         <li>
           <Link href="/fromAuthor">サイト制作者より</Link>
         </li>
-
-        {/* ログインしている場合のみ表示 */}
-        {status === "authenticated" && (
+        {session && (
           <li>
             <Link href="/account">アカウント情報</Link>
           </li>
-        )}
+        )}      
       </ul>
 
       <style jsx>{`
