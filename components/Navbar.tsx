@@ -13,10 +13,11 @@ export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname(); // 現在のURLパスを取得
 
-
-
   const { data: session } = useSession(); // status を追加
-  // console.log(session);
+  
+
+  
+  console.log(session);
 
 
 
