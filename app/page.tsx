@@ -1,7 +1,12 @@
+// ./app/page.tsx
 "use client";
+
+
 import { MessageCircle } from "lucide-react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
+
+
 
 
 import { useSession } from "next-auth/react"; // NextAuth.js のクライアント側フック 
@@ -14,9 +19,6 @@ export default function Home() {
 
 
   const { data: session, status } = useSession(); // statusはログイン状態、sessionはログインしているユーザーの情報 を含むオブジェクト（JWTの中身）
-  console.log("Session status:", status);//これがおかしい
-  console.log("Session data:", session);//これはちゃんとnullになる
-
 
 
 
