@@ -1,22 +1,19 @@
 // ./app/page.tsx
-"use client";
+"use client"
 
 
 import { MessageCircle } from "lucide-react"
-import Link from "next/link"
 import { Button } from "@/components/ui/button"
-
-
-
-
+import Link from "next/link"
+import { useState } from "react"
+import { signIn } from "next-auth/react"
 
 
 
 
 export default function Home() {
 
-
-
+  const [showLogin, setShowLogin] = useState(false)
 
 
 
@@ -89,30 +86,50 @@ export default function Home() {
         {/* CTA Section */}
         <section className="space-y-8 text-center">
           <div className="space-y-4">
-            <Link href="/dashboard">
-              <Button
-                size="lg"
-                className="text-lg bg-gradient-to-r from-rose-500 to-purple-500 hover:from-rose-600 hover:to-purple-600 transition-all duration-300 animate-in fade-in slide-in-from-bottom-4"
-              >
-                お試し版はこちら
-              </Button>
-            </Link>
+            <Button
+              size="lg"
+              className="text-lg bg-gradient-to-r from-rose-500 to-purple-500 hover:from-rose-600 hover:to-purple-600 transition-all duration-300 animate-in fade-in slide-in-from-bottom-4"
+              onClick={() => {
+                window.location.href = "/dashboard"
+              }}
+            >
+              お試し版はこちら
+            </Button>
           </div>
 
           <div className="space-y-4">
-            <Link href="/login">
-              <Button
-                variant="outline"
-                size="lg"
-                className="text-lg group relative overflow-hidden transition-all duration-300 animate-in fade-in slide-in-from-bottom-4"
-              >
-                <span className="relative z-10">ログイン/登録はこちら</span>
-                <div className="absolute inset-0 bg-gradient-to-r from-rose-500/20 to-purple-500/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
-              </Button>
-            </Link>
+            <Button
+              variant="outline"
+              size="lg"
+              className="text-lg group relative overflow-hidden transition-all duration-300 animate-in fade-in slide-in-from-bottom-4"
+              onClick={() => setShowLogin(true)}
+            >
+              <span className="relative z-10">ログイン/登録はこちら</span>
+              <div className="absolute inset-0 bg-gradient-to-r from-rose-500/20 to-purple-500/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
+            </Button>
           </div>
-
         </section>
+
+        {/* ログインモーダル */}
+        {showLogin && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+            <div className="bg-white p-8 rounded-lg shadow-lg text-center w-80">
+              <h1 className="text-2xl font-bold mb-4">ログイン</h1>
+              <button
+                className="px-4 py-2 bg-blue-500 text-white rounded"
+                onClick={() => signIn("google", { callbackUrl: "/dashboard" })}
+              >
+                Googleでログイン
+              </button>
+              <button
+                className="mt-4 block text-sm text-gray-500 underline"
+                onClick={() => setShowLogin(false)}
+              >
+                閉じる
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </main>
   )
