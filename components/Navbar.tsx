@@ -1,3 +1,4 @@
+// ./components/Navbar.tsx
 "use client";
 
 import { useState } from "react";
@@ -14,13 +15,9 @@ import { useSession } from "next-auth/react";
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname(); // 現在のURLパスを取得
-  if (pathname === "/" || pathname === "/login") return null;
-
-
   const { data: session, status } = useSession();
 
- 
-
+  if (pathname === "/" || pathname === "/login") return null;
 
   return (
     <nav className="navbar">
