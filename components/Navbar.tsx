@@ -15,7 +15,7 @@ import { useSession } from "next-auth/react";
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname(); // 現在のURLパスを取得
-  const { data: session, status } = useSession();
+  const { data: session, status } = useSession();  // 完全クライアント側で状態管理するわけではなくてリロードするたびにサーバ側と同期される
 
   if (pathname === "/" || pathname === "/login") return null;
 
