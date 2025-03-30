@@ -1,4 +1,5 @@
 // ./app/layout.tsx
+
 import { SessionProvider } from "next-auth/react";
 import type { ReactNode } from "react";
 import "./globals.css";
@@ -11,7 +12,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     <html lang="en">
       <body>
         <SessionProvider>
-          <Navbar />
+          <Navbar/>
           {children}
         </SessionProvider> 
       </body>

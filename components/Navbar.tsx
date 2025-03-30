@@ -3,12 +3,8 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation"; // 現在のパスを取得
-import { useSession } from "next-auth/react"; 
-
-
-
-
+import { usePathname } from "next/navigation"; 
+import { useSession } from "next-auth/react"; //クライアントサイドコンポート
 
 
 
@@ -16,8 +12,9 @@ export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname(); // 現在のURLパスを取得
   const { data: session, status } = useSession();  // 完全クライアント側で状態管理するわけではなくてリロードするたびにサーバ側と同期される
-
+ 
   if (pathname === "/" || pathname === "/login") return null;
+
 
   return (
     <nav className="navbar">
@@ -39,13 +36,7 @@ export default function Navbar() {
         </li>
         <li>
           <Link href="/fromAuthor">サイト制作者より</Link>
-        </li>
-        {/* {session !== null && (
-          <li>
-            <Link href="/account">アカウント情報</Link>
-          </li>
-        )} */}
-  
+        </li>  
         {status === "authenticated" && session?.user && (
           <li>
             <Link href="/account">アカウント情報</Link>
