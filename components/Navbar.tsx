@@ -42,6 +42,9 @@ export default function Navbar() {
             <Link href="/account">アカウント情報</Link>
           </li>
         )}
+        <li>
+          <Link href="/Dashboard">ダッシュボード</Link>
+        </li>
 
       </ul>
 
