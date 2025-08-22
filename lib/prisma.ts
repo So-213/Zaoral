@@ -34,15 +34,18 @@ export async function withPrismaConnection<T>(operation: () => Promise<T>): Prom
 
 export { prisma };
 
-// 接続をクリーンアップする関数
-const cleanup = async () => {
-  if (prisma) {
-    await prisma.$disconnect();
-  }
-};
+// Edge Runtimeではprocess.onが利用できないため、条件付きで実行
+if (typeof process !== 'undefined' && process.on) {
+  // 接続をクリーンアップする関数
+  const cleanup = async () => {
+    if (prisma) {
+      await prisma.$disconnect();
+    }
+  };
 
-// プロセス終了時に接続をクリーンアップ
-if (process.env.NODE_ENV === 'production') {
-  process.on('SIGTERM', cleanup);
-  process.on('SIGINT', cleanup);
+  // プロセス終了時に接続をクリーンアップ（Node.js環境のみ）
+  if (process.env.NODE_ENV === 'production') {
+    process.on('SIGTERM', cleanup);
+    process.on('SIGINT', cleanup);
+  }
 } 
