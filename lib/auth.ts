@@ -49,6 +49,10 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
         }
         return session;
       }
+    },
+    // Edge Runtime互換性のための設定
+    experimental: {
+      enableWebAuthn: false,
     }
   })
   
