@@ -2,13 +2,19 @@ import { auth } from "@/lib/auth";
 import { NextResponse, NextRequest } from "next/server";
 
 export async function middleware(req: NextRequest) {
-    const session = await auth();
+    try {
+        const session = await auth();
 
-    if (!session) {
-        // ログインしていない場合は `/login` にリダイレクト
-        return NextResponse.redirect(new URL("/login", req.url));
+        if (!session) {
+            // ログインしていない場合はホームページにリダイレクト
+            return NextResponse.redirect(new URL("/", req.url));
+        }
+        return NextResponse.next();
+    } catch (error) {
+        console.error('Middleware error:', error);
+        // エラーが発生した場合はホームページにリダイレクト
+        return NextResponse.redirect(new URL("/", req.url));
     }
-    return NextResponse.next();
 }
 
 export const config = {
