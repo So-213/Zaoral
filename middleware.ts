@@ -33,5 +33,5 @@ export const config = {
     ],
 };
 
-// Edge Runtimeの設定を追加
-export const runtime = 'nodejs'
+// Node.jsランタイムを明示的に指定
+export const runtime = 'nodejs';
