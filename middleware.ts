@@ -14,3 +14,6 @@ export async function middleware(req: NextRequest) {
 export const config = {
     matcher: "/dashboard/:path*",
 };
+
+// Edge Runtimeの設定を追加
+export const runtime = 'nodejs'
