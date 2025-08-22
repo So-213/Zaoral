@@ -13,7 +13,7 @@ export default function Navbar() {
   const pathname = usePathname(); // 現在のURLパスを取得
   const { data: session, status } = useSession();  // 完全クライアント側で状態管理するわけではなくてリロードするたびにサーバ側と同期される
  
-  if (pathname === "/" || pathname === "/login") return null;
+  if (pathname === "/login") return null;
 
 
   return (

@@ -10,9 +10,9 @@ export default function Hero() {
         </div>
         <h1>Zaoral</h1>
       </div>
-      <p className="text-xl md:text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed animate-in fade-in slide-in-from-bottom-8 duration-1000">
+      {/* <p className="text-xl md:text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed animate-in fade-in slide-in-from-bottom-8 duration-1000">
         LINEで女性に返信させるサービス
-      </p>
+      </p> */}
     </section>
   )
 }
