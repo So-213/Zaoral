@@ -3,9 +3,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 
 export default function CreatePage() {
@@ -21,7 +19,7 @@ export default function CreatePage() {
     for (let i = 0; i < 6; i++) {
       result += chars.charAt(Math.floor(Math.random() * chars.length));
     }
-    setRandomString(result);
+    return result;
   };
 
   // EC2バックエンドサーバーにデータを送信する関数
@@ -31,15 +29,13 @@ export default function CreatePage() {
       return;
     }
 
-    if (!randomString) {
-      toast.error("ランダム文字列を生成してください");
-      return;
-    }
+    // データ送信時に自動的にランダム文字列を生成
+    const newRandomString = generateRandomString();
+    setRandomString(newRandomString);
 
     setIsLoading(true);
     
     try {
-      // EC2バックエンドサーバーのエンドポイント（実際のURLに変更してください）
       const response = await fetch('http://your-ec2-instance.com/api/data', {
         method: 'POST',
         headers: {
@@ -72,18 +68,17 @@ export default function CreatePage() {
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-4xl mx-auto px-4">
         <div className="bg-white rounded-lg shadow-md p-6">
-          <h1 className="text-3xl font-bold text-gray-900 mb-6">データ送信システム</h1>
+          <h1 className="text-3xl font-bold text-gray-900 mb-6">Webページ作成</h1>
           
           <div className="space-y-6">
             {/* 文字列入力セクション */}
             <Card>
               <CardHeader>
                 <CardTitle>文字列入力</CardTitle>
-                <CardDescription>送信したい文字列を入力してください</CardDescription>
+                <CardDescription>Webページに表示させたい文字列を入力してください</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-2">
-                  <Label htmlFor="input-text">文字列</Label>
                   <Input
                     id="input-text"
                     type="text"
@@ -96,49 +91,46 @@ export default function CreatePage() {
               </CardContent>
             </Card>
 
-            {/* ランダム文字列生成セクション */}
+            {/* ランダム文字列表示セクション
             <Card>
               <CardHeader>
-                <CardTitle>ランダム文字列生成</CardTitle>
-                <CardDescription>6文字のランダムな文字列を生成します</CardDescription>
+                <CardTitle>ランダム文字列</CardTitle>
+                <CardDescription>データ送信時に自動的に生成される6文字のランダム文字列</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  <Button 
-                    onClick={generateRandomString}
-                    variant="outline"
-                    className="w-full sm:w-auto"
-                  >
-                    ランダム文字列を生成
-                  </Button>
-                  
-                  {randomString && (
+                  {randomString ? (
                     <div className="flex items-center space-x-2">
                       <Label>生成された文字列:</Label>
                       <Badge variant="secondary" className="text-lg font-mono">
                         {randomString}
                       </Badge>
                     </div>
+                  ) : (
+                    <div className="text-gray-500 text-sm">
+                      データ送信時に自動的に生成されます
+                    </div>
                   )}
                 </div>
               </CardContent>
-            </Card>
+            </Card> */}
 
             {/* 送信セクション */}
             <Card>
               <CardHeader>
-                <CardTitle>データ送信</CardTitle>
-                <CardDescription>入力された文字列とランダム文字列をEC2バックエンドサーバーに送信します</CardDescription>
+                <CardTitle>Webページを作成</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="space-y-4">
-                  <Button 
-                    onClick={sendToBackend}
-                    disabled={isLoading || !inputText.trim() || !randomString}
-                    className="w-full"
-                  >
-                    {isLoading ? "送信中..." : "データを送信"}
-                  </Button>
+                  <div className="space-y-4">
+                    <div className="pt-1">
+                      <Button 
+                        onClick={sendToBackend}
+                        disabled={isLoading || !inputText.trim()}
+                        className="w-full"
+                      >
+                        {isLoading ? "送信中..." : "Webページを作成"}
+                      </Button>
+                    </div>
                   
                   {/* 送信データのプレビュー */}
                   {(inputText || randomString) && (

@@ -41,11 +41,14 @@ export default function Navbar() {
           <li>
             <Link href="/account">アカウント情報</Link>
           </li>
-        )}
-        <li>
-          <Link href="/Dashboard">ダッシュボード</Link>
-        </li>
 
+        )}
+        {status === "authenticated" && session?.user && (
+          <li>
+            <Link href="/dashboard">ダッシュボード</Link>
+          </li>
+
+        )}
       </ul>
 
 
