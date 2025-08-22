@@ -33,6 +33,13 @@ const nextConfig = {
     }
     return config;
   },
+  // ランタイム設定
+  serverRuntimeConfig: {
+    // Node.jsランタイムを使用
+  },
+  publicRuntimeConfig: {
+    // クライアントサイドで使用する設定
+  }
 }
 
 mergeConfig(nextConfig, userConfig)
