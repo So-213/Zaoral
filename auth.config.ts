@@ -4,8 +4,8 @@ export const authConfig = {
         id: "google",
         name: "Google",
         type: "oauth",
-        clientId: process.env.GOOGLE_CLIENT_ID!,
-        clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+        clientId: process.env.AUTH_GOOGLE_CLIENT_ID!,
+        clientSecret: process.env.AUTH_GOOGLE_CLIENT_SECRET!,
         authorization: {
           url: "https://accounts.google.com/o/oauth2/auth",
           params: {
