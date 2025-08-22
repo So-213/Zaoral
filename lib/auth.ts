@@ -1,12 +1,13 @@
 // lib/auth.ts
 
-
 import NextAuth from "next-auth"
 import Google from "next-auth/providers/google"
 import LINE from "next-auth/providers/line"
+import { PrismaAdapter } from "@auth/prisma-adapter"
+import { prisma } from "./prisma"
  
 export const { auth, handlers, signIn, signOut } = NextAuth({
-    // adapter: PrismaAdapter(prisma), //認証時のDB保存　//providerが違ってもidが一意になるようにする
+    adapter: PrismaAdapter(prisma), //認証時のDB保存　//providerが違ってもidが一意になるようにする
     providers: [
       Google({
         clientId: process.env.AUTH_GOOGLE_CLIENT_ID!,
