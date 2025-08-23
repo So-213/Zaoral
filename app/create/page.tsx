@@ -6,6 +6,8 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 
+
+
 export default function CreatePage() {
   const [inputText, setInputText] = useState("");
   const [randomString, setRandomString] = useState("");
@@ -22,42 +24,41 @@ export default function CreatePage() {
     return result;
   };
 
-  // EC2バックエンドサーバーにデータを送信する関数
-  const sendToBackend = async () => {
+  // SupabaseDBにデータを保存する関数
+  const saveToDatabase = async () => {
     if (!inputText.trim()) {
       toast.error("文字列を入力してください");
       return;
     }
 
-    // データ送信時に自動的にランダム文字列を生成
+    // データ保存時に自動的にランダム文字列を生成
     const newRandomString = generateRandomString();
     setRandomString(newRandomString);
 
     setIsLoading(true);
     
     try {
-      const response = await fetch('http://your-ec2-instance.com/api/data', {
+      const response = await fetch('/api/slots', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          inputText: inputText,
-          randomString: randomString,
-          timestamp: new Date().toISOString()
+          slug: newRandomString,
+          message: inputText,
         }),
       });
 
       if (response.ok) {
         const data = await response.json();
         setResponse(JSON.stringify(data, null, 2));
-        toast.success("データが正常に送信されました！");
+        toast.success("データが正常に保存されました！");
       } else {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
     } catch (error) {
-      console.error('送信エラー:', error);
-      toast.error("送信に失敗しました。サーバーのURLを確認してください。");
+      console.error('保存エラー:', error);
+      toast.error("保存に失敗しました。データベース接続を確認してください。");
       setResponse("エラー: " + (error instanceof Error ? error.message : "不明なエラー"));
     } finally {
       setIsLoading(false);
@@ -91,30 +92,6 @@ export default function CreatePage() {
               </CardContent>
             </Card>
 
-            {/* ランダム文字列表示セクション
-            <Card>
-              <CardHeader>
-                <CardTitle>ランダム文字列</CardTitle>
-                <CardDescription>データ送信時に自動的に生成される6文字のランダム文字列</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {randomString ? (
-                    <div className="flex items-center space-x-2">
-                      <Label>生成された文字列:</Label>
-                      <Badge variant="secondary" className="text-lg font-mono">
-                        {randomString}
-                      </Badge>
-                    </div>
-                  ) : (
-                    <div className="text-gray-500 text-sm">
-                      データ送信時に自動的に生成されます
-                    </div>
-                  )}
-                </div>
-              </CardContent>
-            </Card> */}
-
             {/* 送信セクション */}
             <Card>
               <CardHeader>
@@ -124,23 +101,23 @@ export default function CreatePage() {
                   <div className="space-y-4">
                     <div className="pt-1">
                       <Button 
-                        onClick={sendToBackend}
+                        onClick={saveToDatabase}
                         disabled={isLoading || !inputText.trim()}
                         className="w-full"
                       >
-                        {isLoading ? "送信中..." : "Webページを作成"}
+                        {isLoading ? "保存中..." : "Webページを作成"}
                       </Button>
                     </div>
                   
-                  {/* 送信データのプレビュー */}
+                  {/* 保存データのプレビュー */}
                   {(inputText || randomString) && (
                     <div className="p-4 bg-gray-50 rounded-lg">
-                      <h4 className="font-semibold mb-2">送信データ:</h4>
+                      <h4 className="font-semibold mb-2">保存データ:</h4>
                       <pre className="text-sm text-gray-700">
                         {JSON.stringify({
-                          inputText: inputText,
-                          randomString: randomString,
-                          timestamp: new Date().toISOString()
+                          slug: randomString,
+                          message: inputText,
+                          expires_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
                         }, null, 2)}
                       </pre>
                     </div>
@@ -153,8 +130,8 @@ export default function CreatePage() {
             {response && (
               <Card>
                 <CardHeader>
-                  <CardTitle>サーバーレスポンス</CardTitle>
-                  <CardDescription>バックエンドサーバーからの応答</CardDescription>
+                  <CardTitle>データベースレスポンス</CardTitle>
+                  <CardDescription>SupabaseDBからの応答</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <pre className="p-4 bg-gray-50 rounded-lg text-sm overflow-x-auto">

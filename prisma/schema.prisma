@@ -94,3 +94,12 @@ model SubscriptionTrash {
   original_subscription_id String
 }
 
+model Slot {
+  id          String   @id @default(cuid())
+  user_name   String
+  slug        String   @unique
+  message     String   @db.Text
+  created_at  DateTime @default(now())
+  expires_at  DateTime
+}
+
