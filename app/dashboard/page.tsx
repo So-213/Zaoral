@@ -123,10 +123,10 @@ export default async function DashboardPage() {
                           </div>
                           
                           {/* 公開ボタン */}
-                          <PublishButton 
+                          {/* <PublishButton 
                             projectId={project.id}
                             isPublished={project.published}
-                          />
+                          /> */}
                         </div>
 
 
