@@ -56,6 +56,7 @@ model User {
   subscription  Subscription?
   accounts      Account[]
   sessions      Session[]
+  slots         Slot[]
   
   @@unique([provider, provider_id])
 }
@@ -96,10 +97,12 @@ model SubscriptionTrash {
 
 model Slot {
   id          String   @id @default(cuid())
+  user_id     String
   user_name   String
   slug        String   @unique
   message     String   @db.Text
   created_at  DateTime @default(now())
   expires_at  DateTime
+  user        User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
 }
 
