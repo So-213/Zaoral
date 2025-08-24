@@ -9,7 +9,18 @@ export async function POST(request: NextRequest) {
 
     // 認証セッションを取得
     const session = await auth();
-    const userName = session?.user?.name || session?.user?.email || "Anonymous";
+    if (!session?.user?.id) {
+      return NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: 401 }
+      );
+    }
+
+    // デバッグ用：セッションのユーザーIDをログに出力
+    console.log('Session user ID:', session.user.id);
+    console.log('Session user:', session.user);
+
+    const userName = session.user.name || session.user.email || "Anonymous";
 
     // 有効期限を24時間後に設定
     const expiresAt = new Date();
@@ -17,6 +28,7 @@ export async function POST(request: NextRequest) {
 
     const savedSlot = await prisma.slot.create({
       data: {
+        user_id: session.user.id,
         user_name: userName,
         slug,
         message,
@@ -36,8 +48,19 @@ export async function POST(request: NextRequest) {
 
 export async function GET() {
   try {
+    // 認証セッションを取得
+    const session = await auth();
+    if (!session?.user?.id) {
+      return NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: 401 }
+      );
+    }
+
+    // ユーザー固有のスロットを取得
     const slots = await prisma.slot.findMany({
       where: {
+        user_id: session.user.id,
         expires_at: {
           gt: new Date(),
         },
