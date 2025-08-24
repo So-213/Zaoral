@@ -26,21 +26,22 @@ export async function POST(request: NextRequest) {
     const expiresAt = new Date();
     expiresAt.setHours(expiresAt.getHours() + 24);
 
-    const savedSlot = await prisma.slot.create({
+    const savedProject = await prisma.project.create({
       data: {
         user_id: session.user.id,
         user_name: userName,
         slug,
         message,
         expires_at: expiresAt,
+        published: false,
       },
     });
 
-    return NextResponse.json(savedSlot, { status: 201 });
+    return NextResponse.json(savedProject, { status: 201 });
   } catch (error) {
-    console.error('Slot creation error:', error);
+    console.error('Project creation error:', error);
     return NextResponse.json(
-      { error: 'Failed to create slot' },
+      { error: 'Failed to create project' },
       { status: 500 }
     );
   }
@@ -57,8 +58,8 @@ export async function GET() {
       );
     }
 
-    // ユーザー固有のスロットを取得
-    const slots = await prisma.slot.findMany({
+    // ユーザー固有のプロジェクトを取得
+    const projects = await prisma.project.findMany({
       where: {
         user_id: session.user.id,
         expires_at: {
@@ -70,11 +71,11 @@ export async function GET() {
       },
     });
 
-    return NextResponse.json(slots);
+    return NextResponse.json(projects);
   } catch (error) {
-    console.error('Slot fetch error:', error);
+    console.error('Project fetch error:', error);
     return NextResponse.json(
-      { error: 'Failed to fetch slots' },
+      { error: 'Failed to fetch projects' },
       { status: 500 }
     );
   }
