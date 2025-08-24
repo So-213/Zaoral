@@ -1,135 +1,89 @@
-# EC2バックエンドサーバー設定ガイド
+# Backend Setup Guide
 
 ## 概要
-このフロントエンドアプリケーションは、文字列入力とランダム文字列をEC2バックエンドサーバーに送信する機能を提供します。
+このプロジェクトは、フロントエンド（Next.js）とバックエンド（Express.js）の連携システムです。
 
-## バックエンドサーバーの要件
+## バックエンドサーバーの起動
 
-### 1. エンドポイント
-```
-POST /api/data
-```
-
-### 2. リクエスト形式
-```json
-{
-  "inputText": "ユーザーが入力した文字列",
-  "randomString": "生成された6文字のランダム文字列",
-  "timestamp": "2024-01-01T00:00:00.000Z"
-}
+### 1. バックエンドディレクトリに移動
+```bash
+cd backend2
 ```
 
-### 3. レスポンス形式
-```json
-{
-  "success": true,
-  "message": "データが正常に受信されました",
-  "receivedData": {
-    "inputText": "ユーザーが入力した文字列",
-    "randomString": "生成された6文字のランダム文字列",
-    "timestamp": "2024-01-01T00:00:00.000Z"
-  }
-}
+### 2. 依存関係のインストール
+```bash
+npm install
 ```
 
-## 設定手順
-
-### 1. フロントエンドの設定変更
-`frontend/app/create/page.tsx` の以下の行を実際のEC2インスタンスのURLに変更してください：
-
-```typescript
-// 現在の設定
-const response = await fetch('http://your-ec2-instance.com/api/data', {
-
-// 実際のEC2インスタンスのURLに変更
-const response = await fetch('http://your-ec2-public-ip:3000/api/data', {
+### 3. サーバーの起動
+```bash
+node server.js
 ```
 
-### 2. CORS設定
-バックエンドサーバーでCORSを有効にする必要があります：
+サーバーは `http://localhost:3001` で起動します。
 
-```javascript
-// Express.js の例
-const cors = require('cors');
-app.use(cors({
-  origin: 'http://localhost:3000', // フロントエンドのURL
-  credentials: true
-}));
+## フロントエンドとの連携設定
+
+### 環境変数の設定
+フロントエンドディレクトリに `.env.local` ファイルを作成し、以下の内容を追加してください：
+
+```env
+# バックエンドサーバーのURL
+# 開発環境
+BACKEND_URL=http://localhost:3001
+
+# 本番環境（EC2の場合）
+# BACKEND_URL=http://your-ec2-public-ip:3001
+# または
+# BACKEND_URL=https://your-domain.com
 ```
 
-### 3. セキュリティ設定
-- EC2セキュリティグループでポート3000（または使用するポート）を開放
-- HTTPSを使用する場合は適切なSSL証明書を設定
+### プロジェクト公開機能
+フロントエンドでプロジェクトが公開されると、自動的にバックエンドサーバーに通知が送信されます。
 
-## バックエンドサーバー実装例（Node.js/Express）
+#### フロー
+1. ユーザーがダッシュボードで「公開する」ボタンをクリック
+2. フロントエンドのAPI（`/api/projects/publish`）が呼び出される
+3. データベースのプロジェクトが公開状態に更新される
+4. バックエンドサーバー（`/api/projects/publish`）に通知が送信される
+5. バックエンドサーバーがログに記録し、データストアに保存
 
-```javascript
-const express = require('express');
-const cors = require('cors');
-const app = express();
+#### バックエンドでの確認方法
+- コンソールログ: プロジェクト公開時にログが出力されます
+- データビューア: `http://localhost:3001/view` で公開されたプロジェクトを確認できます
 
-app.use(cors());
-app.use(express.json());
+## API エンドポイント
 
-app.post('/api/data', (req, res) => {
-  try {
-    const { inputText, randomString, timestamp } = req.body;
-    
-    // データの検証
-    if (!inputText || !randomString) {
-      return res.status(400).json({
-        success: false,
-        message: '必須フィールドが不足しています'
-      });
-    }
-    
-    // データの処理（データベース保存など）
-    console.log('受信したデータ:', { inputText, randomString, timestamp });
-    
-    // レスポンス
-    res.json({
-      success: true,
-      message: 'データが正常に受信されました',
-      receivedData: { inputText, randomString, timestamp }
-    });
-    
-  } catch (error) {
-    console.error('エラー:', error);
-    res.status(500).json({
-      success: false,
-      message: 'サーバーエラーが発生しました'
-    });
-  }
-});
+### バックエンドサーバー
+- `GET /` - サーバー状態確認
+- `POST /api/data` - データ受信
+- `POST /api/projects/publish` - プロジェクト公開通知受信
+- `GET /view` - データ一覧表示
+- `GET /view/:id` - 個別データ表示
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`サーバーがポート${PORT}で起動しました`);
-});
-```
+### フロントエンド
+- `POST /api/projects/publish` - プロジェクト公開処理
 
 ## トラブルシューティング
 
-### よくある問題
+### バックエンドサーバーに接続できない場合
+1. バックエンドサーバーが起動しているか確認
+2. `BACKEND_URL` 環境変数が正しく設定されているか確認
+3. ファイアウォールやセキュリティグループの設定を確認（本番環境）
 
-1. **CORSエラー**
-   - バックエンドでCORS設定を確認
-   - フロントエンドのURLが許可されているか確認
+### プロジェクト公開通知が送信されない場合
+1. ブラウザの開発者ツールでネットワークタブを確認
+2. バックエンドサーバーのログを確認
+3. 環境変数の設定を再確認
 
-2. **接続エラー**
-   - EC2インスタンスのパブリックIPアドレスを確認
-   - セキュリティグループの設定を確認
-   - バックエンドサーバーが起動しているか確認
+## 本番環境での設定
 
-3. **タイムアウトエラー**
-   - ネットワーク接続を確認
-   - ファイアウォール設定を確認
+### EC2インスタンスの場合
+1. EC2インスタンスのパブリックIPを取得
+2. セキュリティグループでポート3001を開放
+3. フロントエンドの環境変数で `BACKEND_URL` を設定
 
-## 開発環境でのテスト
-
-ローカル開発時は、以下のURLを使用してください：
-```typescript
-const response = await fetch('http://localhost:3001/api/data', {
-```
-
-バックエンドサーバーを別のポート（例：3001）で起動し、フロントエンド（3000）からアクセスします。 
+### ドメインを使用する場合
+1. ドメインをバックエンドサーバーに設定
+2. SSL証明書を設定（推奨）
+3. フロントエンドの環境変数で `BACKEND_URL` を設定 
