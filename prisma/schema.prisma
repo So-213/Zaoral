@@ -48,8 +48,6 @@ model User {
   email         String?   @unique
   emailVerified DateTime?
   image         String?
-  provider      String?   // 認証プロバイダー (google, line など)
-  provider_id   String?   // 認証プロバイダーから提供されるID
   stripe_customer_id String?
   created_at    DateTime  @default(now())
   updated_at    DateTime  @updatedAt
@@ -57,8 +55,6 @@ model User {
   accounts      Account[]
   sessions      Session[]
   slots         Slot[]
-  
-  @@unique([provider, provider_id])
 }
 
 model VerificationToken {
