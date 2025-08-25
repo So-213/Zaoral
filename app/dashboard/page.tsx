@@ -77,12 +77,6 @@ export default async function DashboardPage() {
               {userProjects.length === 0 ? (
                 <div className="text-center py-8">
                   <p className="text-gray-500 mb-4">まだプロジェクトがありません</p>
-                  <Link 
-                    href="/create"
-                    className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200"
-                  >
-                    最初のプロジェクトを作成
-                  </Link>
                 </div>
               ) : (
                 <div className="space-y-2">

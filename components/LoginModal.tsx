@@ -30,7 +30,7 @@ export default function LoginModal({ onClose }: { onClose: () => void }) {
         <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full mx-4">
           <div className="text-sm text-gray-800 leading-relaxed mb-6">
             <p className="mb-4">
-              このWebサービスは、ログイン時の認証画面で許可をいただいた場合にのみ、お客様のLINEアカウントに登録されているメールアドレスを取得いたします。取得したメールアドレスは、以下の目的以外には使用いたしません。また、法令で定められている場合を除き、第三者に提供することはありません。
+              このWebサービスは、ログイン時の認証画面で許可をいただいた場合にのみ、お客様のアカウントに登録されているメールアドレスを取得いたします。取得したメールアドレスは、以下の目的以外には使用いたしません。また、法令で定められている場合を除き、第三者に提供することはありません。
             </p>
             <ul className="list-disc list-inside space-y-1">
               <li>ユーザーIDとしてのアカウント管理に使用</li>
