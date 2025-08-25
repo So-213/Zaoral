@@ -9,7 +9,7 @@ export default function AccountPage() {
 
 
   return (
-    <div className="bg-gradient min-h-screen flex items-center justify-center">
+    <div className="flex items-center justify-center">
       <div className="container">
         <h1 className="title">
           <svg
@@ -36,9 +36,6 @@ export default function AccountPage() {
       </div>
 
       <style jsx>{`
-        .bg-gradient {
-          background: linear-gradient(to bottom right, #fff5f7, #faf0ff);
-        }
         .container {
           max-width: 760px;
           margin: 50px auto;

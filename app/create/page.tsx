@@ -65,8 +65,9 @@ export default function CreatePage() {
     }
   };
 
+  
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="py-8">
       <div className="max-w-4xl mx-auto px-4">
         <div className="bg-white rounded-lg shadow-md p-6">
           <h1 className="text-3xl font-bold text-gray-900 mb-6">Webページ作成</h1>
@@ -103,7 +104,7 @@ export default function CreatePage() {
                       <Button 
                         onClick={saveToDatabase}
                         disabled={isLoading || !inputText.trim()}
-                        className="w-full"
+                        className="w-full bg-purple-400 hover:bg-purple-500"
                       >
                         {isLoading ? "保存中..." : "Webページを作成"}
                       </Button>

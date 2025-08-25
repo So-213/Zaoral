@@ -5,6 +5,7 @@ import type { ReactNode } from "react";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import { Toaster } from "sonner";
+import BackgroundWrapper from "@/components/BackgroundWrapper";
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
@@ -12,7 +13,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       <body>
         <SessionProvider>
           <Navbar/>
-          {children}
+          <BackgroundWrapper>
+            {children}
+          </BackgroundWrapper>
           <Toaster />
         </SessionProvider> 
       </body>
