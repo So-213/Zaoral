@@ -40,7 +40,7 @@ export default async function DashboardPage() {
   const totalPublished = userProjects.filter((project: any) => project.published).length;
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="py-8">
       <div className="max-w-6xl mx-auto px-4">
         {/* 上部セクション */}
         <div className="bg-white rounded-lg shadow-md p-6 mb-8">
@@ -51,7 +51,7 @@ export default async function DashboardPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <Link 
               href="/create"
-              className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-4 px-6 rounded-lg shadow-md transition-colors duration-200 flex items-center justify-center text-lg"
+              className="bg-pink-400 hover:bg-pink-500 text-white font-medium py-4 px-6 rounded-lg shadow-md transition-colors duration-200 flex items-center justify-center text-lg"
             >
               <svg className="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
