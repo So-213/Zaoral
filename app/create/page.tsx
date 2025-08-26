@@ -51,7 +51,7 @@ export default function CreatePage() {
 
       if (response.ok) {
         const data = await response.json();
-        const url = `https://zral213.com/p/${data.slug}`;
+        const url = `http://54.95.114.242:3001/p/p/${data.slug}`;
         setResponse(url);
         toast.success("データが正常に保存されました！");
       } else {
