@@ -62,7 +62,7 @@ export default async function DashboardPage() {
             <div className="bg-gray-100 p-4 rounded-lg">
               <h3 className="font-semibold text-gray-700 mb-2">統計</h3>
               <p className="text-gray-500 text-sm">作成数: {totalCreated}</p>
-              <p className="text-gray-500 text-sm">公開中: {totalPublished}</p>
+              {/* <p className="text-gray-500 text-sm">公開中: {totalPublished}</p> */}
             </div>
           </div>
         </div>
@@ -99,11 +99,11 @@ export default async function DashboardPage() {
                           <div className="flex items-center text-xs text-gray-400 mb-3">
                             <span>作成日: {new Date(project.created_at).toLocaleDateString('ja-JP')}</span>
                             <span className="mx-2">•</span>
-                            <span>有効期限: {new Date(project.expires_at).toLocaleDateString('ja-JP')}</span>
+                            {/* <span>有効期限: {new Date(project.expires_at).toLocaleDateString('ja-JP')}</span> */}
                           </div>
                           
                           {/* ステータス表示 */}
-                          <div className="flex items-center justify-between mb-3">
+                          {/* <div className="flex items-center justify-between mb-3">
                             <div className="flex items-center">
                               <span className="text-xs font-medium text-gray-600 mr-2">ステータス:</span>
                               <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
@@ -114,7 +114,7 @@ export default async function DashboardPage() {
                                 {project.published ? '公開中' : '非公開'}
                               </span>
                             </div>
-                          </div>
+                          </div> */}
                           
                           {/* 公開ボタン */}
                           {/* <PublishButton 

@@ -1,12 +1,9 @@
 "use client";
 
-import { signOut } from "next-auth/react"; // NextAuth.js のクライアント側フック 
-
-
+import { signOut, useSession } from "next-auth/react"; // NextAuth.js のクライアント側フック 
 
 export default function AccountPage() {
-  
-
+  const { data: session } = useSession();
 
   return (
     <div className="flex items-center justify-center">
@@ -30,6 +27,11 @@ export default function AccountPage() {
           </svg>
           アカウント情報
         </h1>
+
+        {/* ユーザー名の表示 */}
+        <div className="user-info">
+          <p className="user-name">ユーザー: {session?.user?.name || '読み込み中...'}</p>
+        </div>
 
         {/* ログアウトボタン */}
         <button className="logout-button" onClick={() => signOut({ callbackUrl: "/" })}>ログアウト</button>        
@@ -59,6 +61,14 @@ export default function AccountPage() {
           width: 28px;
           height: 28px;
           color: #ff5a8d;
+        }
+        .user-info {
+          margin: 20px 0;
+        }
+        .user-name {
+          font-size: 18px;
+          color: #666;
+          margin: 0;
         }
         .logout-button {
           margin-top: 20px;

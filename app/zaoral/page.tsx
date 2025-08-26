@@ -17,7 +17,6 @@ export default function ZaoralPage() {
         <br></br>
         <br></br>
         <br></br>
-        <p><strong>《概要》</strong></p>
         <p>ナンパやマッチングアプリをする男達のための<span className="highlight">「女性の返信を促すサービス」</span>です。</p>
         <br></br>
         <p>ナンパやマッチングアプリをしていると、沢山の女性とLINEを交換すると思います。</p>

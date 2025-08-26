@@ -51,7 +51,8 @@ export default function CreatePage() {
 
       if (response.ok) {
         const data = await response.json();
-        setResponse(JSON.stringify(data, null, 2));
+        const url = `https://zral213.com/p/${data.slug}`;
+        setResponse(url);
         toast.success("データが正常に保存されました！");
       } else {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -111,7 +112,7 @@ export default function CreatePage() {
                     </div>
                   
                   {/* 保存データのプレビュー */}
-                  {(inputText || randomString) && (
+                  {/* {(inputText || randomString) && (
                     <div className="p-4 bg-gray-50 rounded-lg">
                       <h4 className="font-semibold mb-2">保存データ:</h4>
                       <pre className="text-sm text-gray-700">
@@ -122,7 +123,7 @@ export default function CreatePage() {
                         }, null, 2)}
                       </pre>
                     </div>
-                  )}
+                  )} */}
                 </div>
               </CardContent>
             </Card>
@@ -131,13 +132,20 @@ export default function CreatePage() {
             {response && (
               <Card>
                 <CardHeader>
-                  <CardTitle>データベースレスポンス</CardTitle>
-                  <CardDescription>SupabaseDBからの応答</CardDescription>
+                  <CardTitle>作成されたWebページのURL</CardTitle>
+                  <CardDescription>作成されたページにアクセスするためのURL</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <pre className="p-4 bg-gray-50 rounded-lg text-sm overflow-x-auto">
-                    {response}
-                  </pre>
+                  <div className="p-4 bg-gray-50 rounded-lg text-sm">
+                    <a 
+                      href={response} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="text-blue-600 hover:text-blue-800 underline break-all"
+                    >
+                      {response}
+                    </a>
+                  </div>
                 </CardContent>
               </Card>
             )}
