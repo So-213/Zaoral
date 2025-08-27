@@ -5,15 +5,22 @@ import { signIn } from "next-auth/react"
 export default function LoginModal({ onClose }: { onClose: () => void }) {
   const [showPrivacyPolicy, setShowPrivacyPolicy] = useState(false)
   const [selectedProvider, setSelectedProvider] = useState<string | null>(null)
+  const [isLoading, setIsLoading] = useState(false)
 
   const handleLogin = (provider: string) => {
     setSelectedProvider(provider)
     setShowPrivacyPolicy(true)
   }
 
-  const handleAgreeAndLogin = () => {
+  const handleAgreeAndLogin = async () => {
     if (selectedProvider) {
-      signIn(selectedProvider, { callbackUrl: "/dashboard" })
+      setIsLoading(true)
+      try {
+        await signIn(selectedProvider, { callbackUrl: "/dashboard" })
+      } catch (error) {
+        console.error('ログインエラー:', error)
+        setIsLoading(false)
+      }
     }
     setShowPrivacyPolicy(false)
     setSelectedProvider(null)
@@ -22,6 +29,23 @@ export default function LoginModal({ onClose }: { onClose: () => void }) {
   const handleCancel = () => {
     setShowPrivacyPolicy(false)
     setSelectedProvider(null)
+  }
+
+  if (isLoading) {
+    return (
+      <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+        <div className="bg-white p-8 rounded-lg shadow-lg text-center w-80">
+          <div className="flex flex-col items-center space-y-4">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pink-500"></div>
+            <h2 className="text-lg font-semibold text-gray-800">ログイン中...</h2>
+            <p className="text-sm text-gray-600">
+              {selectedProvider === 'line' ? 'LINE' : 'Google'}でログインしています。<br />
+              しばらくお待ちください。
+            </p>
+          </div>
+        </div>
+      </div>
+    )
   }
 
   if (showPrivacyPolicy) {
