@@ -1,18 +1,51 @@
 // ./components/Navbar.tsx
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation"; 
+import { usePathname, useRouter } from "next/navigation"; 
 import { useSession } from "next-auth/react"; //クライアントサイドコンポート
 
 
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const pathname = usePathname(); // 現在のURLパスを取得
+  const router = useRouter();
   const { data: session, status } = useSession();  // 完全クライアント側で状態管理するわけではなくてリロードするたびにサーバ側と同期される
  
+  // ページ遷移の検知
+  useEffect(() => {
+    const handleStart = () => setIsLoading(true);
+    const handleComplete = () => setIsLoading(false);
+
+    // カスタムイベントリスナーを追加
+    window.addEventListener('beforeunload', handleStart);
+    window.addEventListener('load', handleComplete);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleStart);
+      window.removeEventListener('load', handleComplete);
+    };
+  }, []);
+
+  // パスが変更された時にローディングを停止
+  useEffect(() => {
+    setIsLoading(false);
+  }, [pathname]);
+
+  // ローディング状態が開始されたら一定時間後に自動停止
+  useEffect(() => {
+    if (isLoading) {
+      const timer = setTimeout(() => {
+        setIsLoading(false);
+      }, 3000); // 3秒後に自動停止
+
+      return () => clearTimeout(timer);
+    }
+  }, [isLoading]);
+
   if (pathname === "/login") return null;
 
   // メニューを閉じる関数
@@ -21,12 +54,45 @@ export default function Navbar() {
   };
 
   // メニュー内のリンククリック時にメニューを閉じる
-  const handleLinkClick = () => {
+  const handleLinkClick = (href: string) => {
     closeMenu();
+    
+    // 同じページに飛ぶ場合はリロード
+    if (pathname === href) {
+      window.location.reload();
+      return;
+    }
+    
+    setIsLoading(true);
   };
 
   return (
     <>
+      {/* ローディングオーバーレイ */}
+      {isLoading && (
+        <div 
+          className="loading-overlay"
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100vw',
+            height: '100vh',
+            backgroundColor: 'rgba(255, 255, 255, 0.8)',
+            zIndex: 9999,
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            pointerEvents: 'none'
+          }}
+        >
+          <div className="loading-spinner">
+            <div className="spinner"></div>
+            <p style={{ marginTop: '10px', color: '#ff5a5f', fontWeight: 'bold' }}>読み込み中...</p>
+          </div>
+        </div>
+      )}
+
       {/* オーバーレイ - メニューが開いている時のみ表示 */}
       {isOpen && (
         <div 
@@ -54,26 +120,26 @@ export default function Navbar() {
         {/* ナビゲーションメニュー */}
         <ul className={`menu ${isOpen ? "open" : ""}`}>
           <li>
-            <Link href="/" onClick={handleLinkClick}>Home</Link>
+            <Link href="/" onClick={() => handleLinkClick("/")}>Home</Link>
           </li>
           <li>
-            <Link href="/zaoral" onClick={handleLinkClick}>Zaoralとは</Link>
+            <Link href="/zaoral" onClick={() => handleLinkClick("/zaoral")}>Zaoralとは</Link>
           </li>
           <li>
-            <Link href="/howToUse" onClick={handleLinkClick}>使い方</Link>
+            <Link href="/howToUse" onClick={() => handleLinkClick("/howToUse")}>使い方</Link>
           </li>
           <li>
-            <Link href="/fromAuthor" onClick={handleLinkClick}>サイト制作者より</Link>
+            <Link href="/fromAuthor" onClick={() => handleLinkClick("/fromAuthor")}>サイト制作者より</Link>
           </li>  
           {status === "authenticated" && session?.user && (
             <li>
-              <Link href="/account" onClick={handleLinkClick}>アカウント情報</Link>
+              <Link href="/account" onClick={() => handleLinkClick("/account")}>アカウント情報</Link>
             </li>
 
           )}
           {status === "authenticated" && session?.user && (
             <li>
-              <Link href="/dashboard" onClick={handleLinkClick}>ダッシュボード</Link>
+              <Link href="/dashboard" onClick={() => handleLinkClick("/dashboard")}>ダッシュボード</Link>
             </li>
 
           )}
@@ -152,6 +218,26 @@ export default function Navbar() {
           /* クリック時のエフェクト */
           .menu li a:active {
             transform: scale(0.96); /* クリック時に少し縮む */
+          }
+
+          /* ローディングスピナー */
+          .loading-spinner {
+            text-align: center;
+          }
+
+          .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #ff5a5f;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+          }
+
+          @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
           }
         `}</style>
       </nav>
