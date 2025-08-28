@@ -24,9 +24,9 @@ export async function POST(request: NextRequest) {
 
     const userName = session.user.name || session.user.email || "Anonymous";
 
-    // 有効期限を24時間後に設定
+    // 有効期限を31日後に設定
     const expiresAt = new Date();
-    expiresAt.setHours(expiresAt.getHours() + 24);
+    expiresAt.setDate(expiresAt.getDate() + 31);
 
     // db保存
     const savedProject = await prisma.project.create({
