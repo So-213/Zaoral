@@ -128,9 +128,9 @@ export default function Navbar() {
           <li>
             <Link href="/howToUse" onClick={() => handleLinkClick("/howToUse")}>使い方</Link>
           </li>
-          <li>
+          {/* <li>
             <Link href="/fromAuthor" onClick={() => handleLinkClick("/fromAuthor")}>サイト制作者より</Link>
-          </li>  
+          </li>   */}
           {status === "authenticated" && session?.user && (
             <li>
               <Link href="/account" onClick={() => handleLinkClick("/account")}>アカウント情報</Link>
