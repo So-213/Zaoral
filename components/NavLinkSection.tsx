@@ -1,7 +1,7 @@
 const links = [
     { href: "/zaoral", label: "Zaoralとは" },
     { href: "/howToUse", label: "使い方" },
-    { href: "/fromAuthor", label: "サイト制作者より" },
+    // { href: "/fromAuthor", label: "サイト制作者より" },
 ]
   
 export default function NavLinkSection() {
