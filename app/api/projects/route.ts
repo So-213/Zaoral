@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
-import { prisma } from '@/lib/prisma';
+import { prisma } from '@/lib/prisma-with-rls';
 
 
 
@@ -86,19 +86,16 @@ export async function POST(request: NextRequest) {
   }
 }
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
-    // 認証セッションを取得
     const session = await auth();
+    
     if (!session?.user?.id) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: '認証が必要です' }, { status: 401 });
     }
 
-    // ユーザー固有のプロジェクトを取得
-    const projects = await prisma.project.findMany({
+    // ユーザーのプロジェクトを取得
+    const userProjects = await prisma.project.findMany({
       where: {
         user_id: session.user.id,
         expires_at: {
@@ -110,12 +107,9 @@ export async function GET() {
       },
     });
 
-    return NextResponse.json(projects);
+    return NextResponse.json({ projects: userProjects });
   } catch (error) {
-    console.error('Project fetch error:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch projects' },
-      { status: 500 }
-    );
+    console.error('プロジェクト取得エラー:', error);
+    return NextResponse.json({ error: 'プロジェクトの取得に失敗しました' }, { status: 500 });
   }
 }
