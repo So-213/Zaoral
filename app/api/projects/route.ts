@@ -33,6 +33,7 @@ export async function POST(request: NextRequest) {
       data: {
         user_id: session.user.id,
         user_name: userName,
+        type: 'message', // 明示的に指定
         slug,
         message,
         expires_at: expiresAt,
