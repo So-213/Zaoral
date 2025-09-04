@@ -149,32 +149,7 @@ export default function DashboardPage() {
                               ? `${project.message.substring(0, 50)}...` 
                               : project.message
                             }
-                          </p>
-                          <div className="flex items-center text-xs text-gray-400 mb-3">
-                            <span>作成日: {new Date(project.created_at).toLocaleDateString('ja-JP')}</span>
-                            <span className="mx-2">•</span>
-                            {/* <span>有効期限: {new Date(project.expires_at).toLocaleDateString('ja-JP')}</span> */}
-                          </div>
-                          
-                          {/* ステータス表示 */}
-                          {/* <div className="flex items-center justify-between mb-3">
-                            <div className="flex items-center">
-                              <span className="text-xs font-medium text-gray-600 mr-2">ステータス:</span>
-                              <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                                project.published 
-                                  ? 'bg-green-100 text-green-800' 
-                                  : 'bg-yellow-100 text-yellow-800'
-                              }`}>
-                                {project.published ? '公開中' : '非公開'}
-                              </span>
-                            </div>
-                          </div> */}
-                          
-                          {/* 公開ボタン */}
-                          {/* <PublishButton 
-                            projectId={project.id}
-                            isPublished={project.published}
-                          /> */}
+                          </p>                     
                         </div>
                       </div>
                     </div>
@@ -253,13 +228,6 @@ export default function DashboardPage() {
                       >
                         http://54.95.114.242:3001/p/{selectedProject.slug}
                       </a>
-                    </div>
-                    
-                    <div className="pt-4">
-                      <PublishButton 
-                        projectId={selectedProject.id}
-                        isPublished={selectedProject.published}
-                      />
                     </div>
                   </div>
                 </div>
