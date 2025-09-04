@@ -118,56 +118,15 @@ export default function DashboardPage() {
 
         {/* 下部セクション - プロジェクトリストと詳細表示 */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* プロジェクトリスト（左側） */}
-          <div className="lg:col-span-1">
-            <div className="bg-white rounded-lg shadow-md p-6">
-              <h2 className="text-xl font-semibold text-gray-800 mb-4">プロジェクト一覧</h2>
-              
-              {userProjects.length === 0 ? (
-                <div className="text-center py-8">
-                  <p className="text-gray-500 mb-4">まだプロジェクトがありません</p>
-                </div>
-              ) : (
-                <div className="space-y-2">
-                  {userProjects.map((project: Project, index: number) => (
-                    <div 
-                      key={project.id}
-                      className={`border rounded-lg p-4 transition-colors duration-200 cursor-pointer ${
-                        selectedProject?.id === project.id 
-                          ? 'border-blue-500 bg-blue-50' 
-                          : 'border-gray-200 hover:bg-gray-50'
-                      }`}
-                      onClick={() => setSelectedProject(project)}
-                    >
-                      <div className="flex justify-between items-start">
-                        <div className="flex-1">
-                          <h3 className="font-medium text-gray-800 mb-1">
-                            プロジェクト{userProjects.length - index}
-                          </h3>
-                          <p className="text-sm text-gray-500 mb-2">
-                            {project.message.length > 50 
-                              ? `${project.message.substring(0, 50)}...` 
-                              : project.message
-                            }
-                          </p>                     
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* プロジェクト詳細表示エリア（右側） */}
-          <div className="lg:col-span-2">
+          {/* プロジェクト詳細表示エリア（スマホでは上、デスクトップでは右側） */}
+          <div className="order-1 lg:order-2 lg:col-span-2">
             <div className="bg-white rounded-lg shadow-md p-6">
               <h2 className="text-xl font-semibold text-gray-800 mb-4">プロジェクト詳細</h2>
               
               {!selectedProject ? (
                 <div className="text-center py-12">
                   <p className="text-gray-500 text-lg">
-                    左側からプロジェクトを選択してください
+                    プロジェクトを選択してください
                   </p>
                 </div>
               ) : (
@@ -230,6 +189,47 @@ export default function DashboardPage() {
                       </a>
                     </div>
                   </div>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* プロジェクトリスト（スマホでは下、デスクトップでは左側） */}
+          <div className="order-2 lg:order-1 lg:col-span-1">
+            <div className="bg-white rounded-lg shadow-md p-6">
+              <h2 className="text-xl font-semibold text-gray-800 mb-4">プロジェクト一覧</h2>
+              
+              {userProjects.length === 0 ? (
+                <div className="text-center py-8">
+                  <p className="text-gray-500 mb-4">まだプロジェクトがありません</p>
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  {userProjects.map((project: Project, index: number) => (
+                    <div 
+                      key={project.id}
+                      className={`border rounded-lg p-4 transition-colors duration-200 cursor-pointer ${
+                        selectedProject?.id === project.id 
+                          ? 'border-blue-500 bg-blue-50' 
+                          : 'border-gray-200 hover:bg-gray-50'
+                      }`}
+                      onClick={() => setSelectedProject(project)}
+                    >
+                      <div className="flex justify-between items-start">
+                        <div className="flex-1">
+                          <h3 className="font-medium text-gray-800 mb-1">
+                            プロジェクト{userProjects.length - index}
+                          </h3>
+                          <p className="text-sm text-gray-500 mb-2">
+                            {project.message.length > 50 
+                              ? `${project.message.substring(0, 50)}...` 
+                              : project.message
+                            }
+                          </p>                     
+                        </div>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               )}
             </div>
