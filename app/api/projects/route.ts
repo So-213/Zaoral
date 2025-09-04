@@ -18,10 +18,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // デバッグ用：セッションのユーザーIDをログに出力
-    // console.log('Session user ID:', session.user.id);
-    // console.log('Session user:', session.user);
-
     const userName = session.user.name || session.user.email || "Anonymous";
 
     // 有効期限を31日後に設定
