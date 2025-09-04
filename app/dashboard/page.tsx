@@ -13,6 +13,7 @@ interface Project {
   expires_at: string;
   published: boolean;
   user_id: string;
+  slug: string;
 }
 
 export default function DashboardPage() {
@@ -229,6 +230,28 @@ export default function DashboardPage() {
                         <p className="text-gray-600">
                           {new Date(selectedProject.expires_at).toLocaleDateString('ja-JP')}
                         </p>
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <h4 className="font-medium text-gray-700 mb-2">WebページURL</h4>
+                      <div className="flex items-center space-x-2">
+                        <a
+                          href={`http://54.95.114.242:3001/p/${selectedProject.slug}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex-1 text-sm text-gray-600 bg-gray-50 p-3 rounded-lg border border-gray-200 hover:bg-gray-100 transition-colors cursor-pointer"
+                        >
+                          http://54.95.114.242:3001/p/{selectedProject.slug}
+                        </a>
+                        <button
+                          onClick={() => {
+                            navigator.clipboard.writeText(`http://54.95.114.242:3001/p/${selectedProject.slug}`);
+                          }}
+                          className="px-3 py-2 text-sm bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+                        >
+                          コピー
+                        </button>
                       </div>
                     </div>
                     
