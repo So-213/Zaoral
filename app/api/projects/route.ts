@@ -105,6 +105,9 @@ export async function GET(request: NextRequest) {
           gt: new Date(),
         },
       },
+      include: {
+        projectMessage: true,
+      },
       orderBy: {
         created_at: 'desc',
       },

@@ -1,19 +1,20 @@
 'use client';
 
 import Link from "next/link";
-import { PublishButton } from "../../components/PublishButton";
 import { useState, useEffect } from "react";
 
 
 
 interface Project {
   id: string;
-  message: string;
   created_at: string;
   expires_at: string;
   published: boolean;
   user_id: string;
   slug: string;
+  projectMessage?: {
+    message: string;
+  };
 }
 
 export default function DashboardPage() {
@@ -86,7 +87,6 @@ export default function DashboardPage() {
 
   // 統計情報を計算
   const totalCreated = userProjects.length;
-  const totalPublished = userProjects.filter((project: Project) => project.published).length;
 
   return (
     <div className="py-8">
@@ -148,7 +148,7 @@ export default function DashboardPage() {
                     <div>
                       <h4 className="font-medium text-gray-700 mb-2">メッセージ</h4>
                       <p className="text-gray-600 bg-gray-50 p-3 rounded-lg">
-                        {selectedProject.message}
+                        {selectedProject.projectMessage?.message || 'メッセージがありません'}
                       </p>
                     </div>
                     
@@ -221,9 +221,11 @@ export default function DashboardPage() {
                             プロジェクト{userProjects.length - index}
                           </h3>
                           <p className="text-sm text-gray-500 mb-2">
-                            {project.message.length > 50 
-                              ? `${project.message.substring(0, 50)}...` 
-                              : project.message
+                            {project.projectMessage?.message 
+                              ? (project.projectMessage.message.length > 50 
+                                  ? `${project.projectMessage.message.substring(0, 50)}...` 
+                                  : project.projectMessage.message)
+                              : 'メッセージがありません'
                             }
                           </p>                     
                         </div>
