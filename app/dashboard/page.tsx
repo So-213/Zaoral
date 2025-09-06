@@ -131,7 +131,7 @@ export default function DashboardPage() {
                 </div>
               ) : (
                 <div className="border border-gray-200 rounded-lg p-6">
-                  <div className="flex justify-between items-start mb-4">
+                  {/* <div className="flex justify-between items-start mb-4">
                     <h3 className="text-lg font-semibold text-gray-800">
                       プロジェクト{userProjects.length - userProjects.findIndex(p => p.id === selectedProject.id)}
                     </h3>
@@ -142,7 +142,7 @@ export default function DashboardPage() {
                     }`}>
                       {selectedProject.published ? '公開中' : '非公開'}
                     </span>
-                  </div>
+                  </div> */}
                   
                   <div className="space-y-4">
                     <div>
