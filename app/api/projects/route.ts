@@ -31,9 +31,16 @@ export async function POST(request: NextRequest) {
         user_name: userName,
         type: 'message', // 明示的に指定
         slug,
-        message,
         expires_at: expiresAt,
         published: false,
+        projectMessage: {
+          create: {
+            message: message,
+          },
+        },
+      },
+      include: {
+        projectMessage: true,
       },
     });
 
@@ -54,7 +61,7 @@ export async function POST(request: NextRequest) {
             user_id: savedProject.user_id,
             user_name: savedProject.user_name,
             slug: savedProject.slug,
-            message: savedProject.message,
+            message: savedProject.projectMessage?.message,
             created_at: savedProject.created_at,
             expires_at: savedProject.expires_at,
             published: savedProject.published
