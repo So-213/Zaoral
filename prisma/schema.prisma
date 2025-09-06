@@ -105,7 +105,6 @@ model Project {
   user_name   String
   type        ProjectType @default(message)
   slug        String      @unique
-  message     String      @db.Text
   created_at  DateTime    @default(now())
   expires_at  DateTime
   published   Boolean     @default(false)
