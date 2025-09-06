@@ -13,6 +13,9 @@ export default function CreatePage() {
   const [randomString, setRandomString] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [response, setResponse] = useState("");
+  
+  // 文字数制限（1000文字）
+  const MAX_CHARACTERS = 50;
 
   // ランダム文字列を生成する関数（6文字、アルファベットと数字を含む）
   const generateRandomString = () => {
@@ -28,6 +31,11 @@ export default function CreatePage() {
   const saveToDatabase = async () => {
     if (!inputText.trim()) {
       toast.error("文字列を入力してください");
+      return;
+    }
+    
+    if (inputText.length > MAX_CHARACTERS) {
+      toast.error(`文字数が制限を超えています（${MAX_CHARACTERS}文字以内）`);
       return;
     }
 
@@ -88,8 +96,19 @@ export default function CreatePage() {
                     placeholder="文字列を入力してください..."
                     value={inputText}
                     onChange={(e) => setInputText(e.target.value)}
+                    maxLength={MAX_CHARACTERS}
                     className="w-full"
                   />
+                  <div className="flex justify-between items-center text-sm">
+                    <span className={`${inputText.length > MAX_CHARACTERS * 0.9 ? 'text-orange-500' : 'text-gray-500'}`}>
+                      {inputText.length} / {MAX_CHARACTERS} 文字
+                    </span>
+                    {inputText.length > MAX_CHARACTERS * 0.9 && (
+                      <span className="text-orange-500 text-xs">
+                        文字数制限に近づいています
+                      </span>
+                    )}
+                  </div>
                 </div>
               </CardContent>
             </Card>
@@ -104,7 +123,7 @@ export default function CreatePage() {
                     <div className="pt-1">
                       <Button 
                         onClick={saveToDatabase}
-                        disabled={isLoading || !inputText.trim()}
+                        disabled={isLoading || !inputText.trim() || inputText.length > MAX_CHARACTERS}
                         className="w-full bg-purple-400 hover:bg-purple-500"
                       >
                         {isLoading ? "保存中..." : "Webページを作成"}
