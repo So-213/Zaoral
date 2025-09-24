@@ -49,40 +49,16 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
         session.user.id = token.userId as string;
       }
       return session;
-    },
-    async signIn({ user, account, profile }) {
-      // サインイン時のログ出力
-      console.log('Sign in attempt:', { 
-        user: user?.email, 
-        provider: account?.provider,
-        profile: profile?.email 
-      });
-      return true;
-    },
-    async redirect({ url, baseUrl }) {
-      // リダイレクト時のログ出力
-      console.log('Redirect:', { url, baseUrl });
-      return url.startsWith(baseUrl) ? url : baseUrl;
     }
   },
-  // Edge Runtime互換性のための設定
   experimental: {
     enableWebAuthn: false,
   },
-  // エラーページの設定
   pages: {
     signIn: '/',
     error: '/auth/error',
   }
 })
-
-
-
-
-
-
-
-
 
 
 
