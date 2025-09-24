@@ -17,4 +17,4 @@ export const config = {
     matcher: ["/dashboard/:path*", "/create/:path*", "/account/:path*"]
 };
 
-export const runtime = 'edge';
+export const runtime = 'experimental-edge';
