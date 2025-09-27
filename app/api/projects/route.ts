@@ -119,3 +119,67 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: 'プロジェクトの取得に失敗しました' }, { status: 500 });
   }
 }
+
+export async function DELETE(request: NextRequest) {
+  try {
+    const session = await auth();
+    
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: '認証が必要です' }, { status: 401 });
+    }
+
+    const { searchParams } = new URL(request.url);
+    const projectId = searchParams.get('id');
+
+    if (!projectId) {
+      return NextResponse.json({ error: 'プロジェクトIDが必要です' }, { status: 400 });
+    }
+
+    // プロジェクトが存在し、ユーザーが所有者であることを確認
+    const project = await prisma.project.findFirst({
+      where: {
+        id: projectId,
+        user_id: session.user.id,
+      },
+    });
+
+    if (!project) {
+      return NextResponse.json({ error: 'プロジェクトが見つからないか、削除権限がありません' }, { status: 404 });
+    }
+
+    // プロジェクトを削除（Cascadeにより関連するProjectMessageも削除される）
+    await prisma.project.delete({
+      where: {
+        id: projectId,
+      },
+    });
+
+    // バックエンドサーバーにプロジェクト削除を通知
+    const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:3001';
+    try {
+      const backendResponse = await fetch(`${BACKEND_URL}/api/projects/delete`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          projectId: projectId,
+        }),
+      });
+
+      if (!backendResponse.ok) {
+        console.error('バックエンドサーバーへの削除通知に失敗:', backendResponse.statusText);
+      } else {
+        console.log('バックエンドサーバーにプロジェクト削除通知を送信しました');
+      }
+    } catch (error) {
+      console.error('バックエンドサーバーへの削除通知エラー:', error);
+      // バックエンドへの通知が失敗しても、フロントエンドの処理は続行
+    }
+
+    return NextResponse.json({ message: 'プロジェクトが正常に削除されました' });
+  } catch (error) {
+    console.error('プロジェクト削除エラー:', error);
+    return NextResponse.json({ error: 'プロジェクトの削除に失敗しました' }, { status: 500 });
+  }
+}
