@@ -2,6 +2,19 @@
 
 import Link from "next/link";
 import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { Trash2 } from "lucide-react";
 
 
 
@@ -22,6 +35,7 @@ export default function DashboardPage() {
   const [userProjects, setUserProjects] = useState<Project[]>([]);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [loading, setLoading] = useState(true);
+  const [deleting, setDeleting] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -57,6 +71,36 @@ export default function DashboardPage() {
 
     fetchData();
   }, []);
+
+  const handleDeleteProject = async (projectId: string) => {
+    setDeleting(projectId);
+    try {
+      const response = await fetch(`/api/projects?id=${projectId}`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || '削除に失敗しました');
+      }
+
+      // プロジェクトリストから削除されたプロジェクトを除去
+      setUserProjects(prev => prev.filter(project => project.id !== projectId));
+      
+      // 削除されたプロジェクトが選択されていた場合、選択を解除
+      if (selectedProject?.id === projectId) {
+        const remainingProjects = userProjects.filter(project => project.id !== projectId);
+        setSelectedProject(remainingProjects.length > 0 ? remainingProjects[0] : null);
+      }
+
+      alert('プロジェクトが正常に削除されました');
+    } catch (error) {
+      console.error('プロジェクト削除エラー:', error);
+      alert('プロジェクトの削除に失敗しました: ' + (error as Error).message);
+    } finally {
+      setDeleting(null);
+    }
+  };
 
   if (loading) {
     return (
@@ -228,6 +272,37 @@ export default function DashboardPage() {
                               : 'メッセージがありません'
                             }
                           </p>                     
+                        </div>
+                        <div className="ml-2">
+                          <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                                disabled={deleting === project.id}
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                              <AlertDialogHeader>
+                                <AlertDialogTitle>プロジェクトを削除しますか？</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                  この操作は取り消すことができません。プロジェクトとそのメッセージが完全に削除されます。
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel>キャンセル</AlertDialogCancel>
+                                <AlertDialogAction
+                                  onClick={() => handleDeleteProject(project.id)}
+                                  className="bg-red-500 hover:bg-red-600"
+                                >
+                                  {deleting === project.id ? '削除中...' : '削除'}
+                                </AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
                         </div>
                       </div>
                     </div>
