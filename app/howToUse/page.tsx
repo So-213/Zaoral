@@ -60,7 +60,6 @@ export default function HowToUsePage() {
           </h1>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
             簡易Webページ作成ツール「Zaoral」の基本的な使い方をご紹介します。
-            初心者の方でも簡単にWebページを作成できます。
           </p>
         </div>
 
@@ -92,9 +91,6 @@ export default function HowToUsePage() {
                   </div>
                   <div>
                     <CardTitle className="text-2xl">{steps[activeStep].title}</CardTitle>
-                    <CardDescription className="text-base mt-2">
-                      {steps[activeStep].description}
-                    </CardDescription>
                   </div>
                 </div>
               </CardHeader>
