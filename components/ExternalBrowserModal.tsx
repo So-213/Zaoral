@@ -34,52 +34,12 @@ export default function ExternalBrowserModal({ isOpen, onClose, onContinue }: Ex
     }
   }
 
-  const handleOpenExternal = () => {
-    const externalUrl = window.location.href
-    
-    if (browserInfo.isInAppBrowser) {
-      // アプリ内ブラウザから外部ブラウザを開く複数の方法を試す
-      
-      // 方法1: Android Intent URL（Android端末の場合）
-      if (navigator.userAgent.includes('Android')) {
-        const intentUrl = `intent://${window.location.host}${window.location.pathname}${window.location.search}#Intent;scheme=https;package=com.android.chrome;end`
-        try {
-          window.location.href = intentUrl
-          onContinue()
-          return
-        } catch (e) {
-          console.log('Intent URL failed, trying alternative methods')
-        }
-      }
-      
-      // 方法2: カスタムスキームを使用してChromeを開く
-      try {
-        const chromeUrl = `googlechrome://navigate?url=${encodeURIComponent(externalUrl)}`
-        window.location.href = chromeUrl
-        
-        // フォールバック: 1秒後に通常のwindow.openを試す
-        setTimeout(() => {
-          try {
-            window.open(externalUrl, '_blank')
-          } catch (e) {
-            console.log('window.open failed, user may need to manually open external browser')
-          }
-        }, 1000)
-      } catch (e) {
-        // 方法3: 最後の手段として通常のwindow.open
-        try {
-          window.open(externalUrl, '_blank')
-        } catch (e) {
-          console.log('All methods failed, user needs to manually copy URL')
-        }
-      }
-    } else {
-      // 通常のブラウザの場合は通常通り
-      window.open(externalUrl, '_blank')
-    }
-    
-    onContinue()
-  }
+//   const handleOpenExternal = () => {
+//     // 外部ブラウザで開くためのURLを生成
+//     const externalUrl = window.location.href
+//     window.open(externalUrl, '_blank')
+//     onContinue()
+//   }
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -163,7 +123,7 @@ export default function ExternalBrowserModal({ isOpen, onClose, onContinue }: Ex
           </Card>
 
           {/* アクションボタン */}
-          <div className="flex gap-3">
+          {/* <div className="flex gap-3">
             <Button
               onClick={handleOpenExternal}
               className="flex-1"
@@ -178,7 +138,7 @@ export default function ExternalBrowserModal({ isOpen, onClose, onContinue }: Ex
             >
               このまま続行
             </Button>
-          </div>
+          </div> */}
         </div>
       </DialogContent>
     </Dialog>
