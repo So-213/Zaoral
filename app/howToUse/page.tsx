@@ -15,7 +15,7 @@ export default function HowToUsePage() {
       title: "外部ブラウザでアクセス",
       icon: <ExternalLink className="w-8 h-8" />,
       details: [
-        "Chrome、Firefox、Safari、Edgeなどの<strong>外部ブラウザ</strong>をご利用ください",
+        "Chrome、Firefox、Safari、Edgeなどの<strong style='color: red;'>外部ブラウザ</strong>をご利用ください",
       ]
     },
     {
@@ -107,7 +107,10 @@ export default function HowToUsePage() {
                         <Badge variant="secondary" className="mt-1 flex-shrink-0">
                           {index + 1}
                         </Badge>
-                        <span className="text-gray-700">{detail}</span>
+                        <span 
+                          className="text-gray-700"
+                          dangerouslySetInnerHTML={{ __html: detail }}
+                        />
                       </li>
                     ))}
                   </ul>
