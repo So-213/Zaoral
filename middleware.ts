@@ -1,19 +1,19 @@
 // middleware.ts
 
 import { NextResponse, NextRequest } from "next/server";
-import { auth } from "@/lib/auth";
+// import { auth } from "@/lib/auth";
 
 
-
+// NextAuth v5（beta）
 
 export async function middleware(req: NextRequest) {
     try {
-        const session = await auth();
+        // const session = await auth(); // 画面遷移のたびに、Prismaアダプターを使用してデータベースにアクセス
 
-        if (!session || !session.user) {
-            console.log('No valid session found, redirecting to home');
-            return NextResponse.redirect(new URL("/", req.url));
-        }
+        // if (!session || !session.user) {
+        //     console.log('No valid session found, redirecting to home');
+        //     return NextResponse.redirect(new URL("/", req.url));
+        // }
 
         console.log('Valid session found, proceeding to dashboard');
         return NextResponse.next();
