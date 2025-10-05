@@ -8,7 +8,10 @@ import { NextResponse, NextRequest } from "next/server";
 
 export async function middleware(req: NextRequest) {
     try {
-        // const session = await auth(); // 画面遷移のたびに、Prismaアダプターを使用してデータベースにアクセス
+
+        // 本来ならコメントアウトを外すべきですが、vercel側の "middleware1MB規制" に引っかかるため、コメントアウトさせています
+
+        // const session = await auth(); // 画面遷移のたびに、ユーザの正当性を検証。 Prismaアダプターを使用してデータベースにアクセス
 
         // if (!session || !session.user) {
         //     console.log('No valid session found, redirecting to home');

@@ -15,8 +15,7 @@ export default function HowToUsePage() {
       title: "外部ブラウザでアクセス",
       icon: <ExternalLink className="w-8 h-8" />,
       details: [
-        "Chrome、Firefox、Safari、Edgeなどの外部ブラウザをご利用ください",
-        "モバイルアプリ内ブラウザではなく、専用ブラウザアプリを使用することで、より安定した動作を実現できます",
+        "Chrome、Firefox、Safari、Edgeなどの<strong>外部ブラウザ</strong>をご利用ください",
       ]
     },
     {
@@ -44,7 +43,6 @@ export default function HowToUsePage() {
       title: "ダッシュボードでプロジェクト管理",
       icon: <Monitor className="w-8 h-8" />,
       details: [
-        "ダッシュボードでは、あなたが作成したすべてのプロジェクトが一覧表示されます",
         "各プロジェクトの詳細（メッセージ、作成日時、有効期限、アクセスURL）を確認できます",
         "プロジェクトの削除も可能です",
         "プロジェクトを作成したら、アクセスURLをコピーし、既読スルーする女の子に送りつけましょう",
