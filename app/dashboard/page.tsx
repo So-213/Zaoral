@@ -216,7 +216,7 @@ export default function DashboardPage() {
                         <h4 className="font-medium text-gray-700">WebページURL</h4>
                         <button
                           onClick={() => {
-                            navigator.clipboard.writeText(`http://54.95.114.242:3001/p/${selectedProject.slug}`);
+                            navigator.clipboard.writeText(`http://mipzrl.vercel.app/p/${selectedProject.slug}`);
                           }}
                           className="px-3 py-1 text-sm bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
                         >
@@ -224,12 +224,12 @@ export default function DashboardPage() {
                         </button>
                       </div>
                       <a
-                        href={`http://54.95.114.242:3001/p/${selectedProject.slug}`}
+                        href={`http://mipzrl.vercel.app/p/${selectedProject.slug}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="block text-sm text-gray-600 bg-gray-50 p-3 rounded-lg border border-gray-200 hover:bg-gray-100 transition-colors cursor-pointer"
                       >
-                        http://54.95.114.242:3001/p/{selectedProject.slug}
+                        http://mipzrl.vercel.app/p/{selectedProject.slug}
                       </a>
                     </div>
                   </div>
