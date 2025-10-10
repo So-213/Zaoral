@@ -51,9 +51,7 @@ export default function ExternalBrowserModal({ isOpen, onClose, onContinue }: Ex
             </div>
             <DialogTitle className="text-xl">外部ブラウザで開くことをお勧めします</DialogTitle>
           </div>
-          <DialogDescription className="text-base">
-            {getExternalBrowserMessage(browserInfo.appName)}
-            <br />
+          <DialogDescription className="text-base">            
             <span className="text-sm text-gray-600 mt-2 block">
               外部ブラウザの方が動作が安定し、すべての機能をご利用いただけます。
             </span>

@@ -59,7 +59,7 @@ export default function CreatePage() {
 
       if (response.ok) {
         const data = await response.json();
-        const url = `http://54.95.114.242:3001/p/${data.slug}`;
+        const url = `http://mipzrl.vercel.app/p/${data.slug}`;
         setResponse(url);
         toast.success("データが正常に保存されました！");
       } else {
