@@ -39,7 +39,7 @@ export default function LoginModal({ onClose }: { onClose: () => void }) {
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pink-500"></div>
             <h2 className="text-lg font-semibold text-gray-800">ログイン中...</h2>
             <p className="text-sm text-gray-600">
-              {selectedProvider === 'line' ? 'LINE' : 'Google'}でログインしています。<br />
+              {selectedProvider === 'line' ? 'LINE' : selectedProvider === 'google' ? 'Google' : 'テストユーザー'}でログインしています。<br />
               しばらくお待ちください。
             </p>
           </div>
@@ -96,6 +96,12 @@ export default function LoginModal({ onClose }: { onClose: () => void }) {
             onClick={() => handleLogin("google")}
           >
             Googleでログイン
+          </button>
+          <button
+            className="w-full px-4 py-3 bg-yellow-500 text-white rounded-lg font-medium hover:bg-yellow-600 transition-colors"
+            onClick={() => handleLogin("test")}
+          >
+            テストユーザーでログイン
           </button>
           <button
             className="w-full px-4 py-3 bg-gray-300 text-gray-800 rounded-lg font-medium hover:bg-gray-400 transition-colors"

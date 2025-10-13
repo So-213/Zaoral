@@ -21,6 +21,22 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
       checks: ['pkce', 'state'],
       allowDangerousEmailAccountLinking: true,
     }),
+    // テストユーザープロバイダー
+    {
+      id: "test",
+      name: "テストユーザー",
+      type: "credentials",
+      credentials: {},
+      async authorize() {
+        // 固定のテストユーザーを返す
+        return {
+          id: "test_user_001",
+          name: "テストユーザ",
+          email: "test@example.com",
+          image: null,
+        };
+      }
+    }
   ],
   session: { strategy: "jwt" },// jwtから情報を取得してくるようにする設定
   trustHost: true,
