@@ -39,7 +39,7 @@ Zaoralは「追いLINEを確実に読んでもらうためにWebページ化す�
 
 ## ER図（PostgreSQL）
 
-![ER図](./public/ER.png)
+![ER図](/ER.png)
 
 
 
