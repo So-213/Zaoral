@@ -42,5 +42,58 @@ Zaoralは「追いLINEを確実に読んでもらうためにWebページ化す�
 <img src="./public/ER.png" alt="ER図" width="70%" />
 
 
+## アプリの様子
+## アプリの様子
+
+**ホーム画面**
+<img src="./public/home.png" alt="home" width="37%" />
+
+**ダッシュボード画面（プロジェクト一覧）**
+<img src="./public/d0.png" alt="dashboard0" width="37%" />
+
+**メッセージ作成画面**
+<img src="./public/wc.png" alt="webpagecreate" width="37%" />
+
+**公開されたメッセージ画面**
+<img src="./public/wp.png" alt="webpage" width="37%" />
+
+**ダッシュボード画面（プロジェクト詳細）**
+<img src="./public/d1.png" alt="dashboard1" width="37%" />Auth.js** - 認証システム
+
+
+### バックエンド・データベース
+- **Prisma** - ORM
+- **PostgreSQL** - データベース
+- **NextAuth.js** - 認証プロバイダー
+
+
+## ER図（PostgreSQL）
+
+<img src="./public/ER.png" alt="ER図" width="70%" />
+
+
+## アプリの様子
+
+**ホーム画面**
+<img src="./public/home.png" alt="home" width="33%" />
+
+**ダッシュボード画面（プロジェクト一覧）**
+<img src="./public/d0.png" alt="dashboard0" width="33%" />
+
+**メッセージ作成画面**
+<img src="./public/wc.png" alt="webpagecreate" width="33%" />
+
+**公開されたメッセージ画面**
+<img src="./public/wp.png" alt="webpage" width="33%" />
+
+**ダッシュボード画面（プロジェクト詳細）**
+<img src="./public/d1.png" alt="dashboard1" width="33%" />
+
+
+
+
+
+
+
 
 
