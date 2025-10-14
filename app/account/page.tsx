@@ -2,6 +2,8 @@
 
 import { signOut, useSession } from "next-auth/react"; // NextAuth.js のクライアント側フック 
 
+
+
 export default function AccountPage() {
   const { data: session } = useSession();
 
