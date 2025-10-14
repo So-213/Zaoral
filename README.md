@@ -89,11 +89,3 @@ Zaoralは「追いLINEを確実に読んでもらうためにWebページ化す�
 **ダッシュボード画面（プロジェクト詳細）**
 <img src="./public/d1.PNG" alt="dashboard1" width="33%" />
 
-
-
-
-
-
-
-
-
