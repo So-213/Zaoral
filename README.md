@@ -2,7 +2,9 @@
 
 Zaoralは「追いLINEを確実に読んでもらうためにWebページ化するアプリケーション」です. 
 
-ユーザはメッセージを作成し, Web上に公開することで, 受信者に確実にメッセージを届けることができます.
+ユーザはメッセージを作成し, Web上に公開することで, 相手の注意を引くようなメッセージを届けることができます.
+
+詳細はアプリ内のページを参照: [https://zaoral.vercel.app/zaoral](https://zaoral.vercel.app/zaoral)
 
 
 ## 初版作成
@@ -46,7 +48,7 @@ Zaoralは「追いLINEを確実に読んでもらうためにWebページ化す�
 **ホーム画面**
 <img src="./public/home.PNG" alt="home" width="33%" />
 
-**ダッシュボード画面（プロジェクト一覧）**
+**空のダッシュボード**
 <img src="./public/d0.PNG" alt="dashboard0" width="33%" />
 
 **メッセージ作成画面**
@@ -55,6 +57,6 @@ Zaoralは「追いLINEを確実に読んでもらうためにWebページ化す�
 **公開されたメッセージ画面**
 <img src="./public/wp.PNG" alt="webpage" width="33%" />
 
-**ダッシュボード画面（プロジェクト詳細）**
+**ダッシュボード画面**
 <img src="./public/d1.PNG" alt="dashboard1" width="33%" />
 
