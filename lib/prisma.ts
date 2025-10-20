@@ -1,4 +1,5 @@
-// Prismaクライアントのインスタンスを作成するためのファイル
+// 統合されたPrismaクライアントファイル
+// 重複を排除し、シンプルな接続管理を提供
 
 import { PrismaClient } from '@prisma/client';
 
@@ -6,6 +7,7 @@ declare global {
   var prisma: PrismaClient | undefined;
 }
 
+// Prismaクライアントのシングルトン作成
 const prismaClientSingleton = () => {
   return new PrismaClient({
     log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
@@ -16,9 +18,12 @@ const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
 };
 
+// グローバルなPrismaクライアントインスタンス
 const prisma = globalForPrisma.prisma ?? prismaClientSingleton();
 
-if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;
+if (process.env.NODE_ENV !== 'production') {
+  globalForPrisma.prisma = prisma;
+}
 
 // Serverless環境でのコネクション管理のためのラッパー関数
 export async function withPrismaConnection<T>(operation: () => Promise<T>): Promise<T> {
@@ -32,20 +37,21 @@ export async function withPrismaConnection<T>(operation: () => Promise<T>): Prom
   }
 }
 
-export { prisma };
+// 接続をクリーンアップする関数
+const cleanup = async () => {
+  if (prisma) {
+    await prisma.$disconnect();
+  }
+};
 
 // Edge Runtimeではprocess.onが利用できないため、条件付きで実行
 if (typeof process !== 'undefined' && process.on) {
-  // 接続をクリーンアップする関数
-  const cleanup = async () => {
-    if (prisma) {
-      await prisma.$disconnect();
-    }
-  };
-
   // プロセス終了時に接続をクリーンアップ（Node.js環境のみ）
   if (process.env.NODE_ENV === 'production') {
     process.on('SIGTERM', cleanup);
     process.on('SIGINT', cleanup);
   }
-} 
+}
+
+// デフォルトのPrismaクライアントをエクスポート
+export { prisma };
