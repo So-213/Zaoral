@@ -30,7 +30,7 @@ export default function NavigationMenu({ isOpen, onLinkClick }: NavigationMenuPr
           <Link 
             href={item.href} 
             onClick={() => onLinkClick(item.href)}
-            className="block w-full p-3 bg-pink-50 rounded-md text-rose-600 font-bold text-center border border-rose-300 transition-colors hover:bg-pink-200 active:scale-95"
+            className="block w-full p-3 bg-pink-50 rounded-md text-pink-400 font-bold text-center border border-rose-300 transition-colors hover:bg-pink-200 active:scale-95"
           >
             {item.label}
           </Link>
@@ -43,7 +43,7 @@ export default function NavigationMenu({ isOpen, onLinkClick }: NavigationMenuPr
             <Link 
               href={item.href} 
               onClick={() => onLinkClick(item.href)}
-              className="block w-full p-3 bg-pink-50 rounded-md text-rose-600 font-bold text-center border border-rose-300 transition-colors hover:bg-pink-200 active:scale-95"
+              className="block w-full p-3 bg-pink-50 rounded-md text-pink-400 font-bold text-center border border-rose-300 transition-colors hover:bg-pink-200 active:scale-95"
             >
               {item.label}
             </Link>

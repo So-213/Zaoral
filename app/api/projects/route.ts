@@ -45,37 +45,7 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    // バックエンドサーバーにプロジェクト作成を通知
-    try {
-      const backendResponse = await fetch(`${config.backendUrl}/api/projects/create`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          projectId: savedProject.id,
-          projectData: {
-            id: savedProject.id,
-            user_id: savedProject.user_id,
-            user_name: savedProject.user_name,
-            slug: savedProject.slug,
-            message: savedProject.projectMessage?.message,
-            created_at: savedProject.created_at,
-            expires_at: savedProject.expires_at,
-            published: savedProject.published
-          }
-        }),
-      });
 
-      if (!backendResponse.ok) {
-        console.error('バックエンドサーバーへの通知に失敗:', backendResponse.statusText);
-      } else {
-        console.log('バックエンドサーバーにプロジェクト作成通知を送信しました');
-      }
-    } catch (error) {
-      console.error('バックエンドサーバーへの通知エラー:', error);
-      // バックエンドへの通知が失敗しても、フロントエンドの処理は続行
-    }
 
     return NextResponse.json(savedProject, { status: 201 });
   } catch (error) {
