@@ -152,28 +152,6 @@ export async function DELETE(request: NextRequest) {
       },
     });
 
-    // バックエンドサーバーにプロジェクト削除を通知
-    // try {
-    //   const backendResponse = await fetch(`${config.backendUrl}/api/projects/delete`, {
-    //     method: 'DELETE',
-    //     headers: {
-    //       'Content-Type': 'application/json',
-    //     },
-    //     body: JSON.stringify({
-    //       projectId: projectId,
-    //     }),
-    //   });
-
-    //   if (!backendResponse.ok) {
-    //     console.error('バックエンドサーバーへの削除通知に失敗:', backendResponse.statusText);
-    //   } else {
-    //     console.log('バックエンドサーバーにプロジェクト削除通知を送信しました');
-    //   }
-    // } catch (error) {
-    //   console.error('バックエンドサーバーへの削除通知エラー:', error);
-    //   // バックエンドへの通知が失敗しても、フロントエンドの処理は続行
-    // }
-
     return NextResponse.json({ message: 'プロジェクトが正常に削除されました' });
   } catch (error) {
     console.error('プロジェクト削除エラー:', error);
