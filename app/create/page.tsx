@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
+import { generateProjectUrl } from "@/lib/config";
 
 
 
@@ -59,7 +60,7 @@ export default function CreatePage() {
 
       if (response.ok) {
         const data = await response.json();
-        const url = `http://mipzrl.vercel.app/p/${data.slug}`;
+        const url = generateProjectUrl(data.slug);
         setResponse(url);
         toast.success("データが正常に保存されました！");
       } else {
