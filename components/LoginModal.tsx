@@ -39,7 +39,7 @@ export default function LoginModal({ onClose }: { onClose: () => void }) {
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pink-500"></div>
             <h2 className="text-lg font-semibold text-gray-800">ログイン中...</h2>
             <p className="text-sm text-gray-600">
-              {selectedProvider === 'line' ? 'LINE' : selectedProvider === 'google' ? 'Google' : 'テストユーザー'}でログインしています。<br />
+              ログインしています。<br />
               しばらくお待ちください。
             </p>
           </div>
