@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/prisma-with-rls';
+import { config } from '@/lib/config';
 
 
 
@@ -44,12 +45,9 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    // バックエンドサーバーのURL（環境変数から取得、デフォルトはlocalhost）
-    const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:3001';
-
     // バックエンドサーバーにプロジェクト作成を通知
     try {
-      const backendResponse = await fetch(`${BACKEND_URL}/api/projects/create`, {
+      const backendResponse = await fetch(`${config.backendUrl}/api/projects/create`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -155,27 +153,26 @@ export async function DELETE(request: NextRequest) {
     });
 
     // バックエンドサーバーにプロジェクト削除を通知
-    const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:3001';
-    try {
-      const backendResponse = await fetch(`${BACKEND_URL}/api/projects/delete`, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          projectId: projectId,
-        }),
-      });
+    // try {
+    //   const backendResponse = await fetch(`${config.backendUrl}/api/projects/delete`, {
+    //     method: 'DELETE',
+    //     headers: {
+    //       'Content-Type': 'application/json',
+    //     },
+    //     body: JSON.stringify({
+    //       projectId: projectId,
+    //     }),
+    //   });
 
-      if (!backendResponse.ok) {
-        console.error('バックエンドサーバーへの削除通知に失敗:', backendResponse.statusText);
-      } else {
-        console.log('バックエンドサーバーにプロジェクト削除通知を送信しました');
-      }
-    } catch (error) {
-      console.error('バックエンドサーバーへの削除通知エラー:', error);
-      // バックエンドへの通知が失敗しても、フロントエンドの処理は続行
-    }
+    //   if (!backendResponse.ok) {
+    //     console.error('バックエンドサーバーへの削除通知に失敗:', backendResponse.statusText);
+    //   } else {
+    //     console.log('バックエンドサーバーにプロジェクト削除通知を送信しました');
+    //   }
+    // } catch (error) {
+    //   console.error('バックエンドサーバーへの削除通知エラー:', error);
+    //   // バックエンドへの通知が失敗しても、フロントエンドの処理は続行
+    // }
 
     return NextResponse.json({ message: 'プロジェクトが正常に削除されました' });
   } catch (error) {
