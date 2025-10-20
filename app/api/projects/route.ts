@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/prisma-with-rls';
 import { config } from '@/lib/config';
+import { requireAuth, handleApiError, validateRequired, checkProjectOwnership } from '@/lib/api-helpers';
 
 
 
@@ -10,16 +10,19 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { slug, message } = body;
 
-    // 認証セッションを取得
-    const session = await auth();
-    if (!session?.user?.id) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+    // 認証チェック
+    const authResult = await requireAuth();
+    if (authResult instanceof NextResponse) {
+      return authResult;
     }
+    const { userId, userName } = authResult;
 
-    const userName = session.user.name || session.user.email || "Anonymous";
+    // バリデーション
+    const slugValidation = validateRequired(slug, 'スラッグ');
+    if (slugValidation) return slugValidation;
+
+    const messageValidation = validateRequired(message, 'メッセージ');
+    if (messageValidation) return messageValidation;
 
     // 有効期限を31日後に設定
     const expiresAt = new Date();
@@ -28,7 +31,7 @@ export async function POST(request: NextRequest) {
     // db保存
     const savedProject = await prisma.project.create({
       data: {
-        user_id: session.user.id,
+        user_id: userId,
         user_name: userName,
         type: 'message', // 明示的に指定
         slug,
@@ -45,30 +48,25 @@ export async function POST(request: NextRequest) {
       },
     });
 
-
-
     return NextResponse.json(savedProject, { status: 201 });
   } catch (error) {
-    console.error('Project creation error:', error);
-    return NextResponse.json(
-      { error: 'Failed to create project' },
-      { status: 500 }
-    );
+    return handleApiError(error, 'プロジェクト作成エラー', 'プロジェクトの作成に失敗しました');
   }
 }
 
 export async function GET(request: NextRequest) {
   try {
-    const session = await auth();
-    
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: '認証が必要です' }, { status: 401 });
+    // 認証チェック
+    const authResult = await requireAuth();
+    if (authResult instanceof NextResponse) {
+      return authResult;
     }
+    const { userId } = authResult;
 
     // ユーザーのプロジェクトを取得
     const userProjects = await prisma.project.findMany({
       where: {
-        user_id: session.user.id,
+        user_id: userId,
         expires_at: {
           gt: new Date(),
         },
@@ -83,48 +81,41 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ projects: userProjects });
   } catch (error) {
-    console.error('プロジェクト取得エラー:', error);
-    return NextResponse.json({ error: 'プロジェクトの取得に失敗しました' }, { status: 500 });
+    return handleApiError(error, 'プロジェクト取得エラー', 'プロジェクトの取得に失敗しました');
   }
 }
 
 export async function DELETE(request: NextRequest) {
   try {
-    const session = await auth();
-    
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: '認証が必要です' }, { status: 401 });
+    // 認証チェック
+    const authResult = await requireAuth();
+    if (authResult instanceof NextResponse) {
+      return authResult;
     }
+    const { userId } = authResult;
 
     const { searchParams } = new URL(request.url);
     const projectId = searchParams.get('id');
 
-    if (!projectId) {
-      return NextResponse.json({ error: 'プロジェクトIDが必要です' }, { status: 400 });
-    }
+    // バリデーション
+    const projectIdValidation = validateRequired(projectId, 'プロジェクトID');
+    if (projectIdValidation) return projectIdValidation;
 
-    // プロジェクトが存在し、ユーザーが所有者であることを確認
-    const project = await prisma.project.findFirst({
-      where: {
-        id: projectId,
-        user_id: session.user.id,
-      },
-    });
-
-    if (!project) {
-      return NextResponse.json({ error: 'プロジェクトが見つからないか、削除権限がありません' }, { status: 404 });
+    // プロジェクトの所有者権限をチェック
+    const ownershipResult = await checkProjectOwnership(projectId!, userId, prisma);
+    if (ownershipResult instanceof NextResponse) {
+      return ownershipResult;
     }
 
     // プロジェクトを削除（Cascadeにより関連するProjectMessageも削除される）
     await prisma.project.delete({
       where: {
-        id: projectId,
+        id: projectId!,
       },
     });
 
     return NextResponse.json({ message: 'プロジェクトが正常に削除されました' });
   } catch (error) {
-    console.error('プロジェクト削除エラー:', error);
-    return NextResponse.json({ error: 'プロジェクトの削除に失敗しました' }, { status: 500 });
+    return handleApiError(error, 'プロジェクト削除エラー', 'プロジェクトの削除に失敗しました');
   }
 }
