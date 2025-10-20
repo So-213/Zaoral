@@ -175,19 +175,6 @@ export default function DashboardPage() {
                 </div>
               ) : (
                 <div className="border border-gray-200 rounded-lg p-6">
-                  {/* <div className="flex justify-between items-start mb-4">
-                    <h3 className="text-lg font-semibold text-gray-800">
-                      プロジェクト{userProjects.length - userProjects.findIndex(p => p.id === selectedProject.id)}
-                    </h3>
-                    <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
-                      selectedProject.published 
-                        ? 'bg-green-100 text-green-800' 
-                        : 'bg-yellow-100 text-yellow-800'
-                    }`}>
-                      {selectedProject.published ? '公開中' : '非公開'}
-                    </span>
-                  </div> */}
-                  
                   <div className="space-y-4">
                     <div>
                       <h4 className="font-medium text-gray-700 mb-2">メッセージ</h4>
