@@ -27,15 +27,15 @@ Zaoralは「追いLINEを確実に読んでもらうためにWebページ化す�
 ## 技術スタック
 
 ### フロントエンド
-- **Next.js 14** - React フレームワーク
-- **TypeScript** - 型安全性
-- **Tailwind CSS** - スタイリング
-- **NextAuth.js** - 認証システム
+- **Next.js 14** 
+- **TypeScript** 
+- **Tailwind CSS** 
+- **NextAuth.js** 
 
 ### バックエンド・データベース
-- **Prisma** - ORM
-- **PostgreSQL** - データベース
-- **NextAuth.js** - 認証プロバイダー
+- **Prisma** 
+- **PostgreSQL** 
+- **NextAuth.js** 
 
 
 ## ER図（PostgreSQL）
