@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { generateProjectUrl } from "@/lib/config";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -132,7 +133,7 @@ export default function DashboardClient({ session, userProjects, totalCreated }:
                         <h4 className="font-medium text-gray-700">WebページURL</h4>
                         <button
                           onClick={() => {
-                            navigator.clipboard.writeText(`http://mipzrl.vercel.app/p/${selectedProject.slug}`);
+                            navigator.clipboard.writeText(generateProjectUrl(selectedProject.slug));
                           }}
                           className="px-3 py-1 text-sm bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
                         >
@@ -140,12 +141,12 @@ export default function DashboardClient({ session, userProjects, totalCreated }:
                         </button>
                       </div>
                       <a
-                        href={`http://mipzrl.vercel.app/p/${selectedProject.slug}`}
+                        href={generateProjectUrl(selectedProject.slug)}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="block text-sm text-gray-600 bg-gray-50 p-3 rounded-lg border border-gray-200 hover:bg-gray-100 transition-colors cursor-pointer"
                       >
-                        http://mipzrl.vercel.app/p/{selectedProject.slug}
+                        {generateProjectUrl(selectedProject.slug)}
                       </a>
                     </div>
                   </div>
