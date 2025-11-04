@@ -24,25 +24,6 @@ Zaoralは「追いLINEを確実に読んでもらうためにWebページ化す�
 - **プロジェクト管理**: ダッシュボードにて作成したプロジェクトの確認/削除
 
 
-## 技術スタック
-
-### フロントエンド
-- **Next.js 14** 
-- **TypeScript** 
-- **Tailwind CSS** 
-- **NextAuth.js** 
-
-### バックエンド・データベース
-- **Prisma** 
-- **PostgreSQL** 
-- **NextAuth.js** 
-
-
-## ER図（PostgreSQL）
-
-<img src="./public/ER.png" alt="ER図" width="70%" />
-
-
 ## アプリの様子
 
 **ホーム画面**
