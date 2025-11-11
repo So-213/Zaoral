@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 
 /**
- * 認証チェック用のヘルパー関数
+ * 認証チェック用のヘルパー関数   DAL認証チェック
  * @returns 認証されたユーザー情報または401エラーレスポンス
  */
 export async function requireAuth() {

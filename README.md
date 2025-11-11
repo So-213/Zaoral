@@ -1,10 +1,9 @@
 # Zaoral 
 
-Zaoralは, マッチングアプリなどで連絡が途切れた相手に対して, 反応を促進するために「メッセージをWebページ化するアプリケーション」です.
+<img src="./public/Zaoral_README.png" alt="Zaoral" width="100%" />
 
-ユーザは追いLINE代わりのメッセージを作成し, Web上に公開することで, 相手の注意を引くようなメッセージを届けることができます.
 
-詳細はアプリ内の使い方ページを参照: [https://zaoral.vercel.app/zaoral](https://zaoral.vercel.app/zaoral)
+詳細はアプリ内ページ参照: [https://zaoral.vercel.app/zaoral](https://zaoral.vercel.app/zaoral)
 
 
 ## 初版作成
@@ -23,7 +22,7 @@ Zaoralは, マッチングアプリなどで連絡が途切れた相手に対し
 - **メッセージ作成**: 簡単なメッセージ作成と公開機能
 - **プロジェクト管理**: ダッシュボードにて作成したプロジェクトの確認/削除
 
-※ 詳細は要件定義書及び詳細設計書参照
+※ 詳細は[要件定義書](https://github.com/So-213/Zaoral/blob/master/%E8%A6%81%E4%BB%B6%E5%AE%9A%E7%BE%A9%E6%9B%B8.md)及び[詳細設計書](https://github.com/So-213/Zaoral/blob/master/%E8%A9%B3%E7%B4%B0%E8%A8%AD%E8%A8%88%E6%9B%B8.md)参照
 
 
 ## アプリの様子
