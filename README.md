@@ -1,7 +1,8 @@
 # Zaoral 
 
-<img src="./public/Zaoral_README.png" alt="Zaoral" width="100%" />
+[English](README_EN.md) | [中文](README_ZH.md)
 
+<img src="./public/Zaoral_README.png" alt="Zaoral" width="100%" />
 
 詳細はアプリ内ページ参照: [https://zaoral.vercel.app/zaoral](https://zaoral.vercel.app/zaoral)
 
@@ -41,4 +42,3 @@
 
 **ダッシュボード画面**
 <img src="./public/d1.PNG" alt="dashboard1" width="33%" />
-
