@@ -3,7 +3,7 @@
  */
 export const config = {
   // プロジェクト表示用のURL（外部からアクセスするURL）
-  projectDisplayUrl: process.env.NEXT_PUBLIC_PROJECT_DISPLAY_URL || 'http://mipzrl.vercel.app',
+  projectDisplayUrl: process.env.NEXT_PUBLIC_PROJECT_DISPLAY_URL || 'https://mipzrl.vercel.app',
 } as const;
 
 /**
