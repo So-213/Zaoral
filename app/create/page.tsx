@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 import { generateProjectUrl } from "@/lib/config";
+import { Copy, Check } from "lucide-react";
 
 
 
@@ -14,6 +15,7 @@ export default function CreatePage() {
   const [randomString, setRandomString] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [response, setResponse] = useState("");
+  const [copied, setCopied] = useState(false);
   
   // 文字数制限（1000文字）
   const MAX_CHARACTERS = 50;
@@ -72,6 +74,21 @@ export default function CreatePage() {
       setResponse("エラー: " + (error instanceof Error ? error.message : "不明なエラー"));
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  // URLをコピーする関数
+  const handleCopyUrl = async () => {
+    if (!response) return;
+    
+    try {
+      await navigator.clipboard.writeText(response);
+      setCopied(true);
+      toast.success("URLをコピーしました");
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error('URLのコピーに失敗しました:', err);
+      toast.error("URLのコピーに失敗しました");
     }
   };
 
@@ -156,15 +173,37 @@ export default function CreatePage() {
                   <CardDescription>作成されたページにアクセスするためのURL</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="p-4 bg-gray-50 rounded-lg text-sm">
-                    <a 
-                      href={response} 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="text-blue-600 hover:text-blue-800 underline break-all"
-                    >
-                      {response}
-                    </a>
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between mb-2">
+                      <Button
+                        onClick={handleCopyUrl}
+                        variant="outline"
+                        size="sm"
+                        className="px-3 py-1 text-sm"
+                      >
+                        {copied ? (
+                          <>
+                            <Check className="w-4 h-4 mr-2" />
+                            コピー完了
+                          </>
+                        ) : (
+                          <>
+                            <Copy className="w-4 h-4 mr-2" />
+                            コピー
+                          </>
+                        )}
+                      </Button>
+                    </div>
+                    <div className="p-4 bg-gray-50 rounded-lg text-sm">
+                      <a 
+                        href={response} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="text-blue-600 hover:text-blue-800 underline break-all"
+                      >
+                        {response}
+                      </a>
+                    </div>
                   </div>
                 </CardContent>
               </Card>
