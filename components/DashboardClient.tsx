@@ -90,144 +90,134 @@ export default function DashboardClient({ session, userProjects, totalCreated }:
           </div>
         </div>
 
-        {/* 下部セクション - プロジェクトリストと詳細表示 */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* プロジェクト詳細表示エリア（スマホでは上、デスクトップでは右側） */}
-          <div className="order-1 lg:order-2 lg:col-span-2">
-            <div className="bg-white rounded-lg shadow-md p-6">
-              <h2 className="text-xl font-semibold text-gray-800 mb-4">プロジェクト詳細</h2>
-              
-              {!selectedProject ? (
-                <div className="text-center py-12">
-                  <p className="text-gray-500 text-lg">
-                    プロジェクトを選択してください
-                  </p>
-                </div>
-              ) : (
-                <div className="border border-gray-200 rounded-lg p-6">
-                  <div className="space-y-4">
-                    <div>
-                      <h4 className="font-medium text-gray-700 mb-2">メッセージ</h4>
-                      <p className="text-gray-600 bg-gray-50 p-3 rounded-lg">
-                        {selectedProject.projectMessage?.message || 'メッセージがありません'}
-                      </p>
-                    </div>
-                    
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <h4 className="font-medium text-gray-700 mb-1">作成日</h4>
-                        <p className="text-gray-600">
-                          {new Date(selectedProject.created_at).toLocaleDateString('ja-JP')}
-                        </p>
+        {/* 下部セクション - プロジェクトリスト */}
+        <div className="bg-white rounded-lg shadow-md p-6">
+          <h2 className="text-xl font-semibold text-gray-800 mb-4">プロジェクト一覧</h2>
+          
+          {userProjects.length === 0 ? (
+            <div className="text-center py-8">
+              <p className="text-gray-500 mb-4">まだプロジェクトがありません</p>
+            </div>
+          ) : (
+            <div className="space-y-2">
+              {userProjects.map((project: Project, index: number) => (
+                <div 
+                  key={project.id}
+                  className={`border rounded-lg transition-colors duration-200 ${
+                    selectedProject?.id === project.id 
+                      ? 'border-blue-500 bg-blue-50' 
+                      : 'border-gray-200 hover:bg-gray-50'
+                  }`}
+                >
+                  <div 
+                    className="p-4 cursor-pointer"
+                    onClick={() => setSelectedProject(selectedProject?.id === project.id ? null : project)}
+                  >
+                    <div className="flex justify-between items-start">
+                      <div className="flex-1">
+                        <h3 className="font-medium text-gray-800 mb-1">
+                          プロジェクト{userProjects.length - index}
+                        </h3>
+                        <p className="text-sm text-gray-500 mb-2">
+                          {project.projectMessage?.message 
+                            ? (project.projectMessage.message.length > 50 
+                                ? `${project.projectMessage.message.substring(0, 50)}...` 
+                                : project.projectMessage.message)
+                            : 'メッセージがありません'
+                          }
+                        </p>                     
                       </div>
-                      <div>
-                        <h4 className="font-medium text-gray-700 mb-1">有効期限</h4>
-                        <p className="text-gray-600">
-                          {new Date(selectedProject.expires_at).toLocaleDateString('ja-JP')}
-                        </p>
+                      <div className="ml-2">
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                              disabled={deleting === project.id}
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>プロジェクトを削除しますか？</AlertDialogTitle>
+                              <AlertDialogDescription>
+                                この操作は取り消すことができません。プロジェクトとそのメッセージが完全に削除されます。
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>キャンセル</AlertDialogCancel>
+                              <AlertDialogAction
+                                onClick={() => handleDeleteProject(project.id)}
+                                className="bg-red-500 hover:bg-red-600"
+                              >
+                                {deleting === project.id ? '削除中...' : '削除'}
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
                       </div>
-                    </div>
-                    
-                    <div>
-                      <div className="flex items-center justify-between mb-2">
-                        <h4 className="font-medium text-gray-700">WebページURL</h4>
-                        <button
-                          onClick={() => {
-                            navigator.clipboard.writeText(generateProjectUrl(selectedProject.slug));
-                          }}
-                          className="px-3 py-1 text-sm bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
-                        >
-                          コピー
-                        </button>
-                      </div>
-                      <a
-                        href={generateProjectUrl(selectedProject.slug)}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="block text-sm text-gray-600 bg-gray-50 p-3 rounded-lg border border-gray-200 hover:bg-gray-100 transition-colors cursor-pointer"
-                      >
-                        {generateProjectUrl(selectedProject.slug)}
-                      </a>
                     </div>
                   </div>
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* プロジェクトリスト（スマホでは下、デスクトップでは左側） */}
-          <div className="order-2 lg:order-1 lg:col-span-1">
-            <div className="bg-white rounded-lg shadow-md p-6">
-              <h2 className="text-xl font-semibold text-gray-800 mb-4">プロジェクト一覧</h2>
-              
-              {userProjects.length === 0 ? (
-                <div className="text-center py-8">
-                  <p className="text-gray-500 mb-4">まだプロジェクトがありません</p>
-                </div>
-              ) : (
-                <div className="space-y-2">
-                  {userProjects.map((project: Project, index: number) => (
-                    <div 
-                      key={project.id}
-                      className={`border rounded-lg p-4 transition-colors duration-200 cursor-pointer ${
-                        selectedProject?.id === project.id 
-                          ? 'border-blue-500 bg-blue-50' 
-                          : 'border-gray-200 hover:bg-gray-50'
-                      }`}
-                      onClick={() => setSelectedProject(project)}
-                    >
-                      <div className="flex justify-between items-start">
-                        <div className="flex-1">
-                          <h3 className="font-medium text-gray-800 mb-1">
-                            プロジェクト{userProjects.length - index}
-                          </h3>
-                          <p className="text-sm text-gray-500 mb-2">
-                            {project.projectMessage?.message 
-                              ? (project.projectMessage.message.length > 50 
-                                  ? `${project.projectMessage.message.substring(0, 50)}...` 
-                                  : project.projectMessage.message)
-                              : 'メッセージがありません'
-                            }
-                          </p>                     
+                  
+                  {/* 選択されたプロジェクトの詳細表示 */}
+                  {selectedProject?.id === project.id && (
+                    <div className="border-t border-blue-300 px-4 pb-4 pt-4 mt-2">
+                      <div className="space-y-4">
+                        <div>
+                          <h4 className="font-medium text-gray-700 mb-2">メッセージ</h4>
+                          <p className="text-gray-600 bg-gray-50 p-3 rounded-lg">
+                            {selectedProject.projectMessage?.message || 'メッセージがありません'}
+                          </p>
                         </div>
-                        <div className="ml-2">
-                          <AlertDialog>
-                            <AlertDialogTrigger asChild>
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                className="text-red-500 hover:text-red-700 hover:bg-red-50"
-                                disabled={deleting === project.id}
-                              >
-                                <Trash2 className="h-4 w-4" />
-                              </Button>
-                            </AlertDialogTrigger>
-                            <AlertDialogContent>
-                              <AlertDialogHeader>
-                                <AlertDialogTitle>プロジェクトを削除しますか？</AlertDialogTitle>
-                                <AlertDialogDescription>
-                                  この操作は取り消すことができません。プロジェクトとそのメッセージが完全に削除されます。
-                                </AlertDialogDescription>
-                              </AlertDialogHeader>
-                              <AlertDialogFooter>
-                                <AlertDialogCancel>キャンセル</AlertDialogCancel>
-                                <AlertDialogAction
-                                  onClick={() => handleDeleteProject(project.id)}
-                                  className="bg-red-500 hover:bg-red-600"
-                                >
-                                  {deleting === project.id ? '削除中...' : '削除'}
-                                </AlertDialogAction>
-                              </AlertDialogFooter>
-                            </AlertDialogContent>
-                          </AlertDialog>
+                        
+                        <div className="grid grid-cols-2 gap-4">
+                          <div>
+                            <h4 className="font-medium text-gray-700 mb-1">作成日</h4>
+                            <p className="text-gray-600">
+                              {new Date(selectedProject.created_at).toLocaleDateString('ja-JP')}
+                            </p>
+                          </div>
+                          <div>
+                            <h4 className="font-medium text-gray-700 mb-1">有効期限</h4>
+                            <p className="text-gray-600">
+                              {new Date(selectedProject.expires_at).toLocaleDateString('ja-JP')}
+                            </p>
+                          </div>
+                        </div>
+                        
+                        <div>
+                          <div className="flex items-center justify-between mb-2">
+                            <h4 className="font-medium text-gray-700">WebページURL</h4>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                navigator.clipboard.writeText(generateProjectUrl(selectedProject.slug));
+                              }}
+                              className="px-3 py-1 text-sm bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+                            >
+                              コピー
+                            </button>
+                          </div>
+                          <a
+                            href={generateProjectUrl(selectedProject.slug)}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            onClick={(e) => e.stopPropagation()}
+                            className="block text-sm text-gray-600 bg-gray-50 p-3 rounded-lg border border-gray-200 hover:bg-gray-100 transition-colors cursor-pointer"
+                          >
+                            {generateProjectUrl(selectedProject.slug)}
+                          </a>
                         </div>
                       </div>
                     </div>
-                  ))}
+                  )}
                 </div>
-              )}
+              ))}
             </div>
-          </div>
+          )}
         </div>
       </div>
     </div>
