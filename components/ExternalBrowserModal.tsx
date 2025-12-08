@@ -49,7 +49,7 @@ export default function ExternalBrowserModal({ isOpen, onClose, onContinue }: Ex
             <div className="p-2 bg-amber-100 rounded-lg">
               <ExternalLink className="w-6 h-6 text-amber-600" />
             </div>
-            <DialogTitle className="text-xl">外部ブラウザで開くことをお勧めします</DialogTitle>
+            <DialogTitle className="text-xl">外部ブラウザを推奨しています</DialogTitle>
           </div>
           <DialogDescription className="text-base">            
             <span className="text-sm text-gray-600 mt-2 block">
@@ -92,12 +92,12 @@ export default function ExternalBrowserModal({ isOpen, onClose, onContinue }: Ex
             <CardContent className="p-4">
               <h3 className="font-semibold mb-3 flex items-center gap-2">
                 <Smartphone className="w-5 h-5 text-green-600" />
-                手順
+                方法
               </h3>
               <div className="space-y-2 text-sm">
-                <p>1. 下のボタンでURLをコピー</p>
-                <p>2. 外部ブラウザを開く</p>
-                <p>3. アドレスバーに貼り付け</p>
+                <p>・右下もしくは右上の3点メニューから「外部ブラウザで開く」を選択</p>
+                <p className="text-center">OR</p>
+                <p>・URLを外部ブラウザに手動でコピー&ペースト</p>
               </div>
               <Button
                 onClick={handleCopyUrl}
