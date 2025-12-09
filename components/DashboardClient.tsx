@@ -15,7 +15,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Trash2 } from "lucide-react";
+import { Trash2, Loader2 } from "lucide-react";
 
 interface Project {
   id: string;
@@ -152,8 +152,16 @@ export default function DashboardClient({ session, userProjects, totalCreated }:
                               <AlertDialogAction
                                 onClick={() => handleDeleteProject(project.id)}
                                 className="bg-red-500 hover:bg-red-600"
+                                disabled={deleting === project.id}
                               >
-                                {deleting === project.id ? '削除中...' : '削除'}
+                                {deleting === project.id ? (
+                                  <>
+                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                    削除中...
+                                  </>
+                                ) : (
+                                  '削除'
+                                )}
                               </AlertDialogAction>
                             </AlertDialogFooter>
                           </AlertDialogContent>
