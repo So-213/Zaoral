@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { generateProjectUrl } from "@/lib/config";
+import { generateProjectUrl, DEFAULT_LEFT_PROJECTS } from "@/lib/config";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -103,7 +103,7 @@ export default function DashboardClient({ session, userProjects, leftProjects }:
             <div className="bg-gray-100 p-4 rounded-lg">
               <h3 className="font-semibold text-gray-700 mb-2">今まで作成したプロジェクト数</h3>
               <p className="text-gray-500 text-sm">
-                {5-leftProjects}個
+                {DEFAULT_LEFT_PROJECTS-leftProjects}個
                 {leftProjects <= 0 && (
                   <span className="ml-2 text-red-600 font-semibold">（上限に達しています）</span>
                 )}
