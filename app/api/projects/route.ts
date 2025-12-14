@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { config } from '@/lib/config';
 import { requireAuth, handleApiError, validateRequired, checkProjectOwnership } from '@/lib/api-helpers';
+import { DEFAULT_LEFT_PROJECTS } from '@/lib/config';
 
 
 
@@ -24,28 +24,64 @@ export async function POST(request: NextRequest) {
     const messageValidation = validateRequired(message, 'メッセージ');
     if (messageValidation) return messageValidation;
 
+    // ユーザーのleft_projects（残機）を取得
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!user) {
+      return NextResponse.json(
+        { error: 'ユーザーが見つかりません' },
+        { status: 404 }
+      );
+    }
+
+    const leftProjects = (user as any).left_projects ?? DEFAULT_LEFT_PROJECTS;
+
+    // 残機チェック（残機が0以下なら作成不可）
+    if (leftProjects <= 0) {
+      return NextResponse.json(
+        { error: 'プロジェクトの作成残機がありません。' },
+        { status: 403 }
+      );
+    }
+
     // 有効期限を31日後に設定
     const expiresAt = new Date();
     expiresAt.setDate(expiresAt.getDate() + 31);
 
-    // db保存
-    const savedProject = await prisma.project.create({
-      data: {
-        user_id: userId,
-        user_name: userName,
-        type: 'message', // 明示的に指定
-        slug,
-        expires_at: expiresAt,
-        published: false,
-        projectMessage: {
-          create: {
-            message: message,
+    // トランザクションでプロジェクト作成と残機減算を同時に実行
+    const savedProject = await prisma.$transaction(async (tx) => {
+      // プロジェクトを作成
+      const project = await tx.project.create({
+        data: {
+          user_id: userId,
+          user_name: userName,
+          type: 'message', // 明示的に指定
+          slug,
+          expires_at: expiresAt,
+          published: false,
+          projectMessage: {
+            create: {
+              message: message,
+            },
           },
         },
-      },
-      include: {
-        projectMessage: true,
-      },
+        include: {
+          projectMessage: true,
+        },
+      });
+
+      // 残機を1減らす
+      const currentLeftProjects = (user as any).left_projects ?? DEFAULT_LEFT_PROJECTS;
+      await tx.user.update({
+        where: { id: userId },
+        data: {
+          left_projects: Math.max(0, currentLeftProjects - 1),
+        } as any,
+      });
+
+      return project;
     });
 
     return NextResponse.json(savedProject, { status: 201 });
