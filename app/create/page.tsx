@@ -66,12 +66,17 @@ export default function CreatePage() {
         setResponse(url);
         toast.success("データが正常に保存されました！");
       } else {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        // エラーレスポンスからメッセージを取得
+        const errorData = await response.json().catch(() => ({}));
+        const errorMessage = errorData.error || `HTTP error! status: ${response.status}`;
+        toast.error(errorMessage);
+        setResponse("");
+        return;
       }
     } catch (error) {
       console.error('保存エラー:', error);
       toast.error("保存に失敗しました。データベース接続を確認してください。");
-      setResponse("エラー: " + (error instanceof Error ? error.message : "不明なエラー"));
+      setResponse("");
     } finally {
       setIsLoading(false);
     }

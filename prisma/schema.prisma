@@ -56,6 +56,7 @@ model User {
   emailVerified DateTime?
   image         String?
   stripe_customer_id String?
+  left_projects Int       @default(3) // lib/config.ts の DEFAULT_LEFT_PROJECTS と同期してください
   created_at    DateTime  @default(now())
   updated_at    DateTime  @updatedAt
   subscription  Subscription?
