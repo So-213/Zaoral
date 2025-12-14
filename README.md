@@ -28,17 +28,22 @@
 
 ## アプリの様子
 
-**ホーム画面**
 <img src="./public/home.PNG" alt="home" width="33%" />
 
-**空のダッシュボード**
+**ホーム画面**
+
 <img src="./public/d0.PNG" alt="dashboard0" width="33%" />
 
-**メッセージ作成画面**
+**空のダッシュボード**
+
 <img src="./public/wc.PNG" alt="webpagecreate" width="33%" />
 
-**公開されたメッセージ画面**
+**メッセージ作成画面**
+
 <img src="./public/wp.PNG" alt="webpage" width="33%" />
 
-**ダッシュボード画面**
+**公開されたメッセージ画面**
+
 <img src="./public/d1.PNG" alt="dashboard1" width="33%" />
+
+**ダッシュボード画面**
