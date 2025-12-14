@@ -31,3 +31,6 @@ next-env.d.ts
 
 # from Author
 /app/fromAuthor/
+
+# scripts
+/scripts
