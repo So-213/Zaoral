@@ -2,6 +2,7 @@ import Link from "next/link";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import DashboardClient from "@/components/DashboardClient";
+import { DEFAULT_LEFT_PROJECTS } from "@/lib/config";
 
 interface Project {
   id: string;
@@ -34,6 +35,12 @@ export default async function DashboardPage() {
     );
   }
 
+//ここ高速化したい
+  // ユーザー情報を取得（project_limitを含む）
+  const user = await prisma.user.findUnique({
+    where: { id: session.user.id },
+  });
+
   // プロジェクトデータをサーバー側で取得
   const userProjects = await prisma.project.findMany({
     where: {
@@ -47,14 +54,14 @@ export default async function DashboardPage() {
     },
   });
 
-  // 統計情報を計算
-  const totalCreated = userProjects.length;
+  // 統計情報を計算（残機を取得）
+  const leftProjects = (user as any)?.left_projects ?? DEFAULT_LEFT_PROJECTS;
 
   return (
     <DashboardClient 
       session={session}
       userProjects={userProjects}
-      totalCreated={totalCreated}
+      leftProjects={leftProjects}
     />
   );
 }

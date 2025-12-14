@@ -7,6 +7,11 @@ export const config = {
 } as const;
 
 /**
+ * デフォルトのプロジェクト作成残機数
+ */
+export const DEFAULT_LEFT_PROJECTS = 3;
+
+/**
  * プロジェクトURLを生成する関数
  */
 export function generateProjectUrl(slug: string): string {

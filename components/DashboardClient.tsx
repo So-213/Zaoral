@@ -32,10 +32,10 @@ interface Project {
 interface DashboardClientProps {
   session: any;
   userProjects: Project[];
-  totalCreated: number;
+  leftProjects: number;
 }
 
-export default function DashboardClient({ session, userProjects, totalCreated }: DashboardClientProps) {
+export default function DashboardClient({ session, userProjects, leftProjects }: DashboardClientProps) {
   const [selectedProject, setSelectedProject] = useState<Project | null>(
     userProjects.length > 0 ? userProjects[0] : null
   );
@@ -72,10 +72,27 @@ export default function DashboardClient({ session, userProjects, totalCreated }:
             ようこそ、{session.user.name || session.user.email} さん！
           </h1>
           
+          {leftProjects <= 0 && (
+            <div className="mb-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+              <p className="text-yellow-800 text-sm">
+                ⚠️ プロジェクトの作成上限に達しています。
+              </p>
+            </div>
+          )}
+          
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <Link 
               href="/create"
-              className="bg-pink-400 hover:bg-pink-500 text-white font-medium py-4 px-6 rounded-lg shadow-md transition-colors duration-200 flex items-center justify-center text-lg"
+              className={`font-medium py-4 px-6 rounded-lg shadow-md transition-colors duration-200 flex items-center justify-center text-lg ${
+                leftProjects <= 0
+                  ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                  : 'bg-pink-400 hover:bg-pink-500 text-white'
+              }`}
+              onClick={(e) => {
+                if (leftProjects <= 0) {
+                  e.preventDefault();
+                }
+              }}
             >
               <svg className="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -84,8 +101,13 @@ export default function DashboardClient({ session, userProjects, totalCreated }:
             </Link>
                         
             <div className="bg-gray-100 p-4 rounded-lg">
-              <h3 className="font-semibold text-gray-700 mb-2">統計</h3>
-              <p className="text-gray-500 text-sm">作成数: {totalCreated}</p>
+              <h3 className="font-semibold text-gray-700 mb-2">今まで作成したプロジェクト数</h3>
+              <p className="text-gray-500 text-sm">
+                {5-leftProjects}個
+                {leftProjects <= 0 && (
+                  <span className="ml-2 text-red-600 font-semibold">（上限に達しています）</span>
+                )}
+              </p>
             </div>
           </div>
         </div>
