@@ -56,12 +56,14 @@ export default async function DashboardPage() {
 
   // 統計情報を計算（残機を取得）
   const leftProjects = (user as any)?.left_projects ?? DEFAULT_LEFT_PROJECTS;
+  const userPlan = (user as any)?.plan ?? 'FREE';
 
   return (
     <DashboardClient 
       session={session}
       userProjects={userProjects}
       leftProjects={leftProjects}
+      userPlan={userPlan}
     />
   );
 }
