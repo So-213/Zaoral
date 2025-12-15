@@ -28,12 +28,29 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
       type: "credentials",
       credentials: {},
       async authorize() {
-        // 固定のテストユーザーを返す
+        // DBから既存のテストユーザーを取得、存在しない場合は作成
+        const testEmail = "test-1765733282609@example.com";
+        let user = await prisma.user.findUnique({
+          where: { email: testEmail },
+        });
+
+        if (!user) {
+          // テストユーザーが存在しない場合は作成
+          user = await prisma.user.create({
+            data: {
+              email: testEmail,
+              name: "テストユーザ",
+              emailVerified: new Date(),
+            },
+          });
+        }
+
+        // DBに存在する実際のユーザーIDを返す
         return {
-          id: "test_user_001",
-          name: "テストユーザ",
-          email: "test@example.com",
-          image: null,
+          id: user.id,
+          name: user.name || "テストユーザ",
+          email: user.email || testEmail,
+          image: user.image,
         };
       }
     }
