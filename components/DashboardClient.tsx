@@ -72,6 +72,12 @@ export default function DashboardClient({ session, userProjects, leftProjects }:
             ようこそ、{session.user.name || session.user.email} さん！
           </h1>
           
+          <div className="mb-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+            <p className="text-blue-800 text-sm">
+              プロジェクトは最大{DEFAULT_LEFT_PROJECTS}つまで作ることができます。
+            </p>
+          </div>
+          
           {leftProjects <= 0 && (
             <div className="mb-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
               <p className="text-yellow-800 text-sm">
