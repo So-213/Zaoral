@@ -36,10 +36,12 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const userPlan = (user as any).plan;
+    const isPremium = userPlan === 'PREMIUM';
     const leftProjects = (user as any).left_projects ?? DEFAULT_LEFT_PROJECTS;
 
-    // 残機チェック（残機が0以下なら作成不可）
-    if (leftProjects <= 0) {
+    // 残機チェック（プレミアムプラン以外で、残機が0以下なら作成不可）
+    if (!isPremium && leftProjects <= 0) {
       return NextResponse.json(
         { error: 'プロジェクトの作成残機がありません。' },
         { status: 403 }
@@ -72,14 +74,16 @@ export async function POST(request: NextRequest) {
         },
       });
 
-      // 残機を1減らす
-      const currentLeftProjects = (user as any).left_projects ?? DEFAULT_LEFT_PROJECTS;
-      await tx.user.update({
-        where: { id: userId },
-        data: {
-          left_projects: Math.max(0, currentLeftProjects - 1),
-        } as any,
-      });
+      // 残機を1減らす（プレミアムプランの場合は減らさない）
+      if (!isPremium) {
+        const currentLeftProjects = (user as any).left_projects ?? DEFAULT_LEFT_PROJECTS;
+        await tx.user.update({
+          where: { id: userId },
+          data: {
+            left_projects: Math.max(0, currentLeftProjects - 1),
+          } as any,
+        });
+      }
 
       return project;
     });
