@@ -84,7 +84,7 @@ export default function DashboardClient({ session, userProjects, leftProjects, u
                 {isPremium ? (
                   <>
                     <p className="text-orange-800 text-sm font-medium mb-1">
-                      ⭐ プレミアムプラン: プロジェクト作成に制限はありません
+                      プレミアムプラン: プロジェクト作成に制限はありません
                     </p>
                     <p className="text-orange-700 text-sm">
                       今まで作成したプロジェクト数: <span className="font-semibold">{userProjects.length}個</span>

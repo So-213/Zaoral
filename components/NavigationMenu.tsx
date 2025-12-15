@@ -19,8 +19,9 @@ export default function NavigationMenu({ isOpen, onLinkClick }: NavigationMenuPr
   ];
 
   const authenticatedMenuItems = [
-    { href: "/account", label: "アカウント情報" },
     { href: "/dashboard", label: "ダッシュボード" },
+    { href: "/account", label: "アカウント情報" },
+    
   ];
 
   return (
