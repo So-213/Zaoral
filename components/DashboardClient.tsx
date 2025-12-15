@@ -73,18 +73,23 @@ export default function DashboardClient({ session, userProjects, leftProjects }:
           </h1>
           
           <div className="mb-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-            <p className="text-blue-800 text-sm">
-              プロジェクトは最大{DEFAULT_LEFT_PROJECTS}つまで作ることができます。
-            </p>
-          </div>
-          
-          {leftProjects <= 0 && (
-            <div className="mb-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-              <p className="text-yellow-800 text-sm">
-                ⚠️ プロジェクトの作成上限に達しています。
-              </p>
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
+              <div>
+                <p className="text-blue-800 text-sm font-medium mb-1">
+                  プロジェクトは最大{DEFAULT_LEFT_PROJECTS}つまで作ることができます。
+                </p>
+                <p className="text-blue-700 text-sm">
+                  今まで作成したプロジェクト数: <span className="font-semibold">{DEFAULT_LEFT_PROJECTS-leftProjects}個</span>
+                  {leftProjects > 0 && (
+                    <span className="ml-2">（残り: <span className="font-semibold">{leftProjects}個</span>）</span>
+                  )}
+                </p>
+              </div>
+              {leftProjects <= 0 && (
+                <span className="text-red-600 font-semibold text-sm">⚠️ 上限に達しています</span>
+              )}
             </div>
-          )}
+          </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <Link 
@@ -105,16 +110,6 @@ export default function DashboardClient({ session, userProjects, leftProjects }:
               </svg>
               新規作成
             </Link>
-                        
-            <div className="bg-gray-100 p-4 rounded-lg">
-              <h3 className="font-semibold text-gray-700 mb-2">今まで作成したプロジェクト数</h3>
-              <p className="text-gray-500 text-sm">
-                {DEFAULT_LEFT_PROJECTS-leftProjects}個
-                {leftProjects <= 0 && (
-                  <span className="ml-2 text-red-600 font-semibold">（上限に達しています）</span>
-                )}
-              </p>
-            </div>
           </div>
         </div>
 
