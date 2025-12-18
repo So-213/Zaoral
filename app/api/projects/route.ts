@@ -62,7 +62,6 @@ export async function POST(request: NextRequest) {
           type: 'message', // 明示的に指定
           slug,
           expires_at: expiresAt,
-          published: false,
           projectMessage: {
             create: {
               message: message,
