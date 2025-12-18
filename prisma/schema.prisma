@@ -118,6 +118,7 @@ model Project {
   // Relations
   user        User        @relation(fields: [user_id], references: [id], onDelete: Cascade)
   projectMessage ProjectMessage?
+  projectPicture ProjectPicture?
 
   @@index([user_id, created_at(sort: Desc)], map: "idx_projects_user_created")
   @@map("projects")
@@ -130,4 +131,17 @@ model ProjectMessage {
 
   project     Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
   @@map("projects_message")
+}
+
+// 子テーブル（picture タイプ専用属性）
+model ProjectPicture {
+  projectId   String   @id @map("project_id")
+  s3_key      String   // S3のオブジェクトキー（パス）
+  file_name   String?  // 元のファイル名
+  file_size   Int?     // ファイルサイズ（バイト）
+  mime_type   String?  // image/jpeg, image/png など
+  uploaded_at DateTime @default(now())
+
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  @@map("projects_picture")
 }
