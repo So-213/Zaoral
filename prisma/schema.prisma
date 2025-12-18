@@ -114,7 +114,6 @@ model Project {
   slug        String      @unique
   created_at  DateTime    @default(now())
   expires_at  DateTime
-  published   Boolean     @default(false)
   
   // Relations
   user        User        @relation(fields: [user_id], references: [id], onDelete: Cascade)
