@@ -16,8 +16,8 @@ datasource db {
 
 enum ProjectType {
   message
+  picture
   // 将来的に他のタイプを追加可能
-  // image
   // video
   // document
 }
@@ -135,13 +135,9 @@ model ProjectMessage {
 
 // 子テーブル（picture タイプ専用属性）
 model ProjectPicture {
-  projectId   String   @id @map("project_id")
-  s3_key      String   // S3のオブジェクトキー（パス）
-  file_name   String?  // 元のファイル名
-  file_size   Int?     // ファイルサイズ（バイト）
-  mime_type   String?  // image/jpeg, image/png など
-  uploaded_at DateTime @default(now())
+  projectId   String  @id @map("project_id")
+  s3_key      String  // S3のオブジェクトキー（パス）
 
-  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  project     Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
   @@map("projects_picture")
 }
