@@ -35,7 +35,6 @@ export default async function DashboardPage() {
     );
   }
 
-//ここ高速化したい
   // ユーザー情報を取得（project_limitを含む）
   const user = await prisma.user.findUnique({
     where: { id: session.user.id },

@@ -31,3 +31,7 @@ next-env.d.ts
 
 # scripts
 /scripts
+
+# terraform
+terraform/*.tfvars
+!terraform/terraform.tfvars.example

@@ -4,20 +4,26 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { generateProjectUrl } from "@/lib/config";
 import { Copy, Check } from "lucide-react";
 
+type ProjectType = "message" | "picture";
+
 
 
 export default function CreatePage() {
+  const [projectType, setProjectType] = useState<ProjectType>("message");
   const [inputText, setInputText] = useState("");
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [randomString, setRandomString] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [response, setResponse] = useState("");
   const [copied, setCopied] = useState(false);
   
-  // 文字数制限（1000文字）
+  // 文字数制限（50文字）
   const MAX_CHARACTERS = 50;
 
   // ランダム文字列を生成する関数（6文字、アルファベットと数字を含む）
@@ -30,16 +36,44 @@ export default function CreatePage() {
     return result;
   };
 
-  // SupabaseDBにデータを保存する関数
-  const saveToDatabase = async () => {
-    if (!inputText.trim()) {
-      toast.error("文字列を入力してください");
-      return;
+  // ファイル選択ハンドラー
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      // ファイルタイプの検証
+      const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+      if (!allowedTypes.includes(file.type)) {
+        toast.error('サポートされていない画像形式です。JPEG、PNG、GIF、WebPのみ対応しています。');
+        return;
+      }
+      // ファイルサイズの検証（10MBまで）
+      const maxSize = 10 * 1024 * 1024; // 10MB
+      if (file.size > maxSize) {
+        toast.error('画像サイズが大きすぎます。10MB以下にしてください。');
+        return;
+      }
+      setSelectedFile(file);
     }
-    
-    if (inputText.length > MAX_CHARACTERS) {
-      toast.error(`文字数が制限を超えています（${MAX_CHARACTERS}文字以内）`);
-      return;
+  };
+
+  // プロジェクトを作成する関数
+  const saveToDatabase = async () => {
+    // タイプに応じたバリデーション
+    if (projectType === 'message') {
+      if (!inputText.trim()) {
+        toast.error("文字列を入力してください");
+        return;
+      }
+      
+      if (inputText.length > MAX_CHARACTERS) {
+        toast.error(`文字数が制限を超えています（${MAX_CHARACTERS}文字以内）`);
+        return;
+      }
+    } else if (projectType === 'picture') {
+      if (!selectedFile) {
+        toast.error("画像ファイルを選択してください");
+        return;
+      }
     }
 
     // データ保存時に自動的にランダム文字列を生成
@@ -49,22 +83,48 @@ export default function CreatePage() {
     setIsLoading(true);
     
     try {
+      let requestBody: any = {
+        slug: newRandomString,
+        type: projectType,
+      };
+
+      if (projectType === 'message') {
+        requestBody.message = inputText;
+      } else if (projectType === 'picture') {
+        // 画像をS3にアップロード
+        const formData = new FormData();
+        formData.append('image', selectedFile!);
+        
+        const uploadResponse = await fetch('/api/projects/upload', {
+          method: 'POST',
+          body: formData,
+        });
+
+        if (!uploadResponse.ok) {
+          const errorData = await uploadResponse.json().catch(() => ({}));
+          const errorMessage = errorData.error || '画像のアップロードに失敗しました';
+          toast.error(errorMessage);
+          setIsLoading(false);
+          return;
+        }
+
+        const uploadData = await uploadResponse.json();
+        requestBody.s3Key = uploadData.s3Key;
+      }
+
       const response = await fetch('/api/projects', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          slug: newRandomString,
-          message: inputText,
-        }),
+        body: JSON.stringify(requestBody),
       });
 
       if (response.ok) {
         const data = await response.json();
         const url = generateProjectUrl(data.slug);
         setResponse(url);
-        toast.success("データが正常に保存されました！");
+        toast.success("プロジェクトが正常に作成されました！");
       } else {
         // エラーレスポンスからメッセージを取得
         const errorData = await response.json().catch(() => ({}));
@@ -105,36 +165,97 @@ export default function CreatePage() {
           <h1 className="text-3xl font-bold text-gray-900 mb-6">Webページ作成</h1>
           
           <div className="space-y-6">
-            {/* 文字列入力セクション */}
+            {/* プロジェクトタイプ選択セクション */}
             <Card>
               <CardHeader>
-                <CardTitle>文字列入力</CardTitle>
-                <CardDescription>Webページに表示させたい文字列を入力してください</CardDescription>
+                <CardTitle>プロジェクトタイプ</CardTitle>
+                <CardDescription>作成するプロジェクトのタイプを選択してください</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-2">
-                  <Input
-                    id="input-text"
-                    type="text"
-                    placeholder="文字列を入力してください..."
-                    value={inputText}
-                    onChange={(e) => setInputText(e.target.value)}
-                    maxLength={MAX_CHARACTERS}
-                    className="w-full"
-                  />
-                  <div className="flex justify-between items-center text-sm">
-                    <span className={`${inputText.length > MAX_CHARACTERS * 0.9 ? 'text-orange-500' : 'text-gray-500'}`}>
-                      {inputText.length} / {MAX_CHARACTERS} 文字
-                    </span>
-                    {inputText.length > MAX_CHARACTERS * 0.9 && (
-                      <span className="text-orange-500 text-xs">
-                        文字数制限に近づいています
-                      </span>
-                    )}
-                  </div>
+                  <Label htmlFor="project-type">タイプ</Label>
+                  <Select value={projectType} onValueChange={(value) => {
+                    setProjectType(value as ProjectType);
+                    // タイプ変更時に入力内容をクリア
+                    setInputText("");
+                    setSelectedFile(null);
+                    setResponse("");
+                  }}>
+                    <SelectTrigger id="project-type" className="w-full">
+                      <SelectValue placeholder="プロジェクトタイプを選択" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="message">メッセージ</SelectItem>
+                      <SelectItem value="picture">画像</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
               </CardContent>
             </Card>
+
+            {/* タイプに応じた入力セクション */}
+            {projectType === 'message' && (
+              <Card>
+                <CardHeader>
+                  <CardTitle>文字列入力</CardTitle>
+                  <CardDescription>Webページに表示させたい文字列を入力してください</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-2">
+                    <Input
+                      id="input-text"
+                      type="text"
+                      placeholder="文字列を入力してください..."
+                      value={inputText}
+                      onChange={(e) => setInputText(e.target.value)}
+                      maxLength={MAX_CHARACTERS}
+                      className="w-full"
+                    />
+                    <div className="flex justify-between items-center text-sm">
+                      <span className={`${inputText.length > MAX_CHARACTERS * 0.9 ? 'text-orange-500' : 'text-gray-500'}`}>
+                        {inputText.length} / {MAX_CHARACTERS} 文字
+                      </span>
+                      {inputText.length > MAX_CHARACTERS * 0.9 && (
+                        <span className="text-orange-500 text-xs">
+                          文字数制限に近づいています
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {projectType === 'picture' && (
+              <Card>
+                <CardHeader>
+                  <CardTitle>画像アップロード</CardTitle>
+                  <CardDescription>Webページに表示させたい画像をアップロードしてください（JPEG、PNG、GIF、WebP、最大10MB）</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-2">
+                    <Label htmlFor="file-input">画像ファイル</Label>
+                    <Input
+                      id="file-input"
+                      type="file"
+                      accept="image/jpeg,image/jpg,image/png,image/gif,image/webp"
+                      onChange={handleFileChange}
+                      className="w-full"
+                    />
+                    {selectedFile && (
+                      <div className="mt-4 p-4 bg-gray-50 rounded-lg">
+                        <p className="text-sm text-gray-700">
+                          <strong>選択されたファイル:</strong> {selectedFile.name}
+                        </p>
+                        <p className="text-sm text-gray-500">
+                          サイズ: {(selectedFile.size / 1024 / 1024).toFixed(2)} MB
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
 
             {/* 送信セクション */}
             <Card>
@@ -146,26 +267,18 @@ export default function CreatePage() {
                     <div className="pt-1">
                       <Button 
                         onClick={saveToDatabase}
-                        disabled={isLoading || !inputText.trim() || inputText.length > MAX_CHARACTERS}
+                        disabled={
+                          isLoading || 
+                          (projectType === 'message' && (!inputText.trim() || inputText.length > MAX_CHARACTERS)) ||
+                          (projectType === 'picture' && !selectedFile)
+                        }
                         className="w-full bg-purple-400 hover:bg-purple-500"
                       >
-                        {isLoading ? "保存中..." : "Webページを作成"}
+                        {isLoading ? "作成中..." : "Webページを作成"}
                       </Button>
                     </div>
                   
-                  {/* 保存データのプレビュー */}
-                  {/* {(inputText || randomString) && (
-                    <div className="p-4 bg-gray-50 rounded-lg">
-                      <h4 className="font-semibold mb-2">保存データ:</h4>
-                      <pre className="text-sm text-gray-700">
-                        {JSON.stringify({
-                          slug: randomString,
-                          message: inputText,
-                          expires_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
-                        }, null, 2)}
-                      </pre>
-                    </div>
-                  )} */}
+
                 </div>
               </CardContent>
             </Card>
