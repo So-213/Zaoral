@@ -9,7 +9,7 @@ import { deleteImageFromS3 } from '@/lib/s3';
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { slug, message, type, s3Key } = body;
+    const { slug, type } = body;
 
     // 認証チェック
     const authResult = await requireAuth();
@@ -22,20 +22,33 @@ export async function POST(request: NextRequest) {
     const slugValidation = validateRequired(slug, 'スラッグ');
     if (slugValidation) return slugValidation;
 
-    const projectType = type;
+    // プロジェクトタイプのバリデーション
+    const typeValidation = validateRequired(type, 'プロジェクトタイプ');
+    if (typeValidation) return typeValidation;
 
-    // タイプに応じたバリデーション
+    // 有効なプロジェクトタイプかチェック
+    const validTypes = ['message', 'picture'];
+    if (!validTypes.includes(type)) {
+      return NextResponse.json(
+        { error: `無効なプロジェクトタイプです。有効なタイプ: ${validTypes.join(', ')}` },
+        { status: 400 }
+      );
+    }
+
+    const projectType = type as 'message' | 'picture';
+
+    // タイプに応じたバリデーションとデータ取得
+    let message: string | undefined;
+    let s3Key: string | undefined;
+
     if (projectType === 'message') {
+      message = body.message;
       const messageValidation = validateRequired(message, 'メッセージ');
       if (messageValidation) return messageValidation;
     } else if (projectType === 'picture') {
+      s3Key = body.s3Key;
       const s3KeyValidation = validateRequired(s3Key, 'S3キー');
       if (s3KeyValidation) return s3KeyValidation;
-    } else {
-      return NextResponse.json(
-        { error: '無効なプロジェクトタイプです' },
-        { status: 400 }
-      );
     }
 
     // ユーザーのleft_projects（残機）を取得
@@ -117,38 +130,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(savedProject, { status: 201 });
   } catch (error) {
     return handleApiError(error, 'プロジェクト作成エラー', 'プロジェクトの作成に失敗しました');
-  }
-}
-
-export async function GET(request: NextRequest) {
-  try {
-    // 認証チェック
-    const authResult = await requireAuth();
-    if (authResult instanceof NextResponse) {
-      return authResult;
-    }
-    const { userId } = authResult;
-
-    // ユーザーのプロジェクトを取得
-    const userProjects = await prisma.project.findMany({
-      where: {
-        user_id: userId,
-        expires_at: {
-          gt: new Date(),
-        },
-      },
-      include: {
-        projectMessage: true,
-        projectPicture: true,
-      },
-      orderBy: {
-        created_at: 'desc',
-      },
-    });
-
-    return NextResponse.json({ projects: userProjects });
-  } catch (error) {
-    return handleApiError(error, 'プロジェクト取得エラー', 'プロジェクトの取得に失敗しました');
   }
 }
 
