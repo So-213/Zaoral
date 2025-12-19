@@ -5,7 +5,7 @@ variable "aws_region" {
 }
 
 variable "s3_bucket_name" {
-  description = "Name of the S3 bucket for project pictures"
+  description = "Name of the S3 bucket for projects_picture"
   type        = string
 }
 

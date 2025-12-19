@@ -20,17 +20,29 @@ export AWS_SECRET_ACCESS_KEY=your_secret_key
 export AWS_DEFAULT_REGION=ap-northeast-1
 ```
 
-### 2. 変数ファイルの作成
+### 2. 変数ファイルの選択
 
-`terraform.tfvars.example`をコピーして`terraform.tfvars`を作成し、値を設定してください：
+環境ごとに異なる変数ファイルが用意されています：
 
+- `terraform.tfvars.dev` - 開発環境用
+- `terraform.tfvars.prod` - 本番環境用
+- `terraform.tfvars.example` - テンプレート（参考用）
+
+**使用方法：**
+
+開発環境で適用する場合：
 ```bash
-cp terraform.tfvars.example terraform.tfvars
+terraform apply -var-file="terraform.tfvars.dev"
 ```
 
-`terraform.tfvars`ファイルを編集して、適切な値を設定してください。
+本番環境で適用する場合：
+```bash
+terraform apply -var-file="terraform.tfvars.prod"
+```
 
-**注意**: `terraform.tfvars`は`.gitignore`に含まれているため、機密情報を含めても安全です。
+**注意**: 
+- `*.tfvars`ファイルは`.gitignore`に含まれているため、機密情報を含めても安全です
+- 新しい環境を作成する場合は、`terraform.tfvars.example`をコピーして編集してください
 
 ### 3. Terraformの初期化
 
@@ -41,14 +53,26 @@ terraform init
 
 ### 4. 実行計画の確認
 
+開発環境の場合：
 ```bash
-terraform plan
+terraform plan -var-file="terraform.tfvars.dev"
+```
+
+本番環境の場合：
+```bash
+terraform plan -var-file="terraform.tfvars.prod"
 ```
 
 ### 5. リソースの作成
 
+開発環境の場合：
 ```bash
-terraform apply
+terraform apply -var-file="terraform.tfvars.dev"
+```
+
+本番環境の場合：
+```bash
+terraform apply -var-file="terraform.tfvars.prod"
 ```
 
 確認プロンプトで`yes`と入力すると、リソースが作成されます。
