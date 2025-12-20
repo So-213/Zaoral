@@ -163,7 +163,17 @@ export default function DashboardClient({ session, userProjects, leftProjects, u
                       <div className="flex-1">
                         <h3 className="font-medium text-gray-800 mb-1">
                           {project.name || `プロジェクト${userProjects.length - index}`}
-                        </h3>            
+                        </h3>
+                        <p className="text-sm text-gray-500 mb-2">
+                          {project.type === 'picture' 
+                            ? (project.name || 'プロジェクト名がありません')
+                            : (project.projectMessage?.message 
+                                ? (project.projectMessage.message.length > 50 
+                                    ? `${project.projectMessage.message.substring(0, 50)}...` 
+                                    : project.projectMessage.message)
+                                : 'メッセージがありません')
+                          }
+                        </p>                
                       </div>
                       <div className="ml-2">
                         <AlertDialog>

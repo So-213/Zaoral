@@ -158,9 +158,7 @@ export async function DELETE(request: NextRequest) {
       return ownershipResult;
     }
 
-    // プロジェクトを取得
-    // messageタイプ: SupabaseのProjectMessageテーブルに保存（Cascade削除で自動削除されるため特別な処理不要）
-    // pictureタイプ: S3に画像ファイル、SupabaseのProjectPictureテーブルにS3キーを保存（S3から削除が必要）
+    // pictureタイプは削除時にprojects_pictureのS3キーが必要な
     const project = await prisma.project.findUnique({
       where: { id: projectId! },
       include: {

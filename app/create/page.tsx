@@ -111,24 +111,24 @@ export default function CreatePage() {
         requestBody.message = inputText;
       } else if (projectType === 'picture') {
         // 画像をS3にアップロード
-        const formData = new FormData();
-        formData.append('image', selectedFile!);
+        // const formData = new FormData();
+        // formData.append('image', selectedFile!);
         
-        const uploadResponse = await fetch('/api/projects/upload', {
-          method: 'POST',
-          body: formData,
-        });
+        // const uploadResponse = await fetch('/api/projects/upload', {
+        //   method: 'POST',
+        //   body: formData,
+        // });
 
-        if (!uploadResponse.ok) {
-          const errorData = await uploadResponse.json().catch(() => ({}));
-          const errorMessage = errorData.error || '画像のアップロードに失敗しました';
-          toast.error(errorMessage);
-          setIsLoading(false);
-          return;
-        }
+        // if (!uploadResponse.ok) {
+        //   const errorData = await uploadResponse.json().catch(() => ({}));
+        //   const errorMessage = errorData.error || '画像のアップロードに失敗しました';
+        //   toast.error(errorMessage);
+        //   setIsLoading(false);
+        //   return;
+        // }
 
-        const uploadData = await uploadResponse.json();
-        requestBody.s3Key = uploadData.s3Key;
+        // const uploadData = await uploadResponse.json();
+        // requestBody.s3Key = uploadData.s3Key;
       }
 
       const response = await fetch('/api/projects', {
@@ -226,7 +226,7 @@ export default function CreatePage() {
                       <Input
                         id="project-name"
                         type="text"
-                        placeholder="プロジェクト名を入力してください..."
+                        placeholder="例：おたおめプロジェクト"
                         value={projectName}
                         onChange={(e) => setProjectName(e.target.value)}
                         maxLength={MAX_PROJECT_NAME_LENGTH}
@@ -255,7 +255,7 @@ export default function CreatePage() {
                       <Input
                         id="input-text"
                         type="text"
-                        placeholder="文字列を入力してください..."
+                        placeholder="例：おたおめ！！"
                         value={inputText}
                         onChange={(e) => setInputText(e.target.value)}
                         maxLength={MAX_CHARACTERS}
@@ -289,7 +289,7 @@ export default function CreatePage() {
                       <Input
                         id="project-name"
                         type="text"
-                        placeholder="プロジェクト名を入力してください..."
+                        placeholder="例：〇〇の写真"
                         value={projectName}
                         onChange={(e) => setProjectName(e.target.value)}
                         maxLength={MAX_PROJECT_NAME_LENGTH}
