@@ -18,6 +18,7 @@ export default function CreatePage() {
   const [projectType, setProjectType] = useState<ProjectType>("message");
   const [inputText, setInputText] = useState("");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [projectName, setProjectName] = useState("");
   const [randomString, setRandomString] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [response, setResponse] = useState("");
@@ -25,6 +26,7 @@ export default function CreatePage() {
   
   // 文字数制限（50文字）
   const MAX_CHARACTERS = 50;
+  const MAX_PROJECT_NAME_LENGTH = 30;
 
   // ランダム文字列を生成する関数（6文字、アルファベットと数字を含む）
   const generateRandomString = () => {
@@ -74,6 +76,14 @@ export default function CreatePage() {
         toast.error("画像ファイルを選択してください");
         return;
       }
+      if (!projectName.trim()) {
+        toast.error("プロジェクト名を入力してください");
+        return;
+      }
+      if (projectName.length > MAX_PROJECT_NAME_LENGTH) {
+        toast.error(`プロジェクト名が制限を超えています（${MAX_PROJECT_NAME_LENGTH}文字以内）`);
+        return;
+      }
     }
 
     // データ保存時に自動的にランダム文字列を生成
@@ -90,6 +100,8 @@ export default function CreatePage() {
 
       if (projectType === 'message') {
         requestBody.message = inputText;
+        // messageタイプの場合、nameはオプショナル（デフォルト: "message"）
+        requestBody.name = 'message';
       } else if (projectType === 'picture') {
         // 画像をS3にアップロード
         const formData = new FormData();
@@ -110,6 +122,7 @@ export default function CreatePage() {
 
         const uploadData = await uploadResponse.json();
         requestBody.s3Key = uploadData.s3Key;
+        requestBody.name = projectName;
       }
 
       const response = await fetch('/api/projects', {
@@ -179,6 +192,7 @@ export default function CreatePage() {
                     // タイプ変更時に入力内容をクリア
                     setInputText("");
                     setSelectedFile(null);
+                    setProjectName("");
                     setResponse("");
                   }}>
                     <SelectTrigger id="project-type" className="w-full">
@@ -227,34 +241,65 @@ export default function CreatePage() {
             )}
 
             {projectType === 'picture' && (
-              <Card>
-                <CardHeader>
-                  <CardTitle>画像アップロード</CardTitle>
-                  <CardDescription>Webページに表示させたい画像をアップロードしてください（JPEG、PNG、GIF、WebP、最大10MB）</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-2">
-                    <Label htmlFor="file-input">画像ファイル</Label>
-                    <Input
-                      id="file-input"
-                      type="file"
-                      accept="image/jpeg,image/jpg,image/png,image/gif,image/webp"
-                      onChange={handleFileChange}
-                      className="w-full"
-                    />
-                    {selectedFile && (
-                      <div className="mt-4 p-4 bg-gray-50 rounded-lg">
-                        <p className="text-sm text-gray-700">
-                          <strong>選択されたファイル:</strong> {selectedFile.name}
-                        </p>
-                        <p className="text-sm text-gray-500">
-                          サイズ: {(selectedFile.size / 1024 / 1024).toFixed(2)} MB
-                        </p>
+              <>
+                <Card>
+                  <CardHeader>
+                    <CardTitle>プロジェクト名</CardTitle>
+                    <CardDescription>プロジェクトを識別するための名前を入力してください</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-2">
+                      <Input
+                        id="project-name"
+                        type="text"
+                        placeholder="プロジェクト名を入力してください..."
+                        value={projectName}
+                        onChange={(e) => setProjectName(e.target.value)}
+                        maxLength={MAX_PROJECT_NAME_LENGTH}
+                        className="w-full"
+                      />
+                      <div className="flex justify-between items-center text-sm">
+                        <span className={`${projectName.length > MAX_PROJECT_NAME_LENGTH * 0.9 ? 'text-orange-500' : 'text-gray-500'}`}>
+                          {projectName.length} / {MAX_PROJECT_NAME_LENGTH} 文字
+                        </span>
+                        {projectName.length > MAX_PROJECT_NAME_LENGTH * 0.9 && (
+                          <span className="text-orange-500 text-xs">
+                            文字数制限に近づいています
+                          </span>
+                        )}
                       </div>
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
+                    </div>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardHeader>
+                    <CardTitle>画像アップロード</CardTitle>
+                    <CardDescription>Webページに表示させたい画像をアップロードしてください（JPEG、PNG、GIF、WebP、最大10MB）</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-2">
+                      <Label htmlFor="file-input">画像ファイル</Label>
+                      <Input
+                        id="file-input"
+                        type="file"
+                        accept="image/jpeg,image/jpg,image/png,image/gif,image/webp"
+                        onChange={handleFileChange}
+                        className="w-full"
+                      />
+                      {selectedFile && (
+                        <div className="mt-4 p-4 bg-gray-50 rounded-lg">
+                          <p className="text-sm text-gray-700">
+                            <strong>選択されたファイル:</strong> {selectedFile.name}
+                          </p>
+                          <p className="text-sm text-gray-500">
+                            サイズ: {(selectedFile.size / 1024 / 1024).toFixed(2)} MB
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              </>
             )}
 
             {/* 送信セクション */}
@@ -270,7 +315,7 @@ export default function CreatePage() {
                         disabled={
                           isLoading || 
                           (projectType === 'message' && (!inputText.trim() || inputText.length > MAX_CHARACTERS)) ||
-                          (projectType === 'picture' && !selectedFile)
+                          (projectType === 'picture' && (!selectedFile || !projectName.trim() || projectName.length > MAX_PROJECT_NAME_LENGTH))
                         }
                         className="w-full bg-purple-400 hover:bg-purple-500"
                       >

@@ -8,11 +8,15 @@ interface Project {
   id: string;
   created_at: string;
   expires_at: string;
-  published: boolean;
   user_id: string;
   slug: string;
+  type: string;
+  name?: string | null;
   projectMessage?: {
     message: string;
+  };
+  projectPicture?: {
+    s3_key: string;
   };
 }
 
@@ -47,6 +51,7 @@ export default async function DashboardPage() {
     },
     include: {
       projectMessage: true,
+      projectPicture: true,
     },
     orderBy: {
       created_at: 'desc',

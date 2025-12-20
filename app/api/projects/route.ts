@@ -9,7 +9,7 @@ import { deleteImageFromS3 } from '@/lib/s3';
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { slug, type } = body;
+    const { slug, type, name } = body;
 
     // 認証チェック
     const authResult = await requireAuth();
@@ -22,9 +22,11 @@ export async function POST(request: NextRequest) {
     const slugValidation = validateRequired(slug, 'スラッグ');
     if (slugValidation) return slugValidation;
 
-    // プロジェクトタイプのバリデーション
     const typeValidation = validateRequired(type, 'プロジェクトタイプ');
     if (typeValidation) return typeValidation;
+
+    const nameValidation = validateRequired(name, 'プロジェクト名');
+    if (nameValidation) return nameValidation;
 
     // 有効なプロジェクトタイプかチェック
     const validTypes = ['message', 'picture'];
@@ -87,6 +89,7 @@ export async function POST(request: NextRequest) {
         user_name: userName,
         type: projectType,
         slug,
+        name,
         expires_at: expiresAt,
       };
 
