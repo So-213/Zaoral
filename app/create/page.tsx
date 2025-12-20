@@ -62,6 +62,14 @@ export default function CreatePage() {
   const saveToDatabase = async () => {
     // タイプに応じたバリデーション
     if (projectType === 'message') {
+      if (!projectName.trim()) {
+        toast.error("プロジェクト名を入力してください");
+        return;
+      }
+      if (projectName.length > MAX_PROJECT_NAME_LENGTH) {
+        toast.error(`プロジェクト名が制限を超えています（${MAX_PROJECT_NAME_LENGTH}文字以内）`);
+        return;
+      }
       if (!inputText.trim()) {
         toast.error("文字列を入力してください");
         return;
@@ -96,12 +104,11 @@ export default function CreatePage() {
       let requestBody: any = {
         slug: newRandomString,
         type: projectType,
+        name: projectName,
       };
 
       if (projectType === 'message') {
         requestBody.message = inputText;
-        // messageタイプの場合、nameはオプショナル（デフォルト: "message"）
-        requestBody.name = 'message';
       } else if (projectType === 'picture') {
         // 画像をS3にアップロード
         const formData = new FormData();
@@ -122,7 +129,6 @@ export default function CreatePage() {
 
         const uploadData = await uploadResponse.json();
         requestBody.s3Key = uploadData.s3Key;
-        requestBody.name = projectName;
       }
 
       const response = await fetch('/api/projects', {
@@ -209,35 +215,66 @@ export default function CreatePage() {
 
             {/* タイプに応じた入力セクション */}
             {projectType === 'message' && (
-              <Card>
-                <CardHeader>
-                  <CardTitle>文字列入力</CardTitle>
-                  <CardDescription>Webページに表示させたい文字列を入力してください</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-2">
-                    <Input
-                      id="input-text"
-                      type="text"
-                      placeholder="文字列を入力してください..."
-                      value={inputText}
-                      onChange={(e) => setInputText(e.target.value)}
-                      maxLength={MAX_CHARACTERS}
-                      className="w-full"
-                    />
-                    <div className="flex justify-between items-center text-sm">
-                      <span className={`${inputText.length > MAX_CHARACTERS * 0.9 ? 'text-orange-500' : 'text-gray-500'}`}>
-                        {inputText.length} / {MAX_CHARACTERS} 文字
-                      </span>
-                      {inputText.length > MAX_CHARACTERS * 0.9 && (
-                        <span className="text-orange-500 text-xs">
-                          文字数制限に近づいています
+              <>
+                <Card>
+                  <CardHeader>
+                    <CardTitle>プロジェクト名</CardTitle>
+                    <CardDescription>プロジェクトを識別するための名前を入力してください</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-2">
+                      <Input
+                        id="project-name"
+                        type="text"
+                        placeholder="プロジェクト名を入力してください..."
+                        value={projectName}
+                        onChange={(e) => setProjectName(e.target.value)}
+                        maxLength={MAX_PROJECT_NAME_LENGTH}
+                        className="w-full"
+                      />
+                      <div className="flex justify-between items-center text-sm">
+                        <span className={`${projectName.length > MAX_PROJECT_NAME_LENGTH * 0.9 ? 'text-orange-500' : 'text-gray-500'}`}>
+                          {projectName.length} / {MAX_PROJECT_NAME_LENGTH} 文字
                         </span>
-                      )}
+                        {projectName.length > MAX_PROJECT_NAME_LENGTH * 0.9 && (
+                          <span className="text-orange-500 text-xs">
+                            文字数制限に近づいています
+                          </span>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                </CardContent>
-              </Card>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardHeader>
+                    <CardTitle>文字列入力</CardTitle>
+                    <CardDescription>Webページに表示させたい文字列を入力してください</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-2">
+                      <Input
+                        id="input-text"
+                        type="text"
+                        placeholder="文字列を入力してください..."
+                        value={inputText}
+                        onChange={(e) => setInputText(e.target.value)}
+                        maxLength={MAX_CHARACTERS}
+                        className="w-full"
+                      />
+                      <div className="flex justify-between items-center text-sm">
+                        <span className={`${inputText.length > MAX_CHARACTERS * 0.9 ? 'text-orange-500' : 'text-gray-500'}`}>
+                          {inputText.length} / {MAX_CHARACTERS} 文字
+                        </span>
+                        {inputText.length > MAX_CHARACTERS * 0.9 && (
+                          <span className="text-orange-500 text-xs">
+                            文字数制限に近づいています
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </>
             )}
 
             {projectType === 'picture' && (
@@ -314,7 +351,7 @@ export default function CreatePage() {
                         onClick={saveToDatabase}
                         disabled={
                           isLoading || 
-                          (projectType === 'message' && (!inputText.trim() || inputText.length > MAX_CHARACTERS)) ||
+                          (projectType === 'message' && (!projectName.trim() || projectName.length > MAX_PROJECT_NAME_LENGTH || !inputText.trim() || inputText.length > MAX_CHARACTERS)) ||
                           (projectType === 'picture' && (!selectedFile || !projectName.trim() || projectName.length > MAX_PROJECT_NAME_LENGTH))
                         }
                         className="w-full bg-purple-400 hover:bg-purple-500"
