@@ -13,3 +13,7 @@ override.tf.json
 .terraformrc
 terraform.rc
 
+# Environment variables
+.env
+.env.local
+.env.*.local

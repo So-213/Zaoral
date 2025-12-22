@@ -111,24 +111,24 @@ export default function CreatePage() {
         requestBody.message = inputText;
       } else if (projectType === 'picture') {
         // 画像をS3にアップロード
-        // const formData = new FormData();
-        // formData.append('image', selectedFile!);
+        const formData = new FormData();
+        formData.append('image', selectedFile!);
         
-        // const uploadResponse = await fetch('/api/projects/upload', {
-        //   method: 'POST',
-        //   body: formData,
-        // });
+        const uploadResponse = await fetch('/api/projects/upload', {
+          method: 'POST',
+          body: formData,
+        });
 
-        // if (!uploadResponse.ok) {
-        //   const errorData = await uploadResponse.json().catch(() => ({}));
-        //   const errorMessage = errorData.error || '画像のアップロードに失敗しました';
-        //   toast.error(errorMessage);
-        //   setIsLoading(false);
-        //   return;
-        // }
+        if (!uploadResponse.ok) {
+          const errorData = await uploadResponse.json().catch(() => ({}));
+          const errorMessage = errorData.error || '画像のアップロードに失敗しました';
+          toast.error(errorMessage);
+          setIsLoading(false);
+          return;
+        }
 
-        // const uploadData = await uploadResponse.json();
-        // requestBody.s3Key = uploadData.s3Key;
+        const uploadData = await uploadResponse.json();
+        requestBody.s3Key = uploadData.s3Key;
       }
 
       const response = await fetch('/api/projects', {
