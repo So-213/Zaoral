@@ -1,4 +1,11 @@
 export default function DebugPage() {
+  // AWS認証情報の最初の数文字を表示（セキュリティのため）
+  const maskKey = (key: string | undefined) => {
+    if (!key) return '未設定';
+    if (key.length <= 8) return key.substring(0, 4) + '****';
+    return key.substring(0, 8) + '...';
+  };
+
   const envVars = {
     NODE_ENV: process.env.NODE_ENV,
     AUTH_GOOGLE_CLIENT_ID: process.env.AUTH_GOOGLE_CLIENT_ID ? '設定済み' : '未設定',
@@ -8,6 +15,11 @@ export default function DebugPage() {
     NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET ? '設定済み' : '未設定',
     DATABASE_URL: process.env.DATABASE_URL ? '設定済み' : '未設定',
     DIRECT_URL: process.env.DIRECT_URL ? '設定済み' : '未設定',
+    // AWS認証情報
+    AWS_ACCESS_KEY_ID: maskKey(process.env.AWS_ACCESS_KEY_ID),
+    AWS_SECRET_ACCESS_KEY: process.env.AWS_SECRET_ACCESS_KEY ? '設定済み' : '未設定',
+    AWS_REGION: process.env.AWS_REGION || '未設定',
+    S3_BUCKET_NAME: process.env.S3_BUCKET_NAME || '未設定',
   };
 
   return (
@@ -37,7 +49,21 @@ export default function DebugPage() {
               <li>• NEXTAUTH_SECRET: NextAuthのシークレットキー</li>
               <li>• DATABASE_URL: Prismaのデータベース接続URL</li>
               <li>• DIRECT_URL: Prismaの直接接続URL（Vercel用）</li>
+              <li>• AWS_ACCESS_KEY_ID: dev-zaoral-app-runtimeユーザーのアクセスキーID</li>
+              <li>• AWS_SECRET_ACCESS_KEY: dev-zaoral-app-runtimeユーザーのシークレットアクセスキー</li>
+              <li>• AWS_REGION: AWSリージョン（例: ap-northeast-1）</li>
+              <li>• S3_BUCKET_NAME: S3バケット名</li>
             </ul>
+          </div>
+          
+          <div className="mt-4 p-4 bg-yellow-50 rounded-lg">
+            <h2 className="font-semibold text-yellow-800 mb-2">⚠️ AWS認証情報の確認</h2>
+            <p className="text-sm text-yellow-700 mb-2">
+              <code className="bg-yellow-100 px-2 py-1 rounded">dev-zaoral-app-runtime</code> ユーザーの認証情報を使用していることを確認してください。
+            </p>
+            <p className="text-sm text-yellow-700">
+              Terraformの出力から取得: <code className="bg-yellow-100 px-2 py-1 rounded">cd terraform && terraform output runtime_access_key_id</code>
+            </p>
           </div>
         </div>
       </div>

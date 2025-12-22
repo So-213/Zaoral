@@ -1,13 +1,37 @@
 import { S3Client, PutObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3';
 
-// S3クライアントの初期化
-const s3Client = new S3Client({
-  region: process.env.AWS_REGION || 'ap-northeast-1',
-  credentials: {
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
-  },
-});
+// S3クライアントを取得する関数（環境変数の変更に対応）
+function getS3Client() {
+  // #region agent log
+  fetch('http://127.0.0.1:7243/ingest/fd387f13-f7cb-4376-8e9e-8890c8da3bd0',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'lib/s3.ts:4',message:'getS3Client called',data:{hasProcessEnv:!!process.env,envKeys:Object.keys(process.env).filter(k=>k.includes('AWS')).join(',')},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
+  // #endregion
+
+  // 環境変数から明示的に認証情報を取得
+  const rawAccessKeyId = process.env.AWS_ACCESS_KEY_ID;
+  const rawSecretAccessKey = process.env.AWS_SECRET_ACCESS_KEY;
+  const rawRegion = process.env.AWS_REGION;
+
+  // #region agent log
+  fetch('http://127.0.0.1:7243/ingest/fd387f13-f7cb-4376-8e9e-8890c8da3bd0',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'lib/s3.ts:10',message:'Raw env values before trim',data:{rawAccessKeyId:rawAccessKeyId||'undefined',rawAccessKeyIdLength:rawAccessKeyId?.length||0,rawAccessKeyIdType:typeof rawAccessKeyId,hasRawSecret:!!rawSecretAccessKey,rawRegion:rawRegion||'undefined'},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
+  // #endregion
+
+  const accessKeyId = rawAccessKeyId?.trim();
+  const secretAccessKey = rawSecretAccessKey?.trim();
+  const region = (rawRegion || 'ap-northeast-1').trim();
+
+  if (!accessKeyId || !secretAccessKey) {
+    throw new Error('AWS認証情報が設定されていません。AWS_ACCESS_KEY_IDとAWS_SECRET_ACCESS_KEYを確認してください。');
+  }
+
+  // 認証情報を明示的に指定（AWS SDKのデフォルト認証情報チェーンは使用されない）
+  return new S3Client({
+    region,
+    credentials: {
+      accessKeyId,
+      secretAccessKey,
+    },
+  });
+}
 
 const BUCKET_NAME = process.env.S3_BUCKET_NAME!;
 
@@ -34,6 +58,7 @@ export async function uploadImageToS3(
   const objectKey = `pictures/${timestamp}/${uuid}.${extension}`;
 
   try {
+    const s3Client = getS3Client();
     const command = new PutObjectCommand({
       Bucket: BUCKET_NAME,
       Key: objectKey,
@@ -60,6 +85,7 @@ export async function deleteImageFromS3(objectKey: string): Promise<void> {
   }
 
   try {
+    const s3Client = getS3Client();
     const command = new DeleteObjectCommand({
       Bucket: BUCKET_NAME,
       Key: objectKey,

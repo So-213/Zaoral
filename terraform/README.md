@@ -95,6 +95,21 @@ terraform apply -var-file="terraform.tfvars.prod"
 - `s3_bucket_arn`: S3バケットのARN
 - `s3_bucket_domain_name`: S3バケットのドメイン名
 - `iam_policy_arn`: IAMポリシーのARN
+- `runtime_user_name`: IAMユーザー名（例: `dev-zaoral-app-runtime`）
+- `runtime_access_key_id`: アクセスキーID（アプリケーションの環境変数に設定）
+- `runtime_secret_access_key`: シークレットアクセスキー（アプリケーションの環境変数に設定）
+
+### 環境変数の設定
+
+アプリケーションの環境変数（`.env.local` または `.env`）に以下を設定してください：
+
+```bash
+# Terraformの出力から取得した値を設定
+AWS_ACCESS_KEY_ID=<runtime_access_key_id>
+AWS_SECRET_ACCESS_KEY=<runtime_secret_access_key>
+AWS_REGION=ap-northeast-1
+S3_BUCKET_NAME=<s3_bucket_name>
+```
 
 これらの値は、アプリケーションの環境変数に設定する必要があります。
 
