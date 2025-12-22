@@ -21,3 +21,9 @@ variable "allowed_origins" {
   default     = ["*"]
 }
 
+variable "iam_user_name" {
+  description = "IAM user name to attach the S3 upload policy"
+  type        = string
+  default     = "zaoral-app"
+}
+

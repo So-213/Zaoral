@@ -14,7 +14,8 @@ provider "aws" {
 }
 
 # S3バケット（画像アップロード用）
-resource "aws_s3_bucket" "project_pictures" {
+# "project_pictures"は Terraform の内部識別子（AWS上の実際のバケット名とは別）
+resource "aws_s3_bucket" "project_pictures" { 
   bucket = var.s3_bucket_name
 
   tags = {
@@ -119,5 +120,30 @@ resource "aws_iam_policy" "s3_upload_policy" {
       }
     ]
   })
+}
+
+# IAMユーザー（アプリケーション実行用）
+resource "aws_iam_user" "runtime_user" {
+  name = "${var.environment}-zaoral-app-runtime"
+  path = "/"
+
+  tags = {
+    Name        = "Zaoral App Runtime User"
+    Environment = var.environment
+    Project     = "zaoral"
+    Purpose     = "Application runtime access"
+  }
+}
+
+# IAMポリシーをランタイムユーザーにアタッチ
+resource "aws_iam_user_policy_attachment" "s3_upload_policy_attachment" {
+  user       = aws_iam_user.runtime_user.name
+  policy_arn = aws_iam_policy.s3_upload_policy.arn
+}
+
+# アクセスキー（アプリケーション用）
+# 注意: シークレットアクセスキーは一度だけ表示されます
+resource "aws_iam_access_key" "runtime_user_key" {
+  user = aws_iam_user.runtime_user.name
 }
 
