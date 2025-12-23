@@ -2,7 +2,8 @@ import Link from "next/link";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import DashboardClient from "@/components/DashboardClient";
-import { DEFAULT_LEFT_PROJECTS } from "@/lib/config";
+import { DEFAULT_LEFT_PROJECTS, generateProjectUrl } from "@/lib/config";
+import { getS3PublicUrl } from "@/lib/s3";
 
 interface Project {
   id: string;
@@ -12,6 +13,7 @@ interface Project {
   slug: string;
   type: string;
   name?: string | null;
+  url: string; // プロジェクトのURL（messageの場合はgenerateProjectUrl、pictureの場合はS3のURL）
   projectMessage?: {
     message: string;
   };
@@ -45,7 +47,7 @@ export default async function DashboardPage() {
   });
 
   // プロジェクトデータをサーバー側で取得
-  const userProjects = await prisma.project.findMany({
+  const rawProjects = await prisma.project.findMany({
     where: {
       user_id: session.user.id,
     },
@@ -56,6 +58,21 @@ export default async function DashboardPage() {
     orderBy: {
       created_at: 'desc',
     },
+  });
+
+  // プロジェクトタイプに応じてURLを生成
+  const userProjects: Project[] = rawProjects.map((project) => {
+    let url: string;
+    if (project.type === 'picture' && project.projectPicture?.s3_key) {
+      url = getS3PublicUrl(project.projectPicture.s3_key);
+    } else {
+      url = generateProjectUrl(project.slug);
+    }
+    
+    return {
+      ...project,
+      url,
+    };
   });
 
   // 統計情報を計算（残機を取得）

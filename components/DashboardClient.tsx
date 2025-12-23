@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { generateProjectUrl, DEFAULT_LEFT_PROJECTS } from "@/lib/config";
+import { DEFAULT_LEFT_PROJECTS } from "@/lib/config";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -25,6 +25,7 @@ interface Project {
   slug: string;
   type: string;
   name?: string | null;
+  url: string; // プロジェクトのURL（サーバーサイドで生成済み）
   projectMessage?: {
     message: string;
   } | null;
@@ -267,7 +268,7 @@ export default function DashboardClient({ session, userProjects, leftProjects, u
                             <button
                               onClick={(e) => {
                                 e.stopPropagation();
-                                navigator.clipboard.writeText(generateProjectUrl(selectedProject.slug));
+                                navigator.clipboard.writeText(selectedProject.url);
                               }}
                               className="px-3 py-1 text-sm bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
                             >
@@ -275,13 +276,13 @@ export default function DashboardClient({ session, userProjects, leftProjects, u
                             </button>
                           </div>
                           <a
-                            href={generateProjectUrl(selectedProject.slug)}
+                            href={selectedProject.url}
                             target="_blank"
                             rel="noopener noreferrer"
                             onClick={(e) => e.stopPropagation()}
                             className="block text-sm text-gray-600 bg-gray-50 p-3 rounded-lg border border-gray-200 hover:bg-gray-100 transition-colors cursor-pointer"
                           >
-                            {generateProjectUrl(selectedProject.slug)}
+                            {selectedProject.url}
                           </a>
                         </div>
                       </div>
