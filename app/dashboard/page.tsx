@@ -2,17 +2,23 @@ import Link from "next/link";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import DashboardClient from "@/components/DashboardClient";
-import { DEFAULT_LEFT_PROJECTS } from "@/lib/config";
+import { DEFAULT_LEFT_PROJECTS, generateProjectUrl } from "@/lib/config";
+import { getS3PublicUrl } from "@/lib/s3";
 
 interface Project {
   id: string;
   created_at: string;
   expires_at: string;
-  published: boolean;
   user_id: string;
   slug: string;
+  type: string;
+  name?: string | null;
+  url: string; // プロジェクトのURL（messageの場合はgenerateProjectUrl、pictureの場合はS3のURL）
   projectMessage?: {
     message: string;
+  };
+  projectPicture?: {
+    s3_key: string;
   };
 }
 
@@ -35,23 +41,38 @@ export default async function DashboardPage() {
     );
   }
 
-//ここ高速化したい
   // ユーザー情報を取得（project_limitを含む）
   const user = await prisma.user.findUnique({
     where: { id: session.user.id },
   });
 
   // プロジェクトデータをサーバー側で取得
-  const userProjects = await prisma.project.findMany({
+  const rawProjects = await prisma.project.findMany({
     where: {
       user_id: session.user.id,
     },
     include: {
       projectMessage: true,
+      projectPicture: true,
     },
     orderBy: {
       created_at: 'desc',
     },
+  });
+
+  // プロジェクトタイプに応じてURLを生成
+  const userProjects: Project[] = rawProjects.map((project) => {
+    let url: string;
+    if (project.type === 'picture' && project.projectPicture?.s3_key) {
+      url = getS3PublicUrl(project.projectPicture.s3_key);
+    } else {
+      url = generateProjectUrl(project.slug);
+    }
+    
+    return {
+      ...project,
+      url,
+    };
   });
 
   // 統計情報を計算（残機を取得）

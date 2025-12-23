@@ -16,8 +16,8 @@ datasource db {
 
 enum ProjectType {
   message
+  picture
   // 将来的に他のタイプを追加可能
-  // image
   // video
   // document
 }
@@ -112,12 +112,14 @@ model Project {
   user_name   String
   type        ProjectType @default(message)
   slug        String      @unique
+  name        String?     // プロジェクト名
   created_at  DateTime    @default(now())
   expires_at  DateTime
   
   // Relations
   user        User        @relation(fields: [user_id], references: [id], onDelete: Cascade)
   projectMessage ProjectMessage?
+  projectPicture ProjectPicture?
 
   @@index([user_id, created_at(sort: Desc)], map: "idx_projects_user_created")
   @@map("projects")
@@ -130,4 +132,13 @@ model ProjectMessage {
 
   project     Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
   @@map("projects_message")
+}
+
+// 子テーブル（picture タイプ専用属性）
+model ProjectPicture {
+  projectId   String  @id @map("project_id")
+  s3_key      String  // S3のオブジェクトキー（パス）
+
+  project     Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  @@map("projects_picture")
 }

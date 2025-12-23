@@ -26,11 +26,12 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# prisma
-/prisma/migrations/
-
 # from Author
 /app/fromAuthor/
 
 # scripts
 /scripts
+
+# terraform
+terraform/*.tfvars
+!terraform/terraform.tfvars.example

@@ -2,13 +2,14 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { requireAuth, handleApiError, validateRequired, checkProjectOwnership } from '@/lib/api-helpers';
 import { DEFAULT_LEFT_PROJECTS } from '@/lib/config';
+import { deleteImageFromS3 } from '@/lib/s3';
 
 
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { slug, message } = body;
+    const { slug, type, name } = body;
 
     // 認証チェック
     const authResult = await requireAuth();
@@ -21,8 +22,36 @@ export async function POST(request: NextRequest) {
     const slugValidation = validateRequired(slug, 'スラッグ');
     if (slugValidation) return slugValidation;
 
-    const messageValidation = validateRequired(message, 'メッセージ');
-    if (messageValidation) return messageValidation;
+    const typeValidation = validateRequired(type, 'プロジェクトタイプ');
+    if (typeValidation) return typeValidation;
+
+    const nameValidation = validateRequired(name, 'プロジェクト名');
+    if (nameValidation) return nameValidation;
+
+    // 有効なプロジェクトタイプかチェック
+    const validTypes = ['message', 'picture'];
+    if (!validTypes.includes(type)) {
+      return NextResponse.json(
+        { error: `無効なプロジェクトタイプです。有効なタイプ: ${validTypes.join(', ')}` },
+        { status: 400 }
+      );
+    }
+
+    const projectType = type as 'message' | 'picture';
+
+    // タイプに応じたバリデーションとデータ取得
+    let message: string | undefined;
+    let s3Key: string | undefined;
+
+    if (projectType === 'message') {
+      message = body.message;
+      const messageValidation = validateRequired(message, 'メッセージ');
+      if (messageValidation) return messageValidation;
+    } else if (projectType === 'picture') {
+      s3Key = body.s3Key;
+      const s3KeyValidation = validateRequired(s3Key, 'S3キー');
+      if (s3KeyValidation) return s3KeyValidation;
+    }
 
     // ユーザーのleft_projects（残機）を取得
     const user = await prisma.user.findUnique({
@@ -55,22 +84,35 @@ export async function POST(request: NextRequest) {
     // トランザクションでプロジェクト作成と残機減算を同時に実行
     const savedProject = await prisma.$transaction(async (tx) => {
       // プロジェクトを作成
-      const project = await tx.project.create({
-        data: {
-          user_id: userId,
-          user_name: userName,
-          type: 'message', // 明示的に指定
-          slug,
-          expires_at: expiresAt,
-          published: false,
-          projectMessage: {
-            create: {
-              message: message,
-            },
+      const projectData: any = {
+        user_id: userId,
+        user_name: userName,
+        type: projectType,
+        slug,
+        name,
+        expires_at: expiresAt,
+      };
+
+      // タイプに応じて関連データを作成
+      if (projectType === 'message') {
+        projectData.projectMessage = {
+          create: {
+            message: message,
           },
-        },
+        };
+      } else if (projectType === 'picture') {
+        projectData.projectPicture = {
+          create: {
+            s3_key: s3Key,
+          },
+        };
+      }
+
+      const project = await tx.project.create({
+        data: projectData,
         include: {
           projectMessage: true,
+          projectPicture: true,
         },
       });
 
@@ -91,37 +133,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(savedProject, { status: 201 });
   } catch (error) {
     return handleApiError(error, 'プロジェクト作成エラー', 'プロジェクトの作成に失敗しました');
-  }
-}
-
-export async function GET(request: NextRequest) {
-  try {
-    // 認証チェック
-    const authResult = await requireAuth();
-    if (authResult instanceof NextResponse) {
-      return authResult;
-    }
-    const { userId } = authResult;
-
-    // ユーザーのプロジェクトを取得
-    const userProjects = await prisma.project.findMany({
-      where: {
-        user_id: userId,
-        expires_at: {
-          gt: new Date(),
-        },
-      },
-      include: {
-        projectMessage: true,
-      },
-      orderBy: {
-        created_at: 'desc',
-      },
-    });
-
-    return NextResponse.json({ projects: userProjects });
-  } catch (error) {
-    return handleApiError(error, 'プロジェクト取得エラー', 'プロジェクトの取得に失敗しました');
   }
 }
 
@@ -147,7 +158,28 @@ export async function DELETE(request: NextRequest) {
       return ownershipResult;
     }
 
-    // プロジェクトを削除（Cascadeにより関連するProjectMessageも削除される）
+    // pictureタイプは削除時にprojects_pictureのS3キーが必要な
+    const project = await prisma.project.findUnique({
+      where: { id: projectId! },
+      include: {
+        projectPicture: true, // プロジェクトに紐づけられているprojectPictureレコードがあればそれを取得
+      },
+    });
+
+    if (!project) {
+      return NextResponse.json(
+        { error: 'プロジェクトが見つかりません' },
+        { status: 404 }
+      );
+    }
+
+    // pictureタイプの場合はS3から画像を削除
+    // messageタイプの場合はSupabaseのみなので特別な処理不要（Cascade削除で自動削除される）
+    if ((project.type as string) === 'picture' && project.projectPicture?.s3_key) {
+      await deleteImageFromS3(project.projectPicture.s3_key);
+    }
+
+    // プロジェクトを削除（Cascadeにより関連するProjectMessage/ProjectPictureも削除される）
     await prisma.project.delete({
       where: {
         id: projectId!,

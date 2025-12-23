@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { generateProjectUrl, DEFAULT_LEFT_PROJECTS } from "@/lib/config";
+import { DEFAULT_LEFT_PROJECTS } from "@/lib/config";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -21,11 +21,16 @@ interface Project {
   id: string;
   created_at: Date;
   expires_at: Date;
-  published: boolean;
   user_id: string;
   slug: string;
+  type: string;
+  name?: string | null;
+  url: string; // プロジェクトのURL（サーバーサイドで生成済み）
   projectMessage?: {
     message: string;
+  } | null;
+  projectPicture?: {
+    s3_key: string;
   } | null;
 }
 
@@ -158,16 +163,18 @@ export default function DashboardClient({ session, userProjects, leftProjects, u
                     <div className="flex justify-between items-start">
                       <div className="flex-1">
                         <h3 className="font-medium text-gray-800 mb-1">
-                          プロジェクト{userProjects.length - index}
+                          {project.name || `プロジェクト${userProjects.length - index}`}
                         </h3>
                         <p className="text-sm text-gray-500 mb-2">
-                          {project.projectMessage?.message 
-                            ? (project.projectMessage.message.length > 50 
-                                ? `${project.projectMessage.message.substring(0, 50)}...` 
-                                : project.projectMessage.message)
-                            : 'メッセージがありません'
+                          {project.type === 'picture' 
+                            ? (project.name || 'プロジェクト名がありません')
+                            : (project.projectMessage?.message 
+                                ? (project.projectMessage.message.length > 50 
+                                    ? `${project.projectMessage.message.substring(0, 50)}...` 
+                                    : project.projectMessage.message)
+                                : 'メッセージがありません')
                           }
-                        </p>                     
+                        </p>                
                       </div>
                       <div className="ml-2">
                         <AlertDialog>
@@ -216,12 +223,29 @@ export default function DashboardClient({ session, userProjects, leftProjects, u
                   {selectedProject?.id === project.id && (
                     <div className="border-t border-blue-300 px-4 pb-4 pt-4 mt-2">
                       <div className="space-y-4">
-                        <div>
-                          <h4 className="font-medium text-gray-700 mb-2">メッセージ</h4>
-                          <p className="text-gray-600 bg-gray-50 p-3 rounded-lg">
-                            {selectedProject.projectMessage?.message || 'メッセージがありません'}
-                          </p>
-                        </div>
+                        {selectedProject.type === 'picture' ? (
+                          <div>
+                            <h4 className="font-medium text-gray-700 mb-2">プロジェクト名</h4>
+                            <p className="text-gray-600 bg-gray-50 p-3 rounded-lg">
+                              {selectedProject.name || 'プロジェクト名がありません'}
+                            </p>
+                          </div>
+                        ) : (
+                          <>
+                            <div>
+                              <h4 className="font-medium text-gray-700 mb-2">プロジェクト名</h4>
+                              <p className="text-gray-600 bg-gray-50 p-3 rounded-lg">
+                                {selectedProject.name || 'プロジェクト名がありません'}
+                              </p>
+                            </div>
+                            <div>
+                              <h4 className="font-medium text-gray-700 mb-2">メッセージ</h4>
+                              <p className="text-gray-600 bg-gray-50 p-3 rounded-lg">
+                                {selectedProject.projectMessage?.message || 'メッセージがありません'}
+                              </p>
+                            </div>
+                          </>
+                        )}
                         
                         <div className="grid grid-cols-2 gap-4">
                           <div>
@@ -244,7 +268,7 @@ export default function DashboardClient({ session, userProjects, leftProjects, u
                             <button
                               onClick={(e) => {
                                 e.stopPropagation();
-                                navigator.clipboard.writeText(generateProjectUrl(selectedProject.slug));
+                                navigator.clipboard.writeText(selectedProject.url);
                               }}
                               className="px-3 py-1 text-sm bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
                             >
@@ -252,13 +276,13 @@ export default function DashboardClient({ session, userProjects, leftProjects, u
                             </button>
                           </div>
                           <a
-                            href={generateProjectUrl(selectedProject.slug)}
+                            href={selectedProject.url}
                             target="_blank"
                             rel="noopener noreferrer"
                             onClick={(e) => e.stopPropagation()}
                             className="block text-sm text-gray-600 bg-gray-50 p-3 rounded-lg border border-gray-200 hover:bg-gray-100 transition-colors cursor-pointer"
                           >
-                            {generateProjectUrl(selectedProject.slug)}
+                            {selectedProject.url}
                           </a>
                         </div>
                       </div>

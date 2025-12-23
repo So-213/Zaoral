@@ -1,0 +1,14 @@
+# AWS設定
+aws_region = "ap-northeast-1"
+
+# S3バケット名（グローバルで一意である必要があります）
+s3_bucket_name = "zaoral-project-pictures-prod"
+
+# 環境名
+environment = "prod"
+
+# CORS許可オリジン（本番環境では適切なドメインを指定してください）
+allowed_origins = [
+  "https://zaoral.vercel.app"
+]
+
