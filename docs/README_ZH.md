@@ -17,25 +17,29 @@ Zaoral 是一款应用程序，可以将您的消息转化为网页，用于重�
 ## 功能
 
 - **用户认证**：通过Google OAuth登录
-- **消息创建**：简单的消息创建和发布功能
+- **项目创建**：上传消息或图片到网络
 - **项目管理**：在仪表板中查看和删除创建的项目
 
-※ 详细信息，请参阅[需求文档](https://github.com/So-213/Zaoral/blob/master/%E8%A6%81%E4%BB%B6%E5%AE%9A%E7%BE%A9%E6%9B%B8.md)和[详细设计文档](https://github.com/So-213/Zaoral/blob/master/%E8%A9%B3%E7%B4%B0%E8%A8%AD%E8%A8%88%E6%9B%B8.md)
+※ 详细信息，请参阅[需求文档](要件定義書.md)和[详细设计文档](詳細設計書.md)
 
 ## 应用截图
 
+<img src="../public/home.PNG" alt="home" width="33%" />
+
 **主页画面**
-<img src="./public/home.PNG" alt="home" width="33%" />
+
+<img src="../public/d0.PNG" alt="dashboard0" width="33%" />
 
 **空仪表板**
-<img src="./public/d0.PNG" alt="dashboard0" width="33%" />
+
+<img src="../public/wc.PNG" alt="webpagecreate" width="33%" />
 
 **消息创建画面**
-<img src="./public/wc.PNG" alt="webpagecreate" width="33%" />
+
+<img src="../public/wp.PNG" alt="webpage" width="33%" />
 
 **已发布消息画面**
-<img src="./public/wp.PNG" alt="webpage" width="33%" />
+
+<img src="../public/d1.PNG" alt="dashboard1" width="33%" />
 
 **仪表板画面**
-<img src="./public/d1.PNG" alt="dashboard1" width="33%" />
-

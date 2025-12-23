@@ -1,6 +1,6 @@
 # Zaoral 
 
-[English](README_EN.md) | [中文](README_ZH.md)
+[English](docs/README_EN.md) | [中文](docs/README_ZH.md)
 
 <img src="./public/Zaoral_README.png" alt="Zaoral" width="70%" />
 
@@ -20,10 +20,10 @@
 ## 機能
 
 - **ユーザ認証**: Google OAuthによるログイン
-- **メッセージ作成**: 簡単なメッセージ作成と公開機能
+- **プロジェクト作成**: メッセージや写真をWeb上へアップロード
 - **プロジェクト管理**: ダッシュボードにて作成したプロジェクトの確認/削除
 
-※ 詳細は[要件定義書](https://github.com/So-213/Zaoral/blob/master/%E8%A6%81%E4%BB%B6%E5%AE%9A%E7%BE%A9%E6%9B%B8.md)及び[詳細設計書](https://github.com/So-213/Zaoral/blob/master/%E8%A9%B3%E7%B4%B0%E8%A8%AD%E8%A8%88%E6%9B%B8.md)参照
+※ 詳細は[要件定義書](docs/要件定義書.md)及び[詳細設計書](docs/詳細設計書.md)参照
 
 
 ## アプリの様子
