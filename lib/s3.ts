@@ -64,7 +64,7 @@ export async function uploadImageToS3(
       Key: objectKey,
       Body: fileBuffer,
       ContentType: contentType,
-      ACL: 'public-read', // 画像は公開読み取り可能
+      // ACLは削除（バケットポリシーで公開アクセスを制御）
     });
 
     await s3Client.send(command);
