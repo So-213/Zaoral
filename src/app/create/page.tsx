@@ -38,25 +38,25 @@ export default function CreatePage() {
     return result;
   };
 
-  // ファイル選択ハンドラー
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      // ファイルタイプの検証
-      const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
-      if (!allowedTypes.includes(file.type)) {
-        toast.error('サポートされていない画像形式です。JPEG、PNG、GIF、WebPのみ対応しています。');
-        return;
-      }
-      // ファイルサイズの検証（10MBまで）
-      const maxSize = 10 * 1024 * 1024; // 10MB
-      if (file.size > maxSize) {
-        toast.error('画像サイズが大きすぎます。10MB以下にしてください。');
-        return;
-      }
-      setSelectedFile(file);
-    }
-  };
+  // ファイル選択ハンドラー（picture型廃止のため無効化）
+  // const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   const file = e.target.files?.[0];
+  //   if (file) {
+  //     // ファイルタイプの検証
+  //     const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+  //     if (!allowedTypes.includes(file.type)) {
+  //       toast.error('サポートされていない画像形式です。JPEG、PNG、GIF、WebPのみ対応しています。');
+  //       return;
+  //     }
+  //     // ファイルサイズの検証（10MBまで）
+  //     const maxSize = 10 * 1024 * 1024; // 10MB
+  //     if (file.size > maxSize) {
+  //       toast.error('画像サイズが大きすぎます。10MB以下にしてください。');
+  //       return;
+  //     }
+  //     setSelectedFile(file);
+  //   }
+  // };
 
   // プロジェクトを作成する関数
   const saveToDatabase = async () => {
@@ -79,20 +79,22 @@ export default function CreatePage() {
         toast.error(`文字数が制限を超えています（${MAX_CHARACTERS}文字以内）`);
         return;
       }
-    } else if (projectType === 'picture') {
-      if (!selectedFile) {
-        toast.error("画像ファイルを選択してください");
-        return;
-      }
-      if (!projectName.trim()) {
-        toast.error("プロジェクト名を入力してください");
-        return;
-      }
-      if (projectName.length > MAX_PROJECT_NAME_LENGTH) {
-        toast.error(`プロジェクト名が制限を超えています（${MAX_PROJECT_NAME_LENGTH}文字以内）`);
-        return;
-      }
     }
+    // picture型は廃止のため無効化
+    // else if (projectType === 'picture') {
+    //   if (!selectedFile) {
+    //     toast.error("画像ファイルを選択してください");
+    //     return;
+    //   }
+    //   if (!projectName.trim()) {
+    //     toast.error("プロジェクト名を入力してください");
+    //     return;
+    //   }
+    //   if (projectName.length > MAX_PROJECT_NAME_LENGTH) {
+    //     toast.error(`プロジェクト名が制限を超えています（${MAX_PROJECT_NAME_LENGTH}文字以内）`);
+    //     return;
+    //   }
+    // }
 
     // データ保存時に自動的にランダム文字列を生成
     const newRandomString = generateRandomString();
@@ -109,27 +111,29 @@ export default function CreatePage() {
 
       if (projectType === 'message') {
         requestBody.message = inputText;
-      } else if (projectType === 'picture') {
-        // 画像をS3にアップロード
-        const formData = new FormData();
-        formData.append('image', selectedFile!);
-        
-        const uploadResponse = await fetch('/api/projects/upload', {
-          method: 'POST',
-          body: formData,
-        });
-
-        if (!uploadResponse.ok) {
-          const errorData = await uploadResponse.json().catch(() => ({}));
-          const errorMessage = errorData.error || '画像のアップロードに失敗しました';
-          toast.error(errorMessage);
-          setIsLoading(false);
-          return;
-        }
-
-        const uploadData = await uploadResponse.json();
-        requestBody.s3Key = uploadData.s3Key;
       }
+      // picture型は廃止のため無効化
+      // else if (projectType === 'picture') {
+      //   // 画像をS3にアップロード
+      //   const formData = new FormData();
+      //   formData.append('image', selectedFile!);
+      //   
+      //   const uploadResponse = await fetch('/api/projects/upload', {
+      //     method: 'POST',
+      //     body: formData,
+      //   });
+
+      //   if (!uploadResponse.ok) {
+      //     const errorData = await uploadResponse.json().catch(() => ({}));
+      //     const errorMessage = errorData.error || '画像のアップロードに失敗しました';
+      //     toast.error(errorMessage);
+      //     setIsLoading(false);
+      //     return;
+      //   }
+
+      //   const uploadData = await uploadResponse.json();
+      //   requestBody.s3Key = uploadData.s3Key;
+      // }
 
       const response = await fetch('/api/projects', {
         method: 'POST',
@@ -194,6 +198,11 @@ export default function CreatePage() {
                 <div className="space-y-2">
                   <Label htmlFor="project-type">タイプ</Label>
                   <Select value={projectType} onValueChange={(value) => {
+                    // picture型は廃止のため選択不可
+                    if (value === 'picture') {
+                      toast.error('画像型プロジェクトは現在利用できません');
+                      return;
+                    }
                     setProjectType(value as ProjectType);
                     // タイプ変更時に入力内容をクリア
                     setInputText("");
@@ -206,7 +215,9 @@ export default function CreatePage() {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="message">メッセージ</SelectItem>
-                      <SelectItem value="picture">画像</SelectItem>
+                      {/* picture型は廃止のため無効化 */}
+                      {/* <SelectItem value="picture">画像</SelectItem> */}
+                      <SelectItem value="picture" disabled>画像（現在は利用できません）</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -277,7 +288,8 @@ export default function CreatePage() {
               </>
             )}
 
-            {projectType === 'picture' && (
+            {/* picture型は廃止のため無効化 */}
+            {/* {projectType === 'picture' && (
               <>
                 <Card>
                   <CardHeader>
@@ -337,7 +349,7 @@ export default function CreatePage() {
                   </CardContent>
                 </Card>
               </>
-            )}
+            )} */}
 
             {/* 送信セクション */}
             <Card>
@@ -351,8 +363,10 @@ export default function CreatePage() {
                         onClick={saveToDatabase}
                         disabled={
                           isLoading || 
-                          (projectType === 'message' && (!projectName.trim() || projectName.length > MAX_PROJECT_NAME_LENGTH || !inputText.trim() || inputText.length > MAX_CHARACTERS)) ||
-                          (projectType === 'picture' && (!selectedFile || !projectName.trim() || projectName.length > MAX_PROJECT_NAME_LENGTH))
+                          (projectType === 'message' && (!projectName.trim() || projectName.length > MAX_PROJECT_NAME_LENGTH || !inputText.trim() || inputText.length > MAX_CHARACTERS))
+                          // picture型は廃止のため無効化
+                          // || (projectType === 'picture' && (!selectedFile || !projectName.trim() || projectName.length > MAX_PROJECT_NAME_LENGTH))
+                          || projectType === 'picture' // picture型は選択不可にする
                         }
                         className="w-full bg-purple-400 hover:bg-purple-500"
                       >

@@ -7,8 +7,8 @@ import { getS3PublicUrl } from "@/lib/s3";
 
 interface Project {
   id: string;
-  created_at: string;
-  expires_at: string;
+  created_at: Date;
+  expires_at: Date;
   user_id: string;
   slug: string;
   type: string;
@@ -16,10 +16,10 @@ interface Project {
   url: string; // プロジェクトのURL（messageの場合はgenerateProjectUrl、pictureの場合はS3のURL）
   projectMessage?: {
     message: string;
-  };
+  } | null;
   projectPicture?: {
     s3_key: string;
-  };
+  } | null;
 }
 
 export default async function DashboardPage() {

@@ -28,8 +28,9 @@ export async function POST(request: NextRequest) {
     const nameValidation = validateRequired(name, 'プロジェクト名');
     if (nameValidation) return nameValidation;
 
-    // 有効なプロジェクトタイプかチェック
-    const validTypes = ['message', 'picture'];
+    // 有効なプロジェクトタイプかチェック（picture型は廃止のため無効化）
+    // const validTypes = ['message', 'picture'];
+    const validTypes = ['message']; // picture型は廃止
     if (!validTypes.includes(type)) {
       return NextResponse.json(
         { error: `無効なプロジェクトタイプです。有効なタイプ: ${validTypes.join(', ')}` },
@@ -41,17 +42,19 @@ export async function POST(request: NextRequest) {
 
     // タイプに応じたバリデーションとデータ取得
     let message: string | undefined;
-    let s3Key: string | undefined;
+    // let s3Key: string | undefined; // picture型は廃止のため無効化
 
     if (projectType === 'message') {
       message = body.message;
       const messageValidation = validateRequired(message, 'メッセージ');
       if (messageValidation) return messageValidation;
-    } else if (projectType === 'picture') {
-      s3Key = body.s3Key;
-      const s3KeyValidation = validateRequired(s3Key, 'S3キー');
-      if (s3KeyValidation) return s3KeyValidation;
     }
+    // picture型は廃止のため無効化
+    // else if (projectType === 'picture') {
+    //   s3Key = body.s3Key;
+    //   const s3KeyValidation = validateRequired(s3Key, 'S3キー');
+    //   if (s3KeyValidation) return s3KeyValidation;
+    // }
 
     // ユーザーのleft_projects（残機）を取得
     const user = await prisma.user.findUnique({
@@ -100,13 +103,15 @@ export async function POST(request: NextRequest) {
             message: message,
           },
         };
-      } else if (projectType === 'picture') {
-        projectData.projectPicture = {
-          create: {
-            s3_key: s3Key,
-          },
-        };
       }
+      // picture型は廃止のため無効化
+      // else if (projectType === 'picture') {
+      //   projectData.projectPicture = {
+      //     create: {
+      //       s3_key: s3Key,
+      //     },
+      //   };
+      // }
 
       const project = await tx.project.create({
         data: projectData,
@@ -158,7 +163,7 @@ export async function DELETE(request: NextRequest) {
       return ownershipResult;
     }
 
-    // pictureタイプは削除時にprojects_pictureのS3キーが必要な
+    // pictureタイプは削除時にprojects_pictureのS3キーが必要
     const project = await prisma.project.findUnique({
       where: { id: projectId! },
       include: {
