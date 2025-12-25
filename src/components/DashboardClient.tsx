@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { DEFAULT_LEFT_PROJECTS } from "@/lib/config";
+import { toast } from "sonner";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -15,7 +16,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Trash2, Loader2 } from "lucide-react";
+import { Trash2, Loader2, Copy, Check } from "lucide-react";
 
 interface Project {
   id: string;
@@ -47,6 +48,7 @@ export default function DashboardClient({ session, userProjects, leftProjects, u
     userProjects.length > 0 ? userProjects[0] : null
   );
   const [deleting, setDeleting] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false);
 
   const handleDeleteProject = async (projectId: string) => {
     setDeleting(projectId);
@@ -67,6 +69,21 @@ export default function DashboardClient({ session, userProjects, leftProjects, u
       alert('プロジェクトの削除に失敗しました: ' + (error as Error).message);
     } finally {
       setDeleting(null);
+    }
+  };
+
+  // URLをコピーする関数
+  const handleCopyUrl = async () => {
+    if (!selectedProject?.url) return;
+    
+    try {
+      await navigator.clipboard.writeText(selectedProject.url);
+      setCopied(true);
+      toast.success("URLをコピーしました");
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error('URLのコピーに失敗しました:', err);
+      toast.error("URLのコピーに失敗しました");
     }
   };
 
@@ -265,15 +282,27 @@ export default function DashboardClient({ session, userProjects, leftProjects, u
                         <div>
                           <div className="flex items-center justify-between mb-2">
                             <h4 className="font-medium text-gray-700">WebページURL</h4>
-                            <button
+                            <Button
                               onClick={(e) => {
                                 e.stopPropagation();
-                                navigator.clipboard.writeText(selectedProject.url);
+                                handleCopyUrl();
                               }}
-                              className="px-3 py-1 text-sm bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+                              variant="outline"
+                              size="sm"
+                              className="px-3 py-1 text-sm"
                             >
-                              コピー
-                            </button>
+                              {copied ? (
+                                <>
+                                  <Check className="w-4 h-4 mr-2" />
+                                  コピー完了
+                                </>
+                              ) : (
+                                <>
+                                  <Copy className="w-4 h-4 mr-2" />
+                                  コピー
+                                </>
+                              )}
+                            </Button>
                           </div>
                           <a
                             href={selectedProject.url}
