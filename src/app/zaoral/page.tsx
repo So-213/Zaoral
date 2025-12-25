@@ -52,8 +52,8 @@ export default function ZaoralPage() {
           <Image 
             src="/zaoral.png" 
             alt="Zaoral ロゴ" 
-            width={800}
-            height={150} 
+            width={500}
+            height={80} 
             className="block max-w-[90%] h-auto mx-auto my-5" 
           />
         </div>
