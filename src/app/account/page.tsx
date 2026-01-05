@@ -1,4 +1,5 @@
 import { auth } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
 import AccountClient from "@/components/AccountClient";
 
 export default async function AccountPage() {
@@ -20,5 +21,12 @@ export default async function AccountPage() {
     );
   }
 
-  return <AccountClient session={session} />;
+  // ユーザー情報を取得（プラン情報を含む）
+  const user = await prisma.user.findUnique({
+    where: { id: session.user.id },
+  });
+
+  const userPlan = (user as any)?.plan ?? 'FREE';
+
+  return <AccountClient session={session} userPlan={userPlan} />;
 }

@@ -23,8 +23,7 @@ export default function HowToUsePage() {
       title: "ログイン",
       icon: <LogIn className="w-8 h-8" />,
       details: [
-        "ホームページの「ログイン」ボタンをクリック",
-        "GoogleアカウントまたはLINEアカウントで簡単ログイン",
+        "GoogleまたはLINEアカウントでログイン",
         "初回ログイン時は自動的にアカウントが作成されます"
       ]
     },
@@ -33,9 +32,11 @@ export default function HowToUsePage() {
         title: "新規プロジェクト作成",
         icon: <Plus className="w-8 h-8" />,
         details: [
-            "「新規作成」ボタンをクリックしてプロジェクト作成ページに移動",
+            "「新規作成」からプロジェクト作成ページに移動",
             "Webページに表示させたいメッセージなど各種項目を入力",
-            "保存ボタンでプロジェクトを保存"
+            "保存ボタンでプロジェクトを保存",
+            "プロジェクトを作成したら、生成されたURLをコピーし、<strong style='color: rgb(255,90,90);'>既読スルーする女の子に送りつけましょう</strong>"
+            // プロジェクトタイプについて
         ]
     },
     {
@@ -43,9 +44,9 @@ export default function HowToUsePage() {
       title: "ダッシュボードでプロジェクト管理",
       icon: <Monitor className="w-8 h-8" />,
       details: [
-        "各プロジェクトの詳細（メッセージ、作成日時、有効期限、アクセスURL）を確認できます",
+        "各プロジェクトの詳細を確認できます",
         "プロジェクトの削除も可能です",
-        "プロジェクトを作成したら、アクセスURLをコピーし、既読スルーする女の子に送りつけましょう",
+        // 有効期限,有効期限+31daysについてもここで言及
       ]
     },
   ]

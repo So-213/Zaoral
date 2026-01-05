@@ -1,4 +1,15 @@
 export default function DebugPage() {
+  // 開発環境でのみアクセス可能
+  if (process.env.NODE_ENV === 'production') {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-gray-800">404 - Page Not Found</h1>
+        </div>
+      </div>
+    );
+  }
+
   // AWS認証情報の最初の数文字を表示（セキュリティのため）
   const maskKey = (key: string | undefined) => {
     if (!key) return '未設定';

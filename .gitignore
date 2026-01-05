@@ -35,3 +35,7 @@ next-env.d.ts
 # terraform
 terraform/*.tfvars
 !terraform/terraform.tfvars.example
+
+# others
+.cursor
+.DS_Store

@@ -4,9 +4,13 @@ import { signOut } from "next-auth/react";
 
 interface AccountClientProps {
   session: any;
+  userPlan: string;
 }
 
-export default function AccountClient({ session }: AccountClientProps) {
+export default function AccountClient({ session, userPlan }: AccountClientProps) {
+  const planDisplayName = userPlan === 'PREMIUM' ? 'Premium' : 'Free';
+  const planBadgeClass = userPlan === 'PREMIUM' ? 'premium-badge' : 'free-badge';
+
   return (
     <div className="flex items-center justify-center">
       <div className="container">
@@ -33,6 +37,12 @@ export default function AccountClient({ session }: AccountClientProps) {
         {/* ユーザー名の表示 */}
         <div className="user-info">
           <p className="user-name">ユーザー: {session?.user?.name || session?.user?.email}</p>
+        </div>
+
+        {/* プラン情報の表示 */}
+        <div className="plan-info">
+          <p className="plan-label">プラン:</p>
+          <span className={planBadgeClass}>{planDisplayName}</span>
         </div>
 
         {/* ログアウトボタン */}
@@ -71,6 +81,37 @@ export default function AccountClient({ session }: AccountClientProps) {
           font-size: 18px;
           color: #666;
           margin: 0;
+        }
+        .plan-info {
+          margin: 20px 0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 10px;
+        }
+        .plan-label {
+          font-size: 18px;
+          color: #666;
+          margin: 0;
+        }
+        .free-badge {
+          display: inline-block;
+          padding: 6px 16px;
+          font-size: 16px;
+          font-weight: bold;
+          color: #666;
+          background-color: #f0f0f0;
+          border-radius: 20px;
+        }
+        .premium-badge {
+          display: inline-block;
+          padding: 6px 16px;
+          font-size: 16px;
+          font-weight: bold;
+          color: white;
+          background: linear-gradient(135deg, #ff5a8d 0%, #ff8c42 100%);
+          border-radius: 20px;
+          box-shadow: 0 2px 8px rgba(255, 90, 141, 0.3);
         }
         .logout-button {
           margin-top: 20px;
