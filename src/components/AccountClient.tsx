@@ -1,6 +1,8 @@
 'use client';
 
 import { signOut } from "next-auth/react";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 interface AccountClientProps {
   session: any;
@@ -8,8 +10,51 @@ interface AccountClientProps {
 }
 
 export default function AccountClient({ session, userPlan }: AccountClientProps) {
+  const router = useRouter();
+  const [isChangingPlan, setIsChangingPlan] = useState(false);
   const planDisplayName = userPlan === 'PREMIUM' ? 'Premium' : 'Free';
   const planBadgeClass = userPlan === 'PREMIUM' ? 'premium-badge' : 'free-badge';
+  const targetPlan = userPlan === 'PREMIUM' ? 'FREE' : 'PREMIUM';
+  const targetPlanDisplayName = targetPlan === 'PREMIUM' ? 'Premium' : 'Free';
+
+  const handlePlanChange = async () => {
+    if (isChangingPlan) return;
+
+    const confirmMessage = userPlan === 'PREMIUM' 
+      ? 'PremiumプランからFreeプランに変更しますか？'
+      : 'FreeプランからPremiumプランに変更しますか？';
+    
+    if (!confirm(confirmMessage)) {
+      return;
+    }
+
+    setIsChangingPlan(true);
+
+    try {
+      const response = await fetch('/api/account/plan', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ plan: targetPlan }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        alert(data.error || 'プランの変更に失敗しました');
+        return;
+      }
+
+      // 成功したらページをリロードして最新のプラン情報を表示
+      router.refresh();
+    } catch (error) {
+      console.error('プラン変更エラー:', error);
+      alert('プランの変更中にエラーが発生しました');
+    } finally {
+      setIsChangingPlan(false);
+    }
+  };
 
   return (
     <div className="flex items-center justify-center">
@@ -41,8 +86,19 @@ export default function AccountClient({ session, userPlan }: AccountClientProps)
 
         {/* プラン情報の表示 */}
         <div className="plan-info">
-          <p className="plan-label">プラン:</p>
-          <span className={planBadgeClass}>{planDisplayName}</span>
+          <div className="plan-display">
+            <p className="plan-label">プラン:</p>
+            <span className={planBadgeClass}>{planDisplayName}</span>
+          </div>
+          
+          {/* プラン変更ボタン */}
+          <button 
+            className="plan-change-button" 
+            onClick={handlePlanChange}
+            disabled={isChangingPlan}
+          >
+            {isChangingPlan ? '変更中...' : `${targetPlanDisplayName}プランに変更`}
+          </button>
         </div>
 
         {/* ログアウトボタン */}
@@ -85,6 +141,13 @@ export default function AccountClient({ session, userPlan }: AccountClientProps)
         .plan-info {
           margin: 20px 0;
           display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          gap: 15px;
+        }
+        .plan-display {
+          display: flex;
           align-items: center;
           justify-content: center;
           gap: 10px;
@@ -113,12 +176,31 @@ export default function AccountClient({ session, userPlan }: AccountClientProps)
           border-radius: 20px;
           box-shadow: 0 2px 8px rgba(255, 90, 141, 0.3);
         }
+        .plan-change-button {
+          margin-top: 0;
+          padding: 10px 20px;
+          font-size: 16px;
+          color: white;
+          background-color:rgb(223, 114, 204);
+          border: none;
+          border-radius: 8px;
+          cursor: pointer;
+          transition: background-color 0.3s ease;
+        }
+        .plan-change-button:hover:not(:disabled) {
+          background-color:rgb(232, 71, 176);
+        }
+        .plan-change-button:disabled {
+          background-color: #cccccc;
+          cursor: not-allowed;
+          opacity: 0.6;
+        }
         .logout-button {
           margin-top: 20px;
           padding: 10px 20px;
           font-size: 16px;
           color: white;
-          background-color: #ff5a8d;
+          background-color:rgb(240, 108, 150);
           border: none;
           border-radius: 8px;
           cursor: pointer;
