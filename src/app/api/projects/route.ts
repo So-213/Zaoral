@@ -12,11 +12,7 @@ export async function POST(request: NextRequest) {
     const { slug, type, name } = body;
 
     // 認証チェック
-    const authResult = await requireAuth();
-    if (authResult instanceof NextResponse) {
-      return authResult;
-    }
-    const { userId, userName } = authResult;
+    const { userId, userName } = await requireAuth();
 
     // バリデーション
     const slugValidation = validateRequired(slug, 'スラッグ');
@@ -137,6 +133,13 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(savedProject, { status: 201 });
   } catch (error) {
+    // 認証エラーの場合は401を返す
+    if (error instanceof Error && error.message === '認証が必要です') {
+      return NextResponse.json(
+        { error: '認証が必要です' },
+        { status: 401 }
+      );
+    }
     return handleApiError(error, 'プロジェクト作成エラー', 'プロジェクトの作成に失敗しました');
   }
 }
@@ -144,11 +147,7 @@ export async function POST(request: NextRequest) {
 export async function DELETE(request: NextRequest) {
   try {
     // 認証チェック
-    const authResult = await requireAuth();
-    if (authResult instanceof NextResponse) {
-      return authResult;
-    }
-    const { userId } = authResult;
+    const { userId } = await requireAuth();
 
     const { searchParams } = new URL(request.url);
     const projectId = searchParams.get('id');
@@ -193,6 +192,13 @@ export async function DELETE(request: NextRequest) {
 
     return NextResponse.json({ message: 'プロジェクトが正常に削除されました' });
   } catch (error) {
+    // 認証エラーの場合は401を返す
+    if (error instanceof Error && error.message === '認証が必要です') {
+      return NextResponse.json(
+        { error: '認証が必要です' },
+        { status: 401 }
+      );
+    }
     return handleApiError(error, 'プロジェクト削除エラー', 'プロジェクトの削除に失敗しました');
   }
 }

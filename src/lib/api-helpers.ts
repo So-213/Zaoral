@@ -2,20 +2,19 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 
 /**
- * 認証チェック用のヘルパー関数   DAL認証チェック
- * @returns 認証されたユーザー情報または401エラーレスポンス
+ * 認証チェック用のヘルパー関数
+ * @returns 認証されたユーザー情報とセッション情報
+ * @throws 認証されていない場合はエラーを投げる
  */
 export async function requireAuth() {
   const session = await auth();
   
   if (!session?.user?.id) {
-    return NextResponse.json(
-      { error: '認証が必要です' },
-      { status: 401 }
-    );
+    throw new Error('認証が必要です');
   }
   
   return {
+    session,
     userId: session.user.id,
     userName: session.user.name || session.user.email || "Anonymous"
   };

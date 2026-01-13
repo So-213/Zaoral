@@ -9,11 +9,7 @@ import { requireAuth, handleApiError } from '@/lib/api-helpers';
 export async function PUT(request: NextRequest) {
   try {
     // 認証チェック
-    const authResult = await requireAuth();
-    if (authResult instanceof NextResponse) {
-      return authResult;
-    }
-    const { userId } = authResult;
+    const { userId } = await requireAuth();
 
     // リクエストボディから新しいプランを取得
     const body = await request.json();
@@ -63,6 +59,13 @@ export async function PUT(request: NextRequest) {
       { status: 200 }
     );
   } catch (error) {
+    // 認証エラーの場合は401を返す
+    if (error instanceof Error && error.message === '認証が必要です') {
+      return NextResponse.json(
+        { error: '認証が必要です' },
+        { status: 401 }
+      );
+    }
     return handleApiError(error, 'プラン変更エラー', 'プランの変更に失敗しました');
   }
 }
