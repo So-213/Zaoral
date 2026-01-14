@@ -24,9 +24,9 @@ export async function POST(request: NextRequest) {
     const nameValidation = validateRequired(name, 'プロジェクト名');
     if (nameValidation) return nameValidation;
 
-    // 有効なプロジェクトタイプかチェック（picture型は廃止のため無効化）
+    // 有効なプロジェクトタイプかチェック（picture型は一時停止中のため無効化）
     // const validTypes = ['message', 'picture'];
-    const validTypes = ['message']; // picture型は廃止
+    const validTypes = ['message']; // picture型は一時停止中
     if (!validTypes.includes(type)) {
       return NextResponse.json(
         { error: `無効なプロジェクトタイプです。有効なタイプ: ${validTypes.join(', ')}` },
@@ -38,14 +38,14 @@ export async function POST(request: NextRequest) {
 
     // タイプに応じたバリデーションとデータ取得
     let message: string | undefined;
-    // let s3Key: string | undefined; // picture型は廃止のため無効化
+    // let s3Key: string | undefined; // picture型は一時停止中のため無効化
 
     if (projectType === 'message') {
       message = body.message;
       const messageValidation = validateRequired(message, 'メッセージ');
       if (messageValidation) return messageValidation;
     }
-    // picture型は廃止のため無効化
+    // picture型は一時停止中のため無効化
     // else if (projectType === 'picture') {
     //   s3Key = body.s3Key;
     //   const s3KeyValidation = validateRequired(s3Key, 'S3キー');
@@ -100,7 +100,7 @@ export async function POST(request: NextRequest) {
           },
         };
       }
-      // picture型は廃止のため無効化
+      // picture型は一時停止中のため無効化
       // else if (projectType === 'picture') {
       //   projectData.projectPicture = {
       //     create: {

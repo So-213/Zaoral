@@ -38,7 +38,7 @@ export default function CreatePage() {
     return result;
   };
 
-  // ファイル選択ハンドラー（picture型廃止のため無効化）
+  // ファイル選択ハンドラー（picture型一時停止中のため無効化）
   // const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
   //   const file = e.target.files?.[0];
   //   if (file) {
@@ -80,7 +80,7 @@ export default function CreatePage() {
         return;
       }
     }
-    // picture型は廃止のため無効化
+    // picture型は一時停止中のため無効化
     // else if (projectType === 'picture') {
     //   if (!selectedFile) {
     //     toast.error("画像ファイルを選択してください");
@@ -112,7 +112,7 @@ export default function CreatePage() {
       if (projectType === 'message') {
         requestBody.message = inputText;
       }
-      // picture型は廃止のため無効化
+      // picture型は一時停止中のため無効化
       // else if (projectType === 'picture') {
       //   // 画像をS3にアップロード
       //   const formData = new FormData();
@@ -198,7 +198,7 @@ export default function CreatePage() {
                 <div className="space-y-2">
                   <Label htmlFor="project-type">タイプ</Label>
                   <Select value={projectType} onValueChange={(value) => {
-                    // picture型は廃止のため選択不可
+                    // picture型は一時停止中のため選択不可
                     if (value === 'picture') {
                       toast.error('画像型プロジェクトは現在利用できません');
                       return;
@@ -215,7 +215,7 @@ export default function CreatePage() {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="message">メッセージ</SelectItem>
-                      {/* picture型は廃止のため無効化 */}
+                      {/* picture型は一時停止中のため無効化 */}
                       {/* <SelectItem value="picture">画像</SelectItem> */}
                       <SelectItem value="picture" disabled>画像（現在は利用できません）</SelectItem>
                     </SelectContent>
@@ -288,7 +288,7 @@ export default function CreatePage() {
               </>
             )}
 
-            {/* picture型は廃止のため無効化 */}
+            {/* picture型は一時停止中のため無効化 */}
             {/* {projectType === 'picture' && (
               <>
                 <Card>
@@ -364,7 +364,7 @@ export default function CreatePage() {
                         disabled={
                           isLoading || 
                           (projectType === 'message' && (!projectName.trim() || projectName.length > MAX_PROJECT_NAME_LENGTH || !inputText.trim() || inputText.length > MAX_CHARACTERS))
-                          // picture型は廃止のため無効化
+                          // picture型は一時停止中のため無効化
                           // || (projectType === 'picture' && (!selectedFile || !projectName.trim() || projectName.length > MAX_PROJECT_NAME_LENGTH))
                           || projectType === 'picture' // picture型は選択不可にする
                         }
