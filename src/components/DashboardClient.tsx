@@ -35,15 +35,22 @@ interface Project {
   } | null;
 }
 
-interface DashboardClientProps {
-  session: any;
-  userProjects: Project[];
-  leftProjects: number;
-  userPlan: string;
+interface UserInfo {
+  id: string;
+  name: string | null;
+  email: string | null;
+  left_projects: number;
+  plan: string;
 }
 
-export default function DashboardClient({ session, userProjects, leftProjects, userPlan }: DashboardClientProps) {
-  const isPremium = userPlan === 'PREMIUM';
+interface DashboardClientProps {
+  user: UserInfo;
+  userProjects: Project[];
+}
+
+export default function DashboardClient({ user, userProjects }: DashboardClientProps) {
+  const isPremium = user.plan === 'PREMIUM';
+  const leftProjects = user.left_projects;
   const [selectedProject, setSelectedProject] = useState<Project | null>(
     userProjects.length > 0 ? userProjects[0] : null
   );
@@ -93,7 +100,7 @@ export default function DashboardClient({ session, userProjects, leftProjects, u
         {/* 上部セクション */}
         <div className="bg-white rounded-lg shadow-md p-6 mb-8">
           <h1 className="text-2xl font-bold text-gray-800 mb-6">
-            ようこそ、{session.user.name || session.user.email} さん！
+            ようこそ、{user.name || user.email} さん！
           </h1>
           
           <div className={`mb-4 p-4 border rounded-lg ${

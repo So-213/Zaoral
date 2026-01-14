@@ -22,14 +22,33 @@ interface Project {
   } | null;
 }
 
+interface UserInfo {
+  id: string;
+  name: string | null;
+  email: string | null;
+  left_projects: number;
+  plan: string;
+}
+
 export default async function DashboardPage() {
   try {
-    const { session, userId } = await requireAuth();
+    const { userId } = await requireAuth();
 
-    // ユーザー情報を取得（project_limitを含む）
+    // ユーザー情報を取得（name, email, left_projects, planを含む）
     const user = await prisma.user.findUnique({
       where: { id: userId },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        left_projects: true,
+        plan: true,
+      },
     });
+
+    if (!user) {
+      throw new Error('ユーザーが見つかりません');
+    }
 
     // プロジェクトデータをサーバー側で取得
     const rawProjects = await prisma.project.findMany({
@@ -60,16 +79,19 @@ export default async function DashboardPage() {
     };
   });
 
-    // 統計情報を計算（残機を取得）
-    const leftProjects = (user as any)?.left_projects ?? DEFAULT_LEFT_PROJECTS;
-    const userPlan = (user as any)?.plan ?? 'FREE';
+    // ユーザー情報を整理
+    const userInfo: UserInfo = {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      left_projects: user.left_projects ?? DEFAULT_LEFT_PROJECTS,
+      plan: user.plan ?? 'FREE',
+    };
 
     return (
       <DashboardClient 
-        session={session}
+        user={userInfo}
         userProjects={userProjects}
-        leftProjects={leftProjects}
-        userPlan={userPlan}
       />
     );
   } catch (error) {
