@@ -1,8 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { requireAuth, handleApiError, validateRequired, checkProjectOwnership } from '@/lib/api-helpers';
+import { 
+  requireAuth, 
+  handleApiError, 
+  validateRequired, 
+  checkProjectOwnership, 
+  validateProjectType,
+  validateAndExtractProjectTypeData,
+  buildProjectTypeData,
+  handleProjectTypeDelete
+} from '@/lib/api-helpers';
 import { DEFAULT_LEFT_PROJECTS } from '@/lib/config';
-import { deleteImageFromS3 } from '@/lib/s3';
 
 
 
@@ -18,39 +26,23 @@ export async function POST(request: NextRequest) {
     const slugValidation = validateRequired(slug, 'スラッグ');
     if (slugValidation) return slugValidation;
 
-    const typeValidation = validateRequired(type, 'プロジェクトタイプ');
-    if (typeValidation) return typeValidation;
+    const typeRequiredValidation = validateRequired(type, 'プロジェクトタイプ');
+    if (typeRequiredValidation) return typeRequiredValidation;
 
     const nameValidation = validateRequired(name, 'プロジェクト名');
     if (nameValidation) return nameValidation;
 
-    // 有効なプロジェクトタイプかチェック（picture型は一時停止中のため無効化）
-    // const validTypes = ['message', 'picture'];
-    const validTypes = ['message']; // picture型は一時停止中
-    if (!validTypes.includes(type)) {
-      return NextResponse.json(
-        { error: `無効なプロジェクトタイプです。有効なタイプ: ${validTypes.join(', ')}` },
-        { status: 400 }
-      );
-    }
+    // 有効なプロジェクトタイプかチェック
+    const typeValidation = validateProjectType(type);
+    if (typeValidation) return typeValidation;
 
     const projectType = type as 'message' | 'picture';
 
-    // タイプに応じたバリデーションとデータ取得
-    let message: string | undefined;
-    // let s3Key: string | undefined; // picture型は一時停止中のため無効化
-
-    if (projectType === 'message') {
-      message = body.message;
-      const messageValidation = validateRequired(message, 'メッセージ');
-      if (messageValidation) return messageValidation;
+    // タイプに応じたバリデーションとデータ抽出
+    const typeDataResult = validateAndExtractProjectTypeData(projectType, body);
+    if (typeDataResult.error) {
+      return typeDataResult.error;
     }
-    // picture型は一時停止中のため無効化
-    // else if (projectType === 'picture') {
-    //   s3Key = body.s3Key;
-    //   const s3KeyValidation = validateRequired(s3Key, 'S3キー');
-    //   if (s3KeyValidation) return s3KeyValidation;
-    // }
 
     // ユーザーのleft_projects（残機）を取得
     const user = await prisma.user.findUnique({
@@ -93,21 +85,8 @@ export async function POST(request: NextRequest) {
       };
 
       // タイプに応じて関連データを作成
-      if (projectType === 'message') {
-        projectData.projectMessage = {
-          create: {
-            message: message,
-          },
-        };
-      }
-      // picture型は一時停止中のため無効化
-      // else if (projectType === 'picture') {
-      //   projectData.projectPicture = {
-      //     create: {
-      //       s3_key: s3Key,
-      //     },
-      //   };
-      // }
+      const typeSpecificData = buildProjectTypeData(projectType, typeDataResult.data);
+      Object.assign(projectData, typeSpecificData);
 
       const project = await tx.project.create({
         data: projectData,
@@ -177,11 +156,8 @@ export async function DELETE(request: NextRequest) {
       );
     }
 
-    // pictureタイプの場合はS3から画像を削除
-    // messageタイプの場合はSupabaseのみなので特別な処理不要（Cascade削除で自動削除される）
-    if ((project.type as string) === 'picture' && project.projectPicture?.s3_key) {
-      await deleteImageFromS3(project.projectPicture.s3_key);
-    }
+    // タイプ固有の削除処理を実行（例: pictureタイプのS3削除など）
+    await handleProjectTypeDelete(project.type as string, project);
 
     // プロジェクトを削除（Cascadeにより関連するProjectMessage/ProjectPictureも削除される）
     await prisma.project.delete({
