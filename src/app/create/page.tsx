@@ -12,7 +12,269 @@ import { Copy, Check } from "lucide-react";
 
 type ProjectType = "message" | "picture";
 
+// 文字数カウント表示コンポーネント
+interface CharacterCountDisplayProps {
+  currentLength: number;
+  maxLength: number;
+  warningThreshold?: number;
+}
 
+const CharacterCountDisplay = ({ 
+  currentLength, 
+  maxLength, 
+  warningThreshold = 0.9 
+}: CharacterCountDisplayProps) => {
+  const isNearLimit = currentLength > maxLength * warningThreshold;
+  
+  return (
+    <div className="flex justify-between items-center text-sm">
+      <span className={isNearLimit ? 'text-orange-500' : 'text-gray-500'}>
+        {currentLength} / {maxLength} 文字
+      </span>
+      {isNearLimit && (
+        <span className="text-orange-500 text-xs">
+          文字数制限に近づいています
+        </span>
+      )}
+    </div>
+  );
+};
+
+// プロジェクト名入力コンポーネント
+interface ProjectNameInputProps {
+  value: string;
+  onChange: (value: string) => void;
+  maxLength: number;
+  placeholder?: string;
+}
+
+const ProjectNameInput = ({ 
+  value, 
+  onChange, 
+  maxLength, 
+  placeholder = "例：プロジェクト名" 
+}: ProjectNameInputProps) => {
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>プロジェクト名</CardTitle>
+        <CardDescription>プロジェクトを識別するための名前を入力してください</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <div className="space-y-2">
+          <Input
+            id="project-name"
+            type="text"
+            placeholder={placeholder}
+            value={value}
+            onChange={(e) => onChange(e.target.value)}
+            maxLength={maxLength}
+            className="w-full"
+          />
+          <CharacterCountDisplay 
+            currentLength={value.length} 
+            maxLength={maxLength} 
+          />
+        </div>
+      </CardContent>
+    </Card>
+  );
+};
+
+// テキスト入力フィールドコンポーネント
+interface TextInputFieldProps {
+  title: string;
+  description: string;
+  value: string;
+  onChange: (value: string) => void;
+  maxLength: number;
+  placeholder: string;
+  inputId: string;
+}
+
+const TextInputField = ({
+  title,
+  description,
+  value,
+  onChange,
+  maxLength,
+  placeholder,
+  inputId,
+}: TextInputFieldProps) => {
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>{title}</CardTitle>
+        <CardDescription>{description}</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <div className="space-y-2">
+          <Input
+            id={inputId}
+            type="text"
+            placeholder={placeholder}
+            value={value}
+            onChange={(e) => onChange(e.target.value)}
+            maxLength={maxLength}
+            className="w-full"
+          />
+          <CharacterCountDisplay 
+            currentLength={value.length} 
+            maxLength={maxLength} 
+          />
+        </div>
+      </CardContent>
+    </Card>
+  );
+};
+
+// 画像アップロードフィールドコンポーネント
+interface ImageUploadFieldProps {
+  selectedFile: File | null;
+  onFileChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+}
+
+const ImageUploadField = ({ selectedFile, onFileChange }: ImageUploadFieldProps) => {
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>画像アップロード</CardTitle>
+        <CardDescription>
+          Webページに表示させたい画像をアップロードしてください（JPEG、PNG、GIF、WebP、最大10MB）
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <div className="space-y-2">
+          <Label htmlFor="file-input">画像ファイル</Label>
+          <Input
+            id="file-input"
+            type="file"
+            accept="image/jpeg,image/jpg,image/png,image/gif,image/webp"
+            onChange={onFileChange}
+            className="w-full"
+          />
+          {selectedFile && (
+            <div className="mt-4 p-4 bg-gray-50 rounded-lg">
+              <p className="text-sm text-gray-700">
+                <strong>選択されたファイル:</strong> {selectedFile.name}
+              </p>
+              <p className="text-sm text-gray-500">
+                サイズ: {(selectedFile.size / 1024 / 1024).toFixed(2)} MB
+              </p>
+            </div>
+          )}
+        </div>
+      </CardContent>
+    </Card>
+  );
+};
+
+// プロジェクトタイプ別の設定
+const PROJECT_TYPE_CONFIG: Record<ProjectType, {
+  projectNamePlaceholder: string;
+  inputFields: Array<{
+    type: 'text' | 'image';
+    title: string;
+    description: string;
+    placeholder?: string;
+    inputId: string;
+  }>;
+}> = {
+  message: {
+    projectNamePlaceholder: "例：おたおめプロジェクト",
+    inputFields: [
+      {
+        type: 'text',
+        title: '文字列入力',
+        description: 'Webページに表示させたい文字列を入力してください',
+        placeholder: '例：おたおめ！！',
+        inputId: 'input-text',
+      },
+    ],
+  },
+  picture: {
+    projectNamePlaceholder: "例：〇〇の写真",
+    inputFields: [
+      {
+        type: 'image',
+        title: '画像アップロード',
+        description: 'Webページに表示させたい画像をアップロードしてください（JPEG、PNG、GIF、WebP、最大10MB）',
+        inputId: 'file-input',
+      },
+    ],
+  },
+};
+
+// プロジェクトタイプ別入力セクションコンポーネント
+interface ProjectTypeInputSectionProps {
+  projectType: ProjectType;
+  projectName: string;
+  onProjectNameChange: (value: string) => void;
+  inputText: string;
+  onInputTextChange: (value: string) => void;
+  selectedFile: File | null;
+  onFileChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  maxProjectNameLength: number;
+  maxCharacters: number;
+}
+
+const ProjectTypeInputSection = ({
+  projectType,
+  projectName,
+  onProjectNameChange,
+  inputText,
+  onInputTextChange,
+  selectedFile,
+  onFileChange,
+  maxProjectNameLength,
+  maxCharacters,
+}: ProjectTypeInputSectionProps) => {
+  const config = PROJECT_TYPE_CONFIG[projectType];
+  
+  if (!config) {
+    return null;
+  }
+
+  return (
+    <>
+      <ProjectNameInput
+        value={projectName}
+        onChange={onProjectNameChange}
+        maxLength={maxProjectNameLength}
+        placeholder={config.projectNamePlaceholder}
+      />
+      
+      {config.inputFields.map((field) => {
+        if (field.type === 'text') {
+          return (
+            <TextInputField
+              key={field.inputId}
+              title={field.title}
+              description={field.description}
+              value={inputText}
+              onChange={onInputTextChange}
+              maxLength={maxCharacters}
+              placeholder={field.placeholder || ''}
+              inputId={field.inputId}
+            />
+          );
+        }
+        
+        if (field.type === 'image') {
+          return (
+            <ImageUploadField
+              key={field.inputId}
+              selectedFile={selectedFile}
+              onFileChange={onFileChange}
+            />
+          );
+        }
+        
+        return null;
+      })}
+    </>
+  );
+};
 
 export default function CreatePage() {
   const [projectType, setProjectType] = useState<ProjectType>("message");
@@ -39,24 +301,24 @@ export default function CreatePage() {
   };
 
   // ファイル選択ハンドラー（picture型一時停止中のため無効化）
-  // const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   const file = e.target.files?.[0];
-  //   if (file) {
-  //     // ファイルタイプの検証
-  //     const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
-  //     if (!allowedTypes.includes(file.type)) {
-  //       toast.error('サポートされていない画像形式です。JPEG、PNG、GIF、WebPのみ対応しています。');
-  //       return;
-  //     }
-  //     // ファイルサイズの検証（10MBまで）
-  //     const maxSize = 10 * 1024 * 1024; // 10MB
-  //     if (file.size > maxSize) {
-  //       toast.error('画像サイズが大きすぎます。10MB以下にしてください。');
-  //       return;
-  //     }
-  //     setSelectedFile(file);
-  //   }
-  // };
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      // ファイルタイプの検証
+      const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+      if (!allowedTypes.includes(file.type)) {
+        toast.error('サポートされていない画像形式です。JPEG、PNG、GIF、WebPのみ対応しています。');
+        return;
+      }
+      // ファイルサイズの検証（10MBまで）
+      const maxSize = 10 * 1024 * 1024; // 10MB
+      if (file.size > maxSize) {
+        toast.error('画像サイズが大きすぎます。10MB以下にしてください。');
+        return;
+      }
+      setSelectedFile(file);
+    }
+  };
 
   // プロジェクトを作成する関数
   const saveToDatabase = async () => {
@@ -225,131 +487,17 @@ export default function CreatePage() {
             </Card>
 
             {/* タイプに応じた入力セクション */}
-            {projectType === 'message' && (
-              <>
-                <Card>
-                  <CardHeader>
-                    <CardTitle>プロジェクト名</CardTitle>
-                    <CardDescription>プロジェクトを識別するための名前を入力してください</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-2">
-                      <Input
-                        id="project-name"
-                        type="text"
-                        placeholder="例：おたおめプロジェクト"
-                        value={projectName}
-                        onChange={(e) => setProjectName(e.target.value)}
-                        maxLength={MAX_PROJECT_NAME_LENGTH}
-                        className="w-full"
-                      />
-                      <div className="flex justify-between items-center text-sm">
-                        <span className={`${projectName.length > MAX_PROJECT_NAME_LENGTH * 0.9 ? 'text-orange-500' : 'text-gray-500'}`}>
-                          {projectName.length} / {MAX_PROJECT_NAME_LENGTH} 文字
-                        </span>
-                        {projectName.length > MAX_PROJECT_NAME_LENGTH * 0.9 && (
-                          <span className="text-orange-500 text-xs">
-                            文字数制限に近づいています
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-                <Card>
-                  <CardHeader>
-                    <CardTitle>文字列入力</CardTitle>
-                    <CardDescription>Webページに表示させたい文字列を入力してください</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-2">
-                      <Input
-                        id="input-text"
-                        type="text"
-                        placeholder="例：おたおめ！！"
-                        value={inputText}
-                        onChange={(e) => setInputText(e.target.value)}
-                        maxLength={MAX_CHARACTERS}
-                        className="w-full"
-                      />
-                      <div className="flex justify-between items-center text-sm">
-                        <span className={`${inputText.length > MAX_CHARACTERS * 0.9 ? 'text-orange-500' : 'text-gray-500'}`}>
-                          {inputText.length} / {MAX_CHARACTERS} 文字
-                        </span>
-                        {inputText.length > MAX_CHARACTERS * 0.9 && (
-                          <span className="text-orange-500 text-xs">
-                            文字数制限に近づいています
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </>
-            )}
-
-            {/* picture型は一時停止中のため無効化 */}
-            {/* {projectType === 'picture' && (
-              <>
-                <Card>
-                  <CardHeader>
-                    <CardTitle>プロジェクト名</CardTitle>
-                    <CardDescription>プロジェクトを識別するための名前を入力してください</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-2">
-                      <Input
-                        id="project-name"
-                        type="text"
-                        placeholder="例：〇〇の写真"
-                        value={projectName}
-                        onChange={(e) => setProjectName(e.target.value)}
-                        maxLength={MAX_PROJECT_NAME_LENGTH}
-                        className="w-full"
-                      />
-                      <div className="flex justify-between items-center text-sm">
-                        <span className={`${projectName.length > MAX_PROJECT_NAME_LENGTH * 0.9 ? 'text-orange-500' : 'text-gray-500'}`}>
-                          {projectName.length} / {MAX_PROJECT_NAME_LENGTH} 文字
-                        </span>
-                        {projectName.length > MAX_PROJECT_NAME_LENGTH * 0.9 && (
-                          <span className="text-orange-500 text-xs">
-                            文字数制限に近づいています
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-                <Card>
-                  <CardHeader>
-                    <CardTitle>画像アップロード</CardTitle>
-                    <CardDescription>Webページに表示させたい画像をアップロードしてください（JPEG、PNG、GIF、WebP、最大10MB）</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-2">
-                      <Label htmlFor="file-input">画像ファイル</Label>
-                      <Input
-                        id="file-input"
-                        type="file"
-                        accept="image/jpeg,image/jpg,image/png,image/gif,image/webp"
-                        onChange={handleFileChange}
-                        className="w-full"
-                      />
-                      {selectedFile && (
-                        <div className="mt-4 p-4 bg-gray-50 rounded-lg">
-                          <p className="text-sm text-gray-700">
-                            <strong>選択されたファイル:</strong> {selectedFile.name}
-                          </p>
-                          <p className="text-sm text-gray-500">
-                            サイズ: {(selectedFile.size / 1024 / 1024).toFixed(2)} MB
-                          </p>
-                        </div>
-                      )}
-                    </div>
-                  </CardContent>
-                </Card>
-              </>
-            )} */}
+            <ProjectTypeInputSection
+              projectType={projectType}
+              projectName={projectName}
+              onProjectNameChange={setProjectName}
+              inputText={inputText}
+              onInputTextChange={setInputText}
+              selectedFile={selectedFile}
+              onFileChange={handleFileChange}
+              maxProjectNameLength={MAX_PROJECT_NAME_LENGTH}
+              maxCharacters={MAX_CHARACTERS}
+            />
 
             {/* 送信セクション */}
             <Card>
@@ -365,8 +513,7 @@ export default function CreatePage() {
                           isLoading || 
                           (projectType === 'message' && (!projectName.trim() || projectName.length > MAX_PROJECT_NAME_LENGTH || !inputText.trim() || inputText.length > MAX_CHARACTERS))
                           // picture型は一時停止中のため無効化
-                          // || (projectType === 'picture' && (!selectedFile || !projectName.trim() || projectName.length > MAX_PROJECT_NAME_LENGTH))
-                          || projectType === 'picture' // picture型は選択不可にする
+                          //|| (projectType === 'picture' && (!selectedFile || !projectName.trim() || projectName.length > MAX_PROJECT_NAME_LENGTH))
                         }
                         className="w-full bg-purple-400 hover:bg-purple-500"
                       >
