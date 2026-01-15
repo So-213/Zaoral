@@ -169,6 +169,18 @@ const ImageUploadField = ({ selectedFile, onFileChange }: ImageUploadFieldProps)
   );
 };
 
+// プロジェクトタイプ別のリクエストボディ構築ハンドラー
+interface RequestBodyBuilder {
+  buildRequestBody: (
+    baseBody: { slug: string; type: string; name: string },
+    context: {
+      inputText: string;
+      selectedFile: File | null;
+      [key: string]: any;
+    }
+  ) => Promise<Record<string, any>>;
+}
+
 // プロジェクトタイプ別の設定
 const PROJECT_TYPE_CONFIG: Record<ProjectType, {
   projectNamePlaceholder: string;
@@ -179,6 +191,7 @@ const PROJECT_TYPE_CONFIG: Record<ProjectType, {
     placeholder?: string;
     inputId: string;
   }>;
+  requestBodyBuilder: RequestBodyBuilder;
 }> = {
   message: {
     projectNamePlaceholder: "例：おたおめプロジェクト",
@@ -191,6 +204,14 @@ const PROJECT_TYPE_CONFIG: Record<ProjectType, {
         inputId: 'input-text',
       },
     ],
+    requestBodyBuilder: {
+      buildRequestBody: async (baseBody, { inputText }) => {
+        return {
+          ...baseBody,
+          message: inputText,
+        };
+      },
+    },
   },
   picture: {
     projectNamePlaceholder: "例：〇〇の写真",
@@ -202,6 +223,34 @@ const PROJECT_TYPE_CONFIG: Record<ProjectType, {
         inputId: 'file-input',
       },
     ],
+    requestBodyBuilder: {
+      buildRequestBody: async (baseBody, { selectedFile }) => {
+        if (!selectedFile) {
+          throw new Error('画像ファイルが必要です');
+        }
+
+        // 画像をS3にアップロード
+        const formData = new FormData();
+        formData.append('image', selectedFile);
+        
+        const uploadResponse = await fetch('/api/projects/upload', {
+          method: 'POST',
+          body: formData,
+        });
+
+        if (!uploadResponse.ok) {
+          const errorData = await uploadResponse.json().catch(() => ({}));
+          const errorMessage = errorData.error || '画像のアップロードに失敗しました';
+          throw new Error(errorMessage);
+        }
+
+        const uploadData = await uploadResponse.json();
+        return {
+          ...baseBody,
+          s3Key: uploadData.s3Key,
+        };
+      },
+    },
   },
 };
 
@@ -365,37 +414,35 @@ export default function CreatePage() {
     setIsLoading(true);
     
     try {
-      let requestBody: any = {
+      const baseBody = {
         slug: newRandomString,
         type: projectType,
         name: projectName,
       };
 
-      if (projectType === 'message') {
-        requestBody.message = inputText;
+      // プロジェクトタイプに応じたリクエストボディを構築
+      const config = PROJECT_TYPE_CONFIG[projectType];
+      if (!config) {
+        toast.error(`未サポートのプロジェクトタイプです: ${projectType}`);
+        setIsLoading(false);
+        return;
       }
-      // picture型は一時停止中のため無効化
-      // else if (projectType === 'picture') {
-      //   // 画像をS3にアップロード
-      //   const formData = new FormData();
-      //   formData.append('image', selectedFile!);
-      //   
-      //   const uploadResponse = await fetch('/api/projects/upload', {
-      //     method: 'POST',
-      //     body: formData,
-      //   });
 
-      //   if (!uploadResponse.ok) {
-      //     const errorData = await uploadResponse.json().catch(() => ({}));
-      //     const errorMessage = errorData.error || '画像のアップロードに失敗しました';
-      //     toast.error(errorMessage);
-      //     setIsLoading(false);
-      //     return;
-      //   }
-
-      //   const uploadData = await uploadResponse.json();
-      //   requestBody.s3Key = uploadData.s3Key;
-      // }
+      let requestBody: Record<string, any>;
+      try {
+        requestBody = await config.requestBodyBuilder.buildRequestBody(
+          baseBody,
+          {
+            inputText,
+            selectedFile,
+          }
+        );
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : 'リクエストボディの構築に失敗しました';
+        toast.error(errorMessage);
+        setIsLoading(false);
+        return;
+      }
 
       const response = await fetch('/api/projects', {
         method: 'POST',
