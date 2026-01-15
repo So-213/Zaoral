@@ -35,6 +35,57 @@ interface Project {
   } | null;
 }
 
+/**
+ * プロジェクトタイプごとの表示フィールド設定
+ */
+interface ProjectTypeFieldConfig {
+  label: string;
+  getValue: (project: Project) => string;
+}
+
+interface ProjectTypeDisplayConfig {
+  fields: ProjectTypeFieldConfig[];
+}
+
+/**
+ * プロジェクトタイプごとの表示設定
+ * 新しいタイプを追加する場合は、ここに設定を追加するだけ
+ */
+const projectTypeDisplayConfigs: Record<string, ProjectTypeDisplayConfig> = {
+  picture: {
+    fields: [
+      {
+        label: 'プロジェクト名',
+        getValue: (project) => project.name || 'プロジェクト名がありません',
+      },
+    ],
+  },
+  message: {
+    fields: [
+      {
+        label: 'プロジェクト名',
+        getValue: (project) => project.name || 'プロジェクト名がありません',
+      },
+      {
+        label: 'メッセージ',
+        getValue: (project) => project.projectMessage?.message || 'メッセージがありません',
+      },
+    ],
+  },
+};
+
+/**
+ * デフォルトの表示設定（タイプが未定義の場合）
+ */
+const defaultDisplayConfig: ProjectTypeDisplayConfig = {
+  fields: [
+    {
+      label: 'プロジェクト名',
+      getValue: (project) => project.name || 'プロジェクト名がありません',
+    },
+  ],
+};
+
 interface UserInfo {
   id: string;
   name: string | null;
@@ -189,16 +240,6 @@ export default function DashboardClient({ user, userProjects }: DashboardClientP
                         <h3 className="font-medium text-gray-800 mb-1">
                           {project.name || `プロジェクト${userProjects.length - index}`}
                         </h3>
-                        <p className="text-sm text-gray-500 mb-2">
-                          {project.type === 'picture' 
-                            ? (project.name || 'プロジェクト名がありません')
-                            : (project.projectMessage?.message 
-                                ? (project.projectMessage.message.length > 50 
-                                    ? `${project.projectMessage.message.substring(0, 50)}...` 
-                                    : project.projectMessage.message)
-                                : 'メッセージがありません')
-                          }
-                        </p>                
                       </div>
                       <div className="ml-2">
                         <AlertDialog>
@@ -247,29 +288,15 @@ export default function DashboardClient({ user, userProjects }: DashboardClientP
                   {selectedProject?.id === project.id && (
                     <div className="border-t border-blue-300 px-4 pb-4 pt-4 mt-2">
                       <div className="space-y-4">
-                        {selectedProject.type === 'picture' ? (
-                          <div>
-                            <h4 className="font-medium text-gray-700 mb-2">プロジェクト名</h4>
+                        {/* プロジェクトタイプに応じた動的フィールド表示 */}
+                        {(projectTypeDisplayConfigs[selectedProject.type] || defaultDisplayConfig).fields.map((field, index) => (
+                          <div key={index}>
+                            <h4 className="font-medium text-gray-700 mb-2">{field.label}</h4>
                             <p className="text-gray-600 bg-gray-50 p-3 rounded-lg">
-                              {selectedProject.name || 'プロジェクト名がありません'}
+                              {field.getValue(selectedProject)}
                             </p>
                           </div>
-                        ) : (
-                          <>
-                            <div>
-                              <h4 className="font-medium text-gray-700 mb-2">プロジェクト名</h4>
-                              <p className="text-gray-600 bg-gray-50 p-3 rounded-lg">
-                                {selectedProject.name || 'プロジェクト名がありません'}
-                              </p>
-                            </div>
-                            <div>
-                              <h4 className="font-medium text-gray-700 mb-2">メッセージ</h4>
-                              <p className="text-gray-600 bg-gray-50 p-3 rounded-lg">
-                                {selectedProject.projectMessage?.message || 'メッセージがありません'}
-                              </p>
-                            </div>
-                          </>
-                        )}
+                        ))}
                         
                         <div className="grid grid-cols-2 gap-4">
                           <div>
