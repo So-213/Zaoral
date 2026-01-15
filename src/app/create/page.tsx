@@ -1,495 +1,32 @@
 "use client";
 
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
-import { toast } from "sonner";
-import { generateProjectUrl } from "@/lib/config";
 import { Copy, Check } from "lucide-react";
-
-type ProjectType = "message" | "picture";
-
-// 文字数カウント表示コンポーネント
-interface CharacterCountDisplayProps {
-  currentLength: number;
-  maxLength: number;
-  warningThreshold?: number;
-}
-
-const CharacterCountDisplay = ({ 
-  currentLength, 
-  maxLength, 
-  warningThreshold = 0.9 
-}: CharacterCountDisplayProps) => {
-  const isNearLimit = currentLength > maxLength * warningThreshold;
-  
-  return (
-    <div className="flex justify-between items-center text-sm">
-      <span className={isNearLimit ? 'text-orange-500' : 'text-gray-500'}>
-        {currentLength} / {maxLength} 文字
-      </span>
-      {isNearLimit && (
-        <span className="text-orange-500 text-xs">
-          文字数制限に近づいています
-        </span>
-      )}
-    </div>
-  );
-};
-
-// プロジェクト名入力コンポーネント
-interface ProjectNameInputProps {
-  value: string;
-  onChange: (value: string) => void;
-  maxLength: number;
-  placeholder?: string;
-}
-
-const ProjectNameInput = ({ 
-  value, 
-  onChange, 
-  maxLength, 
-  placeholder = "例：プロジェクト名" 
-}: ProjectNameInputProps) => {
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle>プロジェクト名</CardTitle>
-        <CardDescription>プロジェクトを識別するための名前を入力してください</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <div className="space-y-2">
-          <Input
-            id="project-name"
-            type="text"
-            placeholder={placeholder}
-            value={value}
-            onChange={(e) => onChange(e.target.value)}
-            maxLength={maxLength}
-            className="w-full"
-          />
-          <CharacterCountDisplay 
-            currentLength={value.length} 
-            maxLength={maxLength} 
-          />
-        </div>
-      </CardContent>
-    </Card>
-  );
-};
-
-// テキスト入力フィールドコンポーネント
-interface TextInputFieldProps {
-  title: string;
-  description: string;
-  value: string;
-  onChange: (value: string) => void;
-  maxLength: number;
-  placeholder: string;
-  inputId: string;
-}
-
-const TextInputField = ({
-  title,
-  description,
-  value,
-  onChange,
-  maxLength,
-  placeholder,
-  inputId,
-}: TextInputFieldProps) => {
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{title}</CardTitle>
-        <CardDescription>{description}</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <div className="space-y-2">
-          <Input
-            id={inputId}
-            type="text"
-            placeholder={placeholder}
-            value={value}
-            onChange={(e) => onChange(e.target.value)}
-            maxLength={maxLength}
-            className="w-full"
-          />
-          <CharacterCountDisplay 
-            currentLength={value.length} 
-            maxLength={maxLength} 
-          />
-        </div>
-      </CardContent>
-    </Card>
-  );
-};
-
-// 画像アップロードフィールドコンポーネント
-interface ImageUploadFieldProps {
-  selectedFile: File | null;
-  onFileChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-}
-
-const ImageUploadField = ({ selectedFile, onFileChange }: ImageUploadFieldProps) => {
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle>画像アップロード</CardTitle>
-        <CardDescription>
-          Webページに表示させたい画像をアップロードしてください（JPEG、PNG、GIF、WebP、最大10MB）
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <div className="space-y-2">
-          <Label htmlFor="file-input">画像ファイル</Label>
-          <Input
-            id="file-input"
-            type="file"
-            accept="image/jpeg,image/jpg,image/png,image/gif,image/webp"
-            onChange={onFileChange}
-            className="w-full"
-          />
-          {selectedFile && (
-            <div className="mt-4 p-4 bg-gray-50 rounded-lg">
-              <p className="text-sm text-gray-700">
-                <strong>選択されたファイル:</strong> {selectedFile.name}
-              </p>
-              <p className="text-sm text-gray-500">
-                サイズ: {(selectedFile.size / 1024 / 1024).toFixed(2)} MB
-              </p>
-            </div>
-          )}
-        </div>
-      </CardContent>
-    </Card>
-  );
-};
-
-// プロジェクトタイプ別のリクエストボディ構築ハンドラー
-interface RequestBodyBuilder {
-  buildRequestBody: (
-    baseBody: { slug: string; type: string; name: string },
-    context: {
-      inputText: string;
-      selectedFile: File | null;
-      [key: string]: any;
-    }
-  ) => Promise<Record<string, any>>;
-}
-
-// プロジェクトタイプ別の設定
-const PROJECT_TYPE_CONFIG: Record<ProjectType, {
-  projectNamePlaceholder: string;
-  inputFields: Array<{
-    type: 'text' | 'image';
-    title: string;
-    description: string;
-    placeholder?: string;
-    inputId: string;
-  }>;
-  requestBodyBuilder: RequestBodyBuilder;
-}> = {
-  message: {
-    projectNamePlaceholder: "例：おたおめプロジェクト",
-    inputFields: [
-      {
-        type: 'text',
-        title: '文字列入力',
-        description: 'Webページに表示させたい文字列を入力してください',
-        placeholder: '例：おたおめ！！',
-        inputId: 'input-text',
-      },
-    ],
-    requestBodyBuilder: {
-      buildRequestBody: async (baseBody, { inputText }) => {
-        return {
-          ...baseBody,
-          message: inputText,
-        };
-      },
-    },
-  },
-  picture: {
-    projectNamePlaceholder: "例：〇〇の写真",
-    inputFields: [
-      {
-        type: 'image',
-        title: '画像アップロード',
-        description: 'Webページに表示させたい画像をアップロードしてください（JPEG、PNG、GIF、WebP、最大10MB）',
-        inputId: 'file-input',
-      },
-    ],
-    requestBodyBuilder: {
-      buildRequestBody: async (baseBody, { selectedFile }) => {
-        if (!selectedFile) {
-          throw new Error('画像ファイルが必要です');
-        }
-
-        // 画像をS3にアップロード
-        const formData = new FormData();
-        formData.append('image', selectedFile);
-        
-        const uploadResponse = await fetch('/api/projects/upload', {
-          method: 'POST',
-          body: formData,
-        });
-
-        if (!uploadResponse.ok) {
-          const errorData = await uploadResponse.json().catch(() => ({}));
-          const errorMessage = errorData.error || '画像のアップロードに失敗しました';
-          throw new Error(errorMessage);
-        }
-
-        const uploadData = await uploadResponse.json();
-        return {
-          ...baseBody,
-          s3Key: uploadData.s3Key,
-        };
-      },
-    },
-  },
-};
-
-// プロジェクトタイプ別入力セクションコンポーネント
-interface ProjectTypeInputSectionProps {
-  projectType: ProjectType;
-  projectName: string;
-  onProjectNameChange: (value: string) => void;
-  inputText: string;
-  onInputTextChange: (value: string) => void;
-  selectedFile: File | null;
-  onFileChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  maxProjectNameLength: number;
-  maxCharacters: number;
-}
-
-const ProjectTypeInputSection = ({
-  projectType,
-  projectName,
-  onProjectNameChange,
-  inputText,
-  onInputTextChange,
-  selectedFile,
-  onFileChange,
-  maxProjectNameLength,
-  maxCharacters,
-}: ProjectTypeInputSectionProps) => {
-  const config = PROJECT_TYPE_CONFIG[projectType];
-  
-  if (!config) {
-    return null;
-  }
-
-  return (
-    <>
-      <ProjectNameInput
-        value={projectName}
-        onChange={onProjectNameChange}
-        maxLength={maxProjectNameLength}
-        placeholder={config.projectNamePlaceholder}
-      />
-      
-      {config.inputFields.map((field) => {
-        if (field.type === 'text') {
-          return (
-            <TextInputField
-              key={field.inputId}
-              title={field.title}
-              description={field.description}
-              value={inputText}
-              onChange={onInputTextChange}
-              maxLength={maxCharacters}
-              placeholder={field.placeholder || ''}
-              inputId={field.inputId}
-            />
-          );
-        }
-        
-        if (field.type === 'image') {
-          return (
-            <ImageUploadField
-              key={field.inputId}
-              selectedFile={selectedFile}
-              onFileChange={onFileChange}
-            />
-          );
-        }
-        
-        return null;
-      })}
-    </>
-  );
-};
+import { useCreateProject, MAX_CHARACTERS, MAX_PROJECT_NAME_LENGTH } from "@/hooks/useCreateProject";
+import { ProjectTypeInputSection } from "@/components/create/ProjectTypeInputSection";
+import { ProjectType } from "@/lib/create/project-type-config";
 
 export default function CreatePage() {
-  const [projectType, setProjectType] = useState<ProjectType>("message");
-  const [inputText, setInputText] = useState("");
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [projectName, setProjectName] = useState("");
-  const [randomString, setRandomString] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [response, setResponse] = useState("");
-  const [copied, setCopied] = useState(false);
-  
-  // 文字数制限（50文字）
-  const MAX_CHARACTERS = 50;
-  const MAX_PROJECT_NAME_LENGTH = 30;
+  const {
+    projectType,
+    inputText,
+    selectedFile,
+    projectName,
+    isLoading,
+    response,
+    copied,
+    setInputText,
+    setProjectName,
+    handleFileChange,
+    handleProjectTypeChange,
+    saveToDatabase,
+    handleCopyUrl,
+    isSubmitDisabled,
+  } = useCreateProject();
 
-  // ランダム文字列を生成する関数（6文字、アルファベットと数字を含む）
-  const generateRandomString = () => {
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    let result = '';
-    for (let i = 0; i < 6; i++) {
-      result += chars.charAt(Math.floor(Math.random() * chars.length));
-    }
-    return result;
-  };
-
-  // ファイル選択ハンドラー（picture型一時停止中のため無効化）
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      // ファイルタイプの検証
-      const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
-      if (!allowedTypes.includes(file.type)) {
-        toast.error('サポートされていない画像形式です。JPEG、PNG、GIF、WebPのみ対応しています。');
-        return;
-      }
-      // ファイルサイズの検証（10MBまで）
-      const maxSize = 10 * 1024 * 1024; // 10MB
-      if (file.size > maxSize) {
-        toast.error('画像サイズが大きすぎます。10MB以下にしてください。');
-        return;
-      }
-      setSelectedFile(file);
-    }
-  };
-
-  // プロジェクトを作成する関数
-  const saveToDatabase = async () => {
-    // タイプに応じたバリデーション
-    if (projectType === 'message') {
-      if (!projectName.trim()) {
-        toast.error("プロジェクト名を入力してください");
-        return;
-      }
-      if (projectName.length > MAX_PROJECT_NAME_LENGTH) {
-        toast.error(`プロジェクト名が制限を超えています（${MAX_PROJECT_NAME_LENGTH}文字以内）`);
-        return;
-      }
-      if (!inputText.trim()) {
-        toast.error("文字列を入力してください");
-        return;
-      }
-      
-      if (inputText.length > MAX_CHARACTERS) {
-        toast.error(`文字数が制限を超えています（${MAX_CHARACTERS}文字以内）`);
-        return;
-      }
-    }
-    // picture型は一時停止中のため無効化
-    // else if (projectType === 'picture') {
-    //   if (!selectedFile) {
-    //     toast.error("画像ファイルを選択してください");
-    //     return;
-    //   }
-    //   if (!projectName.trim()) {
-    //     toast.error("プロジェクト名を入力してください");
-    //     return;
-    //   }
-    //   if (projectName.length > MAX_PROJECT_NAME_LENGTH) {
-    //     toast.error(`プロジェクト名が制限を超えています（${MAX_PROJECT_NAME_LENGTH}文字以内）`);
-    //     return;
-    //   }
-    // }
-
-    // データ保存時に自動的にランダム文字列を生成
-    const newRandomString = generateRandomString();
-    setRandomString(newRandomString);
-
-    setIsLoading(true);
-    
-    try {
-      const baseBody = {
-        slug: newRandomString,
-        type: projectType,
-        name: projectName,
-      };
-
-      // プロジェクトタイプに応じたリクエストボディを構築
-      const config = PROJECT_TYPE_CONFIG[projectType];
-      if (!config) {
-        toast.error(`未サポートのプロジェクトタイプです: ${projectType}`);
-        setIsLoading(false);
-        return;
-      }
-
-      let requestBody: Record<string, any>;
-      try {
-        requestBody = await config.requestBodyBuilder.buildRequestBody(
-          baseBody,
-          {
-            inputText,
-            selectedFile,
-          }
-        );
-      } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : 'リクエストボディの構築に失敗しました';
-        toast.error(errorMessage);
-        setIsLoading(false);
-        return;
-      }
-
-      const response = await fetch('/api/projects', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(requestBody),
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        const url = generateProjectUrl(data.slug);
-        setResponse(url);
-        toast.success("プロジェクトが正常に作成されました！");
-      } else {
-        // エラーレスポンスからメッセージを取得
-        const errorData = await response.json().catch(() => ({}));
-        const errorMessage = errorData.error || `HTTP error! status: ${response.status}`;
-        toast.error(errorMessage);
-        setResponse("");
-        return;
-      }
-    } catch (error) {
-      console.error('保存エラー:', error);
-      toast.error("保存に失敗しました。データベース接続を確認してください。");
-      setResponse("");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  // URLをコピーする関数
-  const handleCopyUrl = async () => {
-    if (!response) return;
-    
-    try {
-      await navigator.clipboard.writeText(response);
-      setCopied(true);
-      toast.success("URLをコピーしました");
-      setTimeout(() => setCopied(false), 2000);
-    } catch (err) {
-      console.error('URLのコピーに失敗しました:', err);
-      toast.error("URLのコピーに失敗しました");
-    }
-  };
-
-  
   return (
     <div className="py-8">
       <div className="max-w-4xl mx-auto px-4">
@@ -506,26 +43,13 @@ export default function CreatePage() {
               <CardContent>
                 <div className="space-y-2">
                   <Label htmlFor="project-type">タイプ</Label>
-                  <Select value={projectType} onValueChange={(value) => {
-                    // picture型は一時停止中のため選択不可
-                    if (value === 'picture') {
-                      toast.error('画像型プロジェクトは現在利用できません');
-                      return;
-                    }
-                    setProjectType(value as ProjectType);
-                    // タイプ変更時に入力内容をクリア
-                    setInputText("");
-                    setSelectedFile(null);
-                    setProjectName("");
-                    setResponse("");
-                  }}>
+                  <Select value={projectType} onValueChange={handleProjectTypeChange}>
                     <SelectTrigger id="project-type" className="w-full">
                       <SelectValue placeholder="プロジェクトタイプを選択" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="message">メッセージ</SelectItem>
                       {/* picture型は一時停止中のため無効化 */}
-                      {/* <SelectItem value="picture">画像</SelectItem> */}
                       <SelectItem value="picture" disabled>画像（現在は利用できません）</SelectItem>
                     </SelectContent>
                   </Select>
@@ -552,23 +76,16 @@ export default function CreatePage() {
                 <CardTitle>Webページを作成</CardTitle>
               </CardHeader>
               <CardContent>
-                  <div className="space-y-4">
-                    <div className="pt-1">
-                      <Button 
-                        onClick={saveToDatabase}
-                        disabled={
-                          isLoading || 
-                          (projectType === 'message' && (!projectName.trim() || projectName.length > MAX_PROJECT_NAME_LENGTH || !inputText.trim() || inputText.length > MAX_CHARACTERS))
-                          // picture型は一時停止中のため無効化
-                          //|| (projectType === 'picture' && (!selectedFile || !projectName.trim() || projectName.length > MAX_PROJECT_NAME_LENGTH))
-                        }
-                        className="w-full bg-purple-400 hover:bg-purple-500"
-                      >
-                        {isLoading ? "作成中..." : "Webページを作成"}
-                      </Button>
-                    </div>
-                  
-
+                <div className="space-y-4">
+                  <div className="pt-1">
+                    <Button 
+                      onClick={saveToDatabase}
+                      disabled={isSubmitDisabled}
+                      className="w-full bg-purple-400 hover:bg-purple-500"
+                    >
+                      {isLoading ? "作成中..." : "Webページを作成"}
+                    </Button>
+                  </div>
                 </div>
               </CardContent>
             </Card>
