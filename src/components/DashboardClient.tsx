@@ -17,6 +17,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Trash2, Loader2, Copy, Check } from "lucide-react";
+import LoadingOverlay from "@/components/LoadingOverlay";
 
 interface Project {
   id: string;
@@ -147,6 +148,7 @@ export default function DashboardClient({ user, userProjects }: DashboardClientP
 
   return (
     <div className="py-8">
+      <LoadingOverlay isLoading={deleting !== null} message="削除中..." />
       <div className="max-w-6xl mx-auto px-4">
         {/* 上部セクション */}
         <div className="bg-white rounded-lg shadow-md p-6 mb-8">
@@ -229,7 +231,7 @@ export default function DashboardClient({ user, userProjects }: DashboardClientP
                     selectedProject?.id === project.id 
                       ? 'border-blue-500 bg-blue-50' 
                       : 'border-gray-200 hover:bg-gray-50'
-                  }`}
+                  } ${deleting === project.id ? 'opacity-50 pointer-events-none' : ''}`}
                 >
                   <div 
                     className="p-4 cursor-pointer"

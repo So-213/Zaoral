@@ -8,6 +8,7 @@ import { Copy, Check } from "lucide-react";
 import { useCreateProject, MAX_CHARACTERS, MAX_PROJECT_NAME_LENGTH } from "@/hooks/useCreateProject";
 import { ProjectTypeInputSection } from "@/components/create/ProjectTypeInputSection";
 import { ProjectType } from "@/lib/create/project-type-config";
+import LoadingOverlay from "@/components/LoadingOverlay";
 
 export default function CreatePage() {
   const {
@@ -29,6 +30,7 @@ export default function CreatePage() {
 
   return (
     <div className="py-8">
+      <LoadingOverlay isLoading={isLoading} message="作成中..." />
       <div className="max-w-4xl mx-auto px-4">
         <div className="bg-white rounded-lg shadow-md p-6">
           <h1 className="text-3xl font-bold text-gray-900 mb-6">Webページ作成</h1>

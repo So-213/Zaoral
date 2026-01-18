@@ -77,6 +77,7 @@ export const PROJECT_TYPE_CONFIG: Record<ProjectType, {
         }
 
         const uploadData = await uploadResponse.json();
+        
         return {
           ...baseBody,
           s3Key: uploadData.s3Key,

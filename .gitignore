@@ -39,6 +39,7 @@ terraform/*.tfvars
 # others
 .cursor
 .DS_Store
+.gitignore
 
 # database backups
 /backups/
