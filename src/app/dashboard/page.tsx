@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import DashboardClient from "@/components/DashboardClient";
-import { DEFAULT_LEFT_PROJECTS, generateProjectUrl } from "@/lib/config";
-import { getS3PublicUrl } from "@/lib/s3";
+import { DEFAULT_LEFT_PROJECTS } from "@/lib/config";
+import { generateProjectUrlByType } from "@/lib/dashboard-config";
 import { requireAuth } from "@/lib/api-helpers";
 
 interface Project {
@@ -34,44 +34,39 @@ export default async function DashboardPage() {
   try {
     const { userId } = await requireAuth();
 
-    // ユーザー情報を取得（name, email, left_projects, planを含む）
-    const user = await prisma.user.findUnique({
-      where: { id: userId },
-      select: {
-        id: true,
-        name: true,
-        email: true,
-        left_projects: true,
-        plan: true,
-      },
-    });
+    // ユーザー情報とプロジェクトデータを並列で取得
+    const [user, rawProjects] = await Promise.all([
+      prisma.user.findUnique({
+        where: { id: userId },
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          left_projects: true,
+          plan: true,
+        },
+      }),
+      prisma.project.findMany({
+        where: {
+          user_id: userId,
+        },
+        include: {
+          projectMessage: true,
+          projectPicture: true,
+        },
+        orderBy: {
+          created_at: 'desc',
+        },
+      }),
+    ]);
 
     if (!user) {
       throw new Error('ユーザーが見つかりません');
     }
 
-    // プロジェクトデータをサーバー側で取得
-    const rawProjects = await prisma.project.findMany({
-      where: {
-        user_id: userId,
-      },
-    include: {
-      projectMessage: true,
-      projectPicture: true,
-    },
-    orderBy: {
-      created_at: 'desc',
-    },
-  });
-
-  // プロジェクトタイプに応じてURLを生成
+  // プロジェクトタイプに応じてURLを生成（設定ベースのアプローチ）
   const userProjects: Project[] = rawProjects.map((project) => {
-    let url: string;
-    if (project.type === 'picture' && project.projectPicture?.s3_key) {
-      url = getS3PublicUrl(project.projectPicture.s3_key);
-    } else {
-      url = generateProjectUrl(project.slug);
-    }
+    const url = generateProjectUrlByType(project);
     
     return {
       ...project,
