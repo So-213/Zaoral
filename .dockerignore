@@ -1,0 +1,44 @@
+# Dependencies
+node_modules
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Next.js
+.next
+out
+
+# Build
+build
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Git
+.git
+.gitignore
+
+# IDE
+.cursor
+.vscode
+.idea
+
+# OS
+.DS_Store
+
+# Documentation
+docs
+*.md
+!README.md
+
+# Terraform（アプリビルドに不要）
+terraform
+
+# Scripts（本番ビルドに不要）
+scripts
+
+# Database backups
+backups
