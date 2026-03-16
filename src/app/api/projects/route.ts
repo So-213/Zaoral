@@ -73,7 +73,7 @@ export async function POST(request: NextRequest) {
     expiresAt.setDate(expiresAt.getDate() + 31);
 
     // トランザクションでプロジェクト作成と残機減算を同時に実行
-    const savedProject = await prisma.$transaction(async (tx) => {
+    const savedProject = await prisma.$transaction(async (tx) => {  // txとは、複数の処理を同じトランザクションとして扱うためのprisma clientのこと
       // プロジェクトを作成
       const projectData: any = {
         user_id: userId,
