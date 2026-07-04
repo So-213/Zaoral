@@ -46,7 +46,7 @@ export default async function DashboardPage() {
           plan: true,
         },
       }),
-      prisma.project.findMany({
+      prisma.project.findMany({  //eager loading：userに関する情報をまとめて先に取得
         where: {
           user_id: userId,
         },
