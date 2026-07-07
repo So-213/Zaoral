@@ -60,7 +60,7 @@ export default function HowToUsePage() {
             使い方
           </h1>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            簡易Webページ作成ツール「Zaoral」の基本的な使い方をご紹介します。
+            簡易Webページ作成ツール「Zaoral」の基本的な使い方をご紹介します
           </p>
         </div>
 
