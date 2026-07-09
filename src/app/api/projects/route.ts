@@ -1,15 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { 
-  requireAuth, 
-  handleApiError, 
-  validateRequired, 
-  checkProjectOwnership, 
+import {
+  requireAuth,
+  handleApiError,
+  validateRequired,
+} from '@/lib/api-helpers';
+import {
+  checkProjectOwnership,
   validateProjectType,
   validateAndExtractProjectTypeData,
   buildProjectTypeData,
   handleProjectTypeDelete
-} from '@/lib/api-helpers';
+} from '@/lib/services/project-service';
 import { DEFAULT_LEFT_PROJECTS } from '@/lib/config';
 
 
@@ -136,7 +138,7 @@ export async function DELETE(request: NextRequest) {
     if (projectIdValidation) return projectIdValidation;
 
     // プロジェクトの所有者権限をチェック
-    const ownershipResult = await checkProjectOwnership(projectId!, userId, prisma);
+    const ownershipResult = await checkProjectOwnership(projectId!, userId);
     if (ownershipResult instanceof NextResponse) {
       return ownershipResult;
     }
