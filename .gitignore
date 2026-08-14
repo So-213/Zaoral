@@ -43,3 +43,6 @@ terraform/*.tfvars
 
 # database backups
 /backups/
+
+# migration planning docs
+/docs/移行計画/
