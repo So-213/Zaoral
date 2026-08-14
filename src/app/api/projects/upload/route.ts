@@ -15,9 +15,6 @@ export async function POST(request: NextRequest) {
   );
 
   // 以下はpicture型一時停止中のためコメントアウト
-  // #region agent log
-  // fetch('http://127.0.0.1:7243/ingest/fd387f13-f7cb-4376-8e9e-8890c8da3bd0',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'app/api/projects/upload/route.ts:10',message:'POST handler entry',data:{hasProcessEnv:!!process.env,awsAccessKeyId:process.env.AWS_ACCESS_KEY_ID||'undefined',awsAccessKeyIdLength:process.env.AWS_ACCESS_KEY_ID?.length||0,allEnvKeys:Object.keys(process.env).filter(k=>k.includes('AWS')).join(',')},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'H'})}).catch(()=>{});
-  // #endregion
   // try {
   //   // 認証チェック
   //   const authResult = await requireAuth();

@@ -2,18 +2,10 @@ import { S3Client, PutObjectCommand, DeleteObjectCommand } from '@aws-sdk/client
 
 // S3クライアントを取得する関数（環境変数の変更に対応）
 function getS3Client() {
-  // #region agent log
-  fetch('http://127.0.0.1:7243/ingest/fd387f13-f7cb-4376-8e9e-8890c8da3bd0',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'lib/s3.ts:4',message:'getS3Client called',data:{hasProcessEnv:!!process.env,envKeys:Object.keys(process.env).filter(k=>k.includes('AWS')).join(',')},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
-  // #endregion
-
   // 環境変数から明示的に認証情報を取得
   const rawAccessKeyId = process.env.AWS_ACCESS_KEY_ID;
   const rawSecretAccessKey = process.env.AWS_SECRET_ACCESS_KEY;
   const rawRegion = process.env.AWS_REGION;
-
-  // #region agent log
-  fetch('http://127.0.0.1:7243/ingest/fd387f13-f7cb-4376-8e9e-8890c8da3bd0',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'lib/s3.ts:10',message:'Raw env values before trim',data:{rawAccessKeyId:rawAccessKeyId||'undefined',rawAccessKeyIdLength:rawAccessKeyId?.length||0,rawAccessKeyIdType:typeof rawAccessKeyId,hasRawSecret:!!rawSecretAccessKey,rawRegion:rawRegion||'undefined'},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
-  // #endregion
 
   const accessKeyId = rawAccessKeyId?.trim();
   const secretAccessKey = rawSecretAccessKey?.trim();
